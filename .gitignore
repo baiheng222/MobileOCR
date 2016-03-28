@@ -1,4 +1,13 @@
-# Built application files
+.gitignore
+*.iml
+/local.properties
+.DS_Store
+
+app/build/
+
+
+.idea/
+
 *.apk
 *.ap_
 
