@@ -1,14 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest package="com.hanvon.mobileocr"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+          xmlns:android="http://schemas.android.com/apk/res/android"
+    android:versionCode="14"
+    android:versionName="1.0.0.1">
+
+
+    <!-- 获取运营商信息，用于支持提供运营商信息相关的接口 -->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" >
+    </uses-permission>
+    <!-- 这个权限用于获取wifi的获取权限，wifi信息会用来进行网络定位 -->
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" >
+    </uses-permission>
+    <!-- 用于读取手机当前的状态 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" >
+    </uses-permission>
+    <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" >
+    </uses-permission>
+    <!-- 访问网络，网络定位需要上网 -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- SD卡读取权限，用户写入离线定位数据 -->
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" >
+    </uses-permission>
+
 
     <!-- camera -->
     <uses-permission android:name="android.permission.CAMERA" />
     <!-- 增加文件存储和访问的权限 -->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
+
     <application
-        android:name="com.hanvon.mobileocr.wboard.MyApplication"
+        android:name="com.hanvon.mobileocr.application.HanvonApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -21,7 +44,18 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.LoginActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait" >
+        </activity>
 
+        <activity android:name=".activity.RegisterUserFromEmail" ></activity>
+        <activity android:name=".activity.RegisterUserFromPhone" ></activity>
+        <activity android:name=".activity.RegisterUserGetCodePhone" ></activity>
+        <activity android:name=".activity.RememberPassword" ></activity>
+        <activity android:name=".activity.ResetPasswd" ></activity>
+        <activity android:name=".activity.RmbPwdCheckCode" ></activity>
         <activity android:name=".md.camera.activity.CameraActivity"></activity>
         <activity android:name=".bcard.ChooseMorePicturesActivity"></activity>
         <activity android:name=".bcard.PreviewPicActivity"></activity>

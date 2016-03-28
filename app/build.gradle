@@ -17,10 +17,15 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    useLibrary 'org.apache.http.legacy'
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.2.1'
+    compile files('libs/hanvon-userinfo.jar')
+    compile files('libs/Baidu-Frontia-Android-2.0.7.jar')
+    compile files('libs/BaiduLBS_Android.jar')
+    compile files('libs/xUtils-2.6.14.jar')
 }

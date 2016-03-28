@@ -1,0 +1,67 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="#F2F2F2"
+    android:orientation="vertical" >
+
+    <include layout="@layout/orderslist_head" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="10dip"
+        android:background="#FFFFFF"
+        android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/orderlist_allorder"
+                android:textSize="15sp" />
+        <TextView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#F2F2F2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/orderlist_waitpay"
+                android:textSize="15sp" />
+        <TextView
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#F2F2F2"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/orderlist_waitdown"
+                android:textSize="15sp"
+                />
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/rl_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"/>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#e2e2e2"
+            android:dividerHeight="1px"
+            android:visibility="gone" >
+        </ListView>
+    </RelativeLayout>
+</LinearLayout>
