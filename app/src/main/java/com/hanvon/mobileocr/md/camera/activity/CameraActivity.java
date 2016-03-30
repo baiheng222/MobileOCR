@@ -95,6 +95,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mCapture = (ImageView) findViewById(R.id.iv_capture);
         mCapture.setOnClickListener(this);
         mCancel = (ImageView) findViewById(R.id.iv_cancel);
+        mCancel.setOnClickListener(this);
 
 
     }
@@ -265,6 +266,10 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         {
             case R.id.iv_capture:
                 requestTakePicture();
+                break;
+
+            case R.id.iv_cancel:
+                this.finish();
                 break;
 
             case R.id.iv_gallery:

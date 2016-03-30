@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -29,6 +30,7 @@ import com.hanvon.mobileocr.utils.BitmapUtil;
 import com.hanvon.mobileocr.utils.ConnectionDetector;
 import com.hanvon.mobileocr.utils.DisplayUtil;
 import com.hanvon.mobileocr.utils.FileUtil;
+import com.hanvon.mobileocr.wboard.bean.PhotoAlbum;
 import com.hanwang.preprocessjava.preprocessdll;
 
 import org.json.JSONObject;
@@ -64,7 +66,6 @@ public class CropActivity extends Activity
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.pt_crop);
 
@@ -73,16 +74,24 @@ public class CropActivity extends Activity
 		screen_width = p.x;
 		density = this.getResources().getDisplayMetrics().density;
 		System.out.println("dens==========="+density);
-		path = this.getIntent().getStringExtra("path");
+		//
+		PhotoAlbum album = (PhotoAlbum) this.getIntent().getSerializableExtra("data");
+		int picturePos = this.getIntent().getExtras().getInt("pos");
+		path = album.getBitList().get(picturePos).getPath();
+		//path = this.getIntent().getStringExtra("path");
+		Log.d(TAG, "!!!!! path is " + path);
 		//path = EXTENDPATH+"universcan/MyGallery/未分类/未命名4.jpg";
 		BitmapFactory.Options opt =  new  BitmapFactory.Options();
 		opt.inSampleSize = BitmapUtil.getImageScale(path);
 		backBitmap = BitmapFactory.decodeFile(path,opt);
 		canvas = (Crop_Canvas) findViewById(R.id.myCanvas);
+		canvas.setImageBitmap(backBitmap);
 		cancel = (Button) findViewById(R.id.pt_crop_cancel);
 		rotate = (Button) findViewById(R.id.pt_crop_rotate);
 		ensure = (Button) findViewById(R.id.pt_crop_ok);
+		backImage = (ImageView) findViewById(R.id.iv_back);
         init();
+		/*
 		new Thread(new Runnable()
 		{
 			@Override
@@ -94,6 +103,7 @@ public class CropActivity extends Activity
 				handler.sendMessage(msg);
 			}
 		}).start();
+		*/
 
 		/*points = preprocessdll.Preprocess_FindSide(path,  EXTENDPATH+"MyTemp/pfind1.jpg");
 		if (Build.VERSION.SDK_INT < 19) {//API 19 以前的{
@@ -111,6 +121,7 @@ public class CropActivity extends Activity
         cancel.setOnClickListener(new MyListener());
         ensure.setOnClickListener(new MyListener());
         rotate.setOnClickListener(new MyListener());
+		backImage.setOnClickListener(new MyListener());
 
 	}
 
@@ -126,49 +137,72 @@ public class CropActivity extends Activity
 				CropActivity.this.finish();
 				break;
 			case R.id.pt_crop_rotate:
+				/*
 				preprocessdll.Preprocess_Rotate(pathAfter, pathAfter, 90, false);//旋转后保存到原路径
 				backBitmap = BitmapFactory.decodeFile(pathAfter);
 				canvas.setRotateFlag(true);
 				init();
+				*/
 				break;
 			case R.id.pt_crop_ok:
 				File tmp = new File(Environment.getExternalStorageDirectory() + "/MyTemp");
                 tmp.mkdirs();
                 File f = new File(Environment.getExternalStorageDirectory() + "/MyTemp/" + "cropAfter" + ".png");
-                try {
+                try
+				{
                     f.createNewFile();
-                } catch (IOException e1) {
-                    // TODO Auto-generated catch block
+                }
+				catch (IOException e1)
+				{
                     e1.printStackTrace();
                 }
+
                 FileOutputStream fOut = null;
-                try {
+                try
+				{
                         fOut = new FileOutputStream(f);
-                } catch (FileNotFoundException e) {
+                }
+				catch (FileNotFoundException e)
+				{
                         e.printStackTrace();
                 }
 
                 canvas.getSubsetBitmap(screen_width,screen_height).compress(Bitmap.CompressFormat.PNG, 60, fOut);
-                try {
+                try
+				{
                         fOut.flush();
-                } catch (IOException e) {
+                }
+				catch (IOException e)
+				{
                         e.printStackTrace();
                 }
-                try {
+
+                try
+				{
                         fOut.close();
-                } catch (IOException e) {
+                }
+				catch (IOException e)
+				{
                         e.printStackTrace();
                 }
+
                 BitmapFactory.Options opts1 = new BitmapFactory.Options();
                 opts1.inSampleSize = BitmapUtil.getImageScale(f.getAbsolutePath());
                 System.out.println(f.getAbsolutePath() +" file path");
                 cropBitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), opts1);
-                if(connInNet())
-				{ //如果连网
+				/*
+                if(connInNet()) //如果连网
+				{
 	                mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
 	                new Thread(textThread).start();
                 }
+                */
 				break;
+
+				case R.id.iv_back:
+
+					break;
+
 			default:
 				break;
 			}
@@ -199,6 +233,7 @@ public class CropActivity extends Activity
 		}
 		
 	};
+
 	private void init()
 	{
 		float scaleX = (float) (((screen_width- padding*2*density) * 1.0)/(backBitmap.getWidth() * 1.0) );
@@ -266,6 +301,7 @@ public class CropActivity extends Activity
 			processResult(content);
 		};
 	};
+
 	protected void processResult(String content)
 	{
 		// TODO Auto-generated method stub
@@ -309,25 +345,36 @@ public class CropActivity extends Activity
 			e.printStackTrace();
 		}
 	}
-	public  boolean connInNet(){ //检查是否连网
+
+	public  boolean connInNet() //检查是否连网
+	{
 		ConnectionDetector  connectionDetector = new ConnectionDetector(getApplication());
-		if(connectionDetector.isConnectingTOInternet()){
+		if(connectionDetector.isConnectingTOInternet())
+		{
 			return true;
-		}else{
+		}
+		else
+		{
 			Toast.makeText(getApplication(), "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
 			return false;
 		}		
 	}
+
 	@Override
-	protected void onDestroy() {
+	protected void onDestroy()
+	{
 		super.onDestroy();
-		if (cropBitmap!= null &&!cropBitmap.isRecycled()) {
+		if (cropBitmap!= null &&!cropBitmap.isRecycled())
+		{
 			cropBitmap.recycle();
 		}
-		if(backBitmap != null && !backBitmap.isRecycled()){
+
+		if(backBitmap != null && !backBitmap.isRecycled())
+		{
 			backBitmap.recycle();
 			backBitmap = null;
 		}
+
 		if (null != mProgress) {
 			mProgress.dismiss();
 		}
@@ -335,14 +382,17 @@ public class CropActivity extends Activity
 	}
 	
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
 		super.onActivityResult(requestCode, resultCode, data);
-		if (resultCode == RESULT_OK) {
+		if (resultCode == RESULT_OK)
+		{
 		}
 	}
+
 	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
 		if (keyCode == KeyEvent.KEYCODE_BACK )
         {
 			flag = true;

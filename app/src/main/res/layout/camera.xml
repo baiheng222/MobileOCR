@@ -4,8 +4,9 @@
                 android:layout_height="match_parent">
     <RelativeLayout
         android:id="@+id/rl_top"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="50dp"
+        android:background="@color/wboard_folder_manage_color"
         android:layout_alignParentTop="true">
 
         <ImageView
@@ -13,14 +14,18 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
             android:layout_width="40dp"
-            android:layout_height="40dp"/>
+            android:layout_height="40dp"
+            android:src="@mipmap/camera_flash_on"/>
         <TextView
             android:id="@+id/tv_light"
             android:layout_width="40dp"
             android:layout_height="40dp"
+            android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_light"
             android:text="@string/camera_light_auto"
+            android:textColor="@color/white"
             />
     </RelativeLayout>
 

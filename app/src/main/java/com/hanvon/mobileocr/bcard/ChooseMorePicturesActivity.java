@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -30,6 +31,7 @@ import com.hanvon.mobileocr.bcard.adapter.BcardChoosePicAdapter.onGridItemClickL
 import com.hanvon.mobileocr.bcard.bean.BcardChooseGridItem;
 import com.hanvon.mobileocr.md.camera.activity.CameraActivity;
 //import com.hanvon.md.camera.activity.ThreadBCardListPathProcess;
+import com.hanvon.mobileocr.presentation.CropActivity;
 import com.hanvon.mobileocr.wboard.bean.PhotoAlbum;
 
 import com.hanvon.mobileocr.utils.DisplayUtil;
@@ -45,7 +47,7 @@ import java.util.Map;
 
 public class ChooseMorePicturesActivity extends Activity implements OnClickListener
 {
-
+	private final static String TAG = "ChooseMorePictures";
 	private final static int SCAN_OK = 1;
 
 	private GridView gridView;
@@ -181,15 +183,20 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		 */
 		//StatService.onPause(mContext);
 	}
-	public void initGridItemClick(){
-		adapter.setOnGridItemClickListener(new onGridItemClickListener() {
+	public void initGridItemClick()
+	{
+		adapter.setOnGridItemClickListener(new onGridItemClickListener()
+		{
 			
 			@Override
-			public void onGridItemClick(View v, int position) {
+			public void onGridItemClick(View v, int position)
+			{
 				// TODO Auto-generated method stub
-				switch (v.getId()) {
+				switch (v.getId())
+				{
 				case R.id.photo_img_view:
 					// TODO Auto-generated method stub
+
 					Intent intent = new Intent();
 					intent.setClass(mContext,PreviewPicActivity.class);
 					
@@ -198,6 +205,18 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					intent.putExtra("from", "big");
 					intent.putExtra("parentActivity", comeFrom);
 					startActivityForResult(intent,REQ_PREVIEW);
+
+					/*
+					Log.d(TAG, " !!!!!!! onGridItemClick !!!!!!!!!!");
+					Intent intent = new Intent();
+					intent.setClass(mContext,CropActivity.class);
+					intent.putExtra("data", allAlbums);
+					intent.putExtra("pos", position);
+					intent.putExtra("from", "big");
+					intent.putExtra("parentActivity", comeFrom);
+					startActivity(intent);
+					*/
+
 					break;
 				case R.id.photo_select:
 					if( allAlbums.getBitList().get(position).isSelect()){				
@@ -222,18 +241,22 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		});
 	}
 	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		switch (v.getId()) {
+	public void onClick(View v)
+	{
+		switch (v.getId())
+		{
 		case R.id.left:
 		case R.id.bc_left_img_back:
 		case R.id.bc_left_title:
 			ChooseMorePicturesActivity.this.finish();
 			break;
+
 		case R.id.bc_right_cancle:
 			ChooseMorePicturesActivity.this.finish();
 			break;
-		case R.id.bc_bottom_preview:{
+
+		case R.id.bc_bottom_preview:
+		{
 			
 			previewPhotoAlum = new PhotoAlbum();
 			for(int i = 0;i<allAlbums.getBitList().size();i++){
@@ -241,6 +264,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					previewPhotoAlum.getBitList().add(allAlbums.getBitList().get(i));
 				}
 			}
+
 			Intent intent = new Intent();
 			intent.setClass(mContext,PreviewPicActivity.class);
 			intent.putExtra("data", previewPhotoAlum);
@@ -248,11 +272,39 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			intent.putExtra("from", "preview");
 			intent.putExtra("parentActivity",comeFrom);
 			startActivityForResult(intent, REQ_PREVIEW);
+
+
 		}
-			
-			break;
+		break;
+
 		case R.id.bc_bottom_confirm:
 		{
+			Log.d(TAG, " !!!!!!! onGridItemClick !!!!!!!!!!");
+			int position = -1;
+			paths = new ArrayList<String>();
+			for(int i = 0;i<allAlbums.getBitList().size();i++)
+			{
+				if(allAlbums.getBitList().get(i).isSelect())
+				{
+					paths.add(allAlbums.getBitList().get(i).getPath());
+					position = i;
+					break;
+				}
+			}
+
+			if ((position < 0) || (position >=allAlbums.getBitList().size()) )
+			{
+				return;
+			}
+
+
+			Intent intent = new Intent();
+			intent.setClass(mContext,CropActivity.class);
+			intent.putExtra("data", allAlbums);
+			intent.putExtra("pos", position);
+			intent.putExtra("from", "big");
+			intent.putExtra("parentActivity", comeFrom);
+			startActivity(intent);
 			/*
 			paths = new ArrayList<String>();
 			for(int i = 0;i<allAlbums.getBitList().size();i++){
@@ -297,6 +349,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
+					/*
 					Intent intent = new Intent();
 					intent.setClass(mContext,PreviewPicActivity.class);
 					
@@ -305,6 +358,16 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					intent.putExtra("from", "big");
 					intent.putExtra("parentActivity", comeFrom);
 					startActivityForResult(intent,REQ_PREVIEW);
+					*/
+
+					Log.d(TAG, " !!!!!!! onGridItemClick !!!!!!!!!!");
+					Intent intent = new Intent();
+					intent.setClass(mContext,CropActivity.class);
+					intent.putExtra("data", allAlbums);
+					intent.putExtra("pos", pos);
+					intent.putExtra("from", "big");
+					intent.putExtra("parentActivity", comeFrom);
+					startActivity(intent);
 				}
 			});
 			mSelect.setOnClickListener(new OnClickListener() {

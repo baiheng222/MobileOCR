@@ -59,6 +59,7 @@
         <activity android:name=".md.camera.activity.CameraActivity"></activity>
         <activity android:name=".bcard.ChooseMorePicturesActivity"></activity>
         <activity android:name=".bcard.PreviewPicActivity"></activity>
+        <activity android:name=".presentation.CropActivity"></activity>
     </application>
 
 </manifest>

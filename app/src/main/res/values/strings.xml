@@ -104,5 +104,6 @@
     <string name="bc_str_back">Back</string>
     <string name="wb_str_done">Done</string>
     <string name="wb_str_rotate">Rotate</string>
+    <string name="gallery">Gallery</string>
 
 </resources>
