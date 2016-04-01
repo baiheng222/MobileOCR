@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F2F2F2"
+    android:orientation="vertical" >
+    
+    <include layout="@layout/resetpwd_getcode_title" />
+    
+    <TextView 
+        android:id="@+id/rmbpwd_phone"
+        android:layout_width="match_parent"
+        android:layout_height="30dip"
+        android:layout_marginTop="40dip"
+        android:gravity="center"
+        android:text="@string/resetpwd_doc"
+        android:textColor="#999999"
+        android:textSize="15sp"/>
+    
+    <com.hanvon.rc.utils.ClearEditText
+        android:id="@+id/rmbpwd_authcode"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:layout_marginTop="20dip"
+        android:background="#FFFFFF"
+        android:hint="@string/auth_code"
+        android:singleLine="true"
+        android:drawableRight="@mipmap/edit_clear"
+        android:maxLength="6"
+        android:textColor="#D7D7D7"
+        android:textColorHint="#D7D7D7"
+        android:textSize="16sp"
+        android:imeOptions="actionDone" >
+    </com.hanvon.rc.utils.ClearEditText>
+        
+   
+    <Button
+        android:id="@+id/rmbpwd_authcodebtn"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:layout_marginTop="30dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="#C9C9C9"
+        android:text="@string/ensure"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+
+    <Button
+        android:id="@+id/rmbpwd_authcodetimebtn"
+        android:layout_width="match_parent"
+        android:layout_height="40dip"
+        android:layout_marginTop="20dip"
+        android:layout_marginLeft="20dip"
+        android:layout_marginRight="20dip"
+        android:background="#C9C9C9"
+        android:text="@string/rmb_time"
+        android:textColor="@android:color/white"
+        android:textSize="20sp" />
+</LinearLayout>

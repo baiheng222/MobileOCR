@@ -1,0 +1,116 @@
+<resources>
+    <string name="app_name">MobileOCR</string>
+    <string name="main_autorec">Fast Recognize</string>
+    <string name="main_exactrec">Exact Recognize</string>
+
+    <!-- menu fragment -->
+    <string name="menu_main_ocr">OCR</string>
+    <string name="menu_main_file">File</string>
+    <string name="menu_main_orders">Orders</string>
+    <string name="menu_main_settings">Settings</string>
+
+    <string name="menu_drawer_open">Open</string>
+    <string name="menu_drawer_close">Close</string>
+
+
+    <string name="fileinfo_filemsg">文件信息</string>
+    <string name="fileinfo_pagenumber">页数</string>
+    <string name="fileinfo_bytesnumber">字节</string>
+    <string name="fileinfo_transformat">转换格式</string>
+    <string name="fileinfo_waittime">等待时间</string>
+    <string name="fileinfo_preciseOcr">精准人工识别</string>
+    <string name="fileinfo_info">备注</string>
+    <string name="fileinfo_toPay">去支付</string>
+    <string name="fileinfo_uploadsuc">上传成功</string>
+    <string name="fileinfo_feescale">收费标准</string>
+    <string name="orderinfo_failedtime">订单失效时间:&#160;&#160;</string>
+    <string name="orderinfo_preciseOcr">精准人工OCR识别文件</string>
+    <string name="orderinfo_ordermsg">订单详情</string>
+    <string name="orderinfo_ordernumber">订单号码:&#160;&#160;</string>
+    <string name="orderinfo_ordertime">订单时间:&#160;&#160;</string>
+    <string name="orderinfo_payMode">支付方式:&#160;&#160;在线支付</string>
+    <string name="orderinfo_peceiptname">收货姓名:&#160;&#160;</string>
+    <string name="orderinfo_phonenumber">手机号码:&#160;&#160;</string>
+    <string name="orderinfo_customerservice">客服</string>
+    <string name="orderinfo_Ocring">人工识别中，已用时:&#160;&#160;</string>
+    <string name="orderinfo_deletebtn">删除</string>
+    <string name="orderlist_allorder">全部订单</string>
+    <string name="orderlist_waitpay">待付款</string>
+    <string name="orderlist_waitdown">待收取</string>
+    <string name="orderlist_older">订单</string>
+    <string name="payinfo_selectpaymode">选择支付方式</string>
+    <string name="payinfo_wxpaymode">微信</string>
+    <string name="payinfo_Alipaymode">支付宝</string>
+    <string name="payinfo_amountpayable">应付金额:&#160;&#160;</string>
+    <string name="payinfo_confirmpayment">确认付款</string>
+    <string name="payinfo_pay">支付</string>
+
+    <!-- 登录注册用到的标题 -->
+    <string name="login_user">邮箱/手机</string>
+    <string name="auth_code">验证码</string>
+    <string name="login_pwd">密码</string>
+    <string name="rgst_pwd">请设置密码，6-16位字母和数字组合</string>
+    <string name="register_user">注册</string>
+    <string name="login_third">----第三方登录----</string>
+    <string name="login_button">登录</string>
+    <string name="rgst_button">注册</string>
+    <string name="rgst_email">邮箱注册</string>
+    <string name="rgst_phone_user">请输入你的手机号</string>
+    <string name="rgst_email_user">请输入你的常用邮箱地址</string>
+    <string name="remember_pwd">忘记密码?</string>
+    <string name="resetpwd_button">重设密码</string>
+    <string name="resetpwd_doc">输入已注册的手机号或邮箱</string>
+    <string name="resetpwd_reset">请输入新密码</string>
+    <string name="new_passwd">新密码</string>
+    <string name="ensure_new_passwd">确认新密码</string>
+    <string name="reset_passwd_error">格式有误请输入6-16位字母和数字组合密码</string>
+    <string name="pwd_format">6-16位数字和字母组合</string>
+    <string name="ensure">确定</string>
+    <string name="rmb_time">重新发送验证码(60s)</string>
+    <string name="back">返回</string>
+    <string name="forget_pwd">找回密码</string>
+    <string name="empty_notebooklist_tips">NoteBook is empty</string>
+    <string name="userid_found">用户信息已存在，正在跳转登录操作…</string>
+    <string name="logining">使用%s帐号登录中…</string>
+    <string name="auth_cancel">授权操作已取消</string>
+    <string name="auth_error">授权操作遇到错误</string>
+    <string name="client_error">未安装第三方客户端,请先进行第三方客户端的安装!</string>
+    <string name="auth_complete">授权成功，正在跳转登录操作…</string>
+    <!-- 账户基本信息显示用到的字段 -->
+    <string name="account">账户</string>
+    <string name="account_message">账户信息</string>
+    <string name="myaccount">我的账户</string>
+    <string name="show_account">用户账号</string>
+    <string name="nickname">名字</string>
+    <string name="modify_nickname">未填写</string>
+    <string name="password_safety">密码安全</string>
+    <string name="modify_passwd">修改密码</string>
+    <string name="third_login">第三方</string>
+    <string name="third_bind">第三方绑定</string>
+    <string name="loginout">退出登录</string>
+    <string name="modify_name">请输入您的名字</string>
+    <string name="third_sina">&#160;&#160;新浪微博</string>
+    <string name="third_qq">&#160;&#160;QQ</string>
+    <string name="third_weixin">&#160;&#160;微信</string>
+    <string name="third_unbind">未绑定</string>
+
+    <!-- camera activity -->
+    <string name="camera_light_on">Light On</string>
+    <string name="camera_light_off">Light Off</string>
+    <string name="camera_light_auto">Light Auto</string>
+
+    <string name="bc_str_confirm">OK</string>
+    <string name="bc_str_cancle">Cancel</string>
+    <string name="bc_str_back">Back</string>
+    <string name="wb_str_done">Done</string>
+    <string name="wb_str_rotate">Rotate</string>
+    <string name="gallery">Gallery</string>
+
+    <string name="title_failrec">Reconize fail</string>
+    <string name="title_save_ret">Save</string>
+
+    <string name="ret_str_share">Share</string>
+    <string name="ret_str_copy">Copy</string>
+    <string name="ret_str_exact">Exact</string>
+    <string name="ret_str_del">Delete</string>
+</resources>

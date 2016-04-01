@@ -1,0 +1,108 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="fill_parent"
+    android:background="#F2F2F2"
+    android:orientation="vertical" >
+
+    <include layout="@layout/orderslist_head" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_marginTop="10dip"
+        android:background="#FFFFFF"
+        android:orientation="horizontal">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/order_all"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:layout_centerInParent="true"
+                android:text="@string/orderlist_allorder"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/all_hr"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/black"/>
+        </RelativeLayout>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#F2F2F2"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/order_waitpay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:layout_centerInParent="true"
+                android:text="@string/orderlist_waitpay"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/waitpay_hr"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/black"/>
+        </RelativeLayout>
+        <TextView
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"
+            android:layout_width="2dp"
+            android:layout_height="match_parent"
+            android:background="#F2F2F2"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/order_waitdown"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dip"
+                android:layout_centerInParent="true"
+                android:text="@string/orderlist_waitdown"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/waitdown_hr"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_alignParentBottom="true"
+                android:background="@color/black"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <RelativeLayout
+        android:id="@+id/rl_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/orderlist_empty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical|center_horizontal"/>
+
+        <ListView
+            android:id="@+id/orderlist"
+            android:layout_marginTop="12dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="#e2e2e2"
+            android:dividerHeight="12dp"
+            android:visibility="gone" >
+        </ListView>
+    </RelativeLayout>
+
+</LinearLayout>
