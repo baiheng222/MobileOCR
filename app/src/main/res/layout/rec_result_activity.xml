@@ -20,11 +20,12 @@
             android:src="@mipmap/back"/>
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:text="@string/title_failrec"
+            android:text="@string/title_new_reco_result"
             android:gravity="center_vertical"
             android:textColor="@color/white"/>
 
