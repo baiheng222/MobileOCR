@@ -158,6 +158,9 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
                         pd.dismiss();
                         initView();
                         break;
+                    case InfoMsg.ORDER_DELETE_TYPE:
+                        finish();
+                        break;
                 }
             }
         };

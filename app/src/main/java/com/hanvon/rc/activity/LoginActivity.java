@@ -20,11 +20,12 @@ import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.ClearEditText;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.userinfo.RequestTask;
+import com.hanvon.userinfo.ResultCallBack;
+import com.hanvon.userinfo.UserInfoMessage;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.hanvon.userinfo.*;
 
 
 /**

@@ -2,6 +2,8 @@ package com.hanvon.rc.utils;
 
 import android.util.Log;
 
+import com.hanvon.rc.application.HanvonApplication;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -19,9 +21,9 @@ public class RequestJson {
             JSONObject conditionJson = new JSONObject();
             //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
             //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("start", "0");
-            JSuserInfoJson.put("pageSize", "10");
+            JSuserInfoJson.put("pageSize", "100");
             JSuserInfoJson.put("sort", conditionJson);
             JSuserInfoJson.put("fileType", "2");
             JSuserInfoJson.put("recogType", "1");
@@ -36,7 +38,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("fid", fuid);
             JSuserInfoJson.put("fileName", newName);
             JSuserInfoJson.put("fileType", "1");
@@ -51,7 +53,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("fid", fuid);
             JSuserInfoJson.put("fileType", String.valueOf(tyep));
         } catch(JSONException e) {
@@ -64,7 +66,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("fid", fuid);
             JSuserInfoJson.put("fileType", String.valueOf(tyep));
         } catch(JSONException e) {
@@ -77,7 +79,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("filePath", path);
         } catch(JSONException e) {
             e.printStackTrace();
@@ -90,7 +92,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("fileType", "2");
             JSuserInfoJson.put("fid", "05n7xzvtvntk39");
             JSuserInfoJson.put("filePath", "");
@@ -111,7 +113,7 @@ public class RequestJson {
             JSONObject queryJson = new JSONObject();
             //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
             //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("start", "0");
             JSuserInfoJson.put("pageSize", "10");
             JSuserInfoJson.put("sort", conditionJson);
@@ -134,7 +136,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("inFid", "123456");
             JSuserInfoJson.put("recogType", "1");
             JSuserInfoJson.put("wordsRange", "5100-5200");
@@ -154,7 +156,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("fid", fuid);
         } catch(JSONException e) {
             e.printStackTrace();
@@ -167,7 +169,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("oid", oid);
             JSuserInfoJson.put("payType", "1");
             JSuserInfoJson.put("payWay", "11");
@@ -186,7 +188,7 @@ public class RequestJson {
             JSONObject conditionJson = new JSONObject();
             //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
             //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("start", "0");
             JSuserInfoJson.put("pageSize", "10");
             JSuserInfoJson.put("sort", conditionJson);
@@ -202,7 +204,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("oid", oid);
         } catch(JSONException e) {
             e.printStackTrace();
@@ -219,7 +221,7 @@ public class RequestJson {
             JSONObject queryJson = new JSONObject();
             //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
             //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("start", "0");
             JSuserInfoJson.put("pageSize", "10");
             JSuserInfoJson.put("sort", conditionJson);
@@ -240,7 +242,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("fid", fuid);
             JSuserInfoJson.put("status", "4");
         } catch(JSONException e) {
@@ -254,7 +256,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("oid", oid);
         } catch(JSONException e) {
             e.printStackTrace();

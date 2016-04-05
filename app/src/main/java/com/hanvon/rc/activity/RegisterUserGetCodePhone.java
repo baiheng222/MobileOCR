@@ -3,7 +3,6 @@ package com.hanvon.rc.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
-
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -16,12 +15,13 @@ import com.hanvon.rc.R;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.ClearEditText;
 import com.hanvon.rc.utils.ConnectionDetector;
+import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.userinfo.RequestTask;
+import com.hanvon.userinfo.ResultCallBack;
+import com.hanvon.userinfo.UserInfoMessage;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import com.hanvon.rc.utils.LogUtil;
-import com.hanvon.userinfo.*;
-
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

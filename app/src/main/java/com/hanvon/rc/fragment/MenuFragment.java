@@ -3,6 +3,8 @@ package com.hanvon.rc.fragment;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +33,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     private RelativeLayout mRlFile;
     private RelativeLayout mRlOrders;
     private RelativeLayout mRlSettings;
+    private TextView mVersion;
 
 
     @Override
@@ -48,6 +51,17 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mRlFile = (RelativeLayout) view.findViewById(R.id.rl_file);
         mRlOrders = (RelativeLayout) view.findViewById(R.id.rl_orders);
         mRlSettings = (RelativeLayout) view.findViewById(R.id.rl_settings);
+
+        mVersion = (TextView) view.findViewById(R.id.tv_version);
+        try
+        {
+            mVersion.setText("Version" + getCurVersion());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
 
         mRlOrders.setOnClickListener(this);
         return view;
@@ -144,5 +158,12 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             }
             mIvLogin.setImageResource(R.mipmap.logout);
         }
+    }
+
+    private String getCurVersion() throws Exception
+    {
+        PackageManager packageManager = getActivity().getPackageManager();
+        PackageInfo packInfo = packageManager.getPackageInfo(getActivity().getPackageName(), 0);
+        return packInfo.versionName;
     }
 }

@@ -1,7 +1,5 @@
 package com.hanvon.rc.utils;
 
-import android.widget.ImageView;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -19,7 +17,6 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.widget.ImageView;
-import android.widget.ImageView.ScaleType;
 
 import com.hanvon.rc.R;
 

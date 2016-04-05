@@ -18,7 +18,8 @@
             android:textSize="20sp"
             android:textColor="#7A7A7A" />
 
-        <TextView
+        <ImageView
+            android:id="@+id/payinfo_back"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dip"

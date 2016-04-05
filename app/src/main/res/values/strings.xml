@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MobileOCR</string>
+    <string name="app_name">RC</string>
     <string name="main_autorec">Fast Recognize</string>
     <string name="main_exactrec">Exact Recognize</string>
 

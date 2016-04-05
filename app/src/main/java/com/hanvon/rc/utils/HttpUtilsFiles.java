@@ -2,25 +2,38 @@ package com.hanvon.rc.utils;
 
 import android.util.Log;
 
+import com.hanvon.rc.application.HanvonApplication;
+
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.hanvon.rc.utils.RequestJson.FileDown;
 
 /**
  * @Desc:
@@ -30,44 +43,43 @@ import java.util.Map;
 public class HttpUtilsFiles {
 
     private final static int BUF_SIZE = 32768;
+    private static int offset = 0;  //上传上传的文件长度
+    private static boolean isPause;
+    private static boolean isDownPause;
+    private static int downOffset  = 0;
 
     public static void UploadFiletoHvn(int type,String path,String filename){
         try {
-            final int blocknum;
-            final byte[] buffer;
+            byte[] buffer = null;
             int readBytes = BUF_SIZE;
             Map<String, String> parmas;
             final File file = new File(path);
-            String checksum =  MD5Util.getFileMD5String(file);
 
             FileInputStream fis = new FileInputStream(file);
             int length = fis.available();
 
-            if (length%BUF_SIZE != 0){
-                blocknum = length/BUF_SIZE + 1;
-            }else{
-                blocknum = length/BUF_SIZE;
+            Log.i("====Start===","offset:"+offset);
+            if(offset != 0){
+                fis.skip(offset);
             }
-            if (blocknum <= 1){
-                buffer =  new byte[length];
-            }else{
-                buffer =  new byte[BUF_SIZE];
-            }
-
-            for(int i = 0;i < blocknum;i++){
-                if (i == blocknum -1){
-                    readBytes = length - i*BUF_SIZE;
-                    byte[] buffer1 = new byte[readBytes];
-                    readBytes = fis.read(buffer1);
-                    parmas = GetMapFromType(Base64Utils.encode(buffer1), filename, i * BUF_SIZE, length, type, readBytes, checksum);
-                    dopost(parmas, type, buffer1);
-                }else{
-                    readBytes = BUF_SIZE;
-                    readBytes = fis.read(buffer);
-                    parmas = GetMapFromType(Base64Utils.encode(buffer), filename, i * BUF_SIZE, length, type, readBytes, checksum);
-                    dopost(parmas, type, buffer);
+            while(true){
+                if ((isPause) || ((!isPause)&&(offset >= length))){
+                    break;
                 }
-
+                if((length-offset)/BUF_SIZE > 0) {
+                    readBytes = BUF_SIZE;
+                }else {
+                    readBytes = length - offset;
+                }
+                try {
+                    buffer =  new byte[readBytes];
+                    readBytes = fis.read(buffer);
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+                Log.i("=======","readBytes:"+readBytes);
+                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, type, readBytes);
+                dopost(parmas, type, buffer);
             }
         } catch (IOException e) {
             // TODO Auto-generated catch block
@@ -76,11 +88,11 @@ public class HttpUtilsFiles {
     }
 
     public static Map<String, String> GetMapFromType(String data,String filename,
-                                                     int offset, int totalLength, int type,int readBytes,String checkSum){
+                                                     int offset, int totalLength, int type,int readBytes){
         //封装数据
         Map<String, String> parmas = new HashMap<String, String>();
         if (type == InfoMsg.FILE_UPLOAD_TYPE) {
-            parmas.put("userid", "test2345");
+            parmas.put("userid", HanvonApplication.hvnName);
             parmas.put("fileType", "1");
             parmas.put("fid", "");
             parmas.put("fileName", URLEncoder.encode(filename));
@@ -94,7 +106,7 @@ public class HttpUtilsFiles {
         //    parmas.put("devid", "123456789");
             Log.i("==234===", parmas.toString());
         }else if(type == InfoMsg.FILE_RECOGINE_TYPE){
-            parmas.put("userid", "test2345");
+            parmas.put("userid", HanvonApplication.hvnName);
             parmas.put("resType", "1");
             parmas.put("platformType", "4");
             parmas.put("fileName", URLEncoder.encode(filename));
@@ -139,6 +151,15 @@ public class HttpUtilsFiles {
             InputStream content = entity.getContent();
             String returnConnection = convertStreamToString(content);
             Log.i("=======",returnConnection);
+            try {
+                JSONObject json = new JSONObject(returnConnection);
+                if (json.getString("code").equals("0")){
+                    offset = Integer.valueOf(json.getString("offset"));
+                    Log.i("=======",offset+"");
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         } catch (IllegalStateException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -164,5 +185,64 @@ public class HttpUtilsFiles {
             }
         }
         return sb.toString();
+    }
+
+
+    public  static void HttpDownFiles(JSONObject params,String urlStr){
+        HttpClient httpClient = new DefaultHttpClient();
+        HttpResponse response;
+        try { // 模拟调用rest API下载文件接口
+            StringEntity entity = new StringEntity(params.toString());
+            // 以post方式请求URL
+            HttpPost httpPost = new HttpPost(urlStr);
+            // 参数为json串形式
+         //   httpPost.addHeader("Content-Type", MediaType.APPLICATION_JSON);
+            httpPost.setEntity(entity);
+            // 执行后获得响应数据
+            response = httpClient.execute(httpPost);
+            int statusCode = response.getStatusLine().getStatusCode();
+            if(statusCode != 200){
+                httpPost.abort();
+                throw new RuntimeException("HttpClient, response :" + response);
+            }
+            String contentDisposition = response.getHeaders("Content-Disposition")[0].toString();
+            String size = contentDisposition.substring(
+                    contentDisposition.lastIndexOf("#") + 1, contentDisposition.length());
+
+            // 获得附件文件名称
+            String attachmentFileName = contentDisposition.substring(
+                    contentDisposition.lastIndexOf("=")+2,  contentDisposition.lastIndexOf("#")-1);
+            // 解决中文文件名乱码问题
+            attachmentFileName = URLDecoder.decode(attachmentFileName, "UTF-8");
+            String downloadPath = "/sdcard/"+attachmentFileName;
+            Log.i("---------",downloadPath+"   size:"+size);
+            HttpEntity responseEntity = response.getEntity();
+            if(responseEntity != null){
+                if(responseEntity.isStreaming()){
+                    //下载文件，断点续传，每次的内容追加写入文件
+                    responseEntity.writeTo(new FileOutputStream(
+                            new File("/sdcard/"+attachmentFileName), true));
+                }else{
+                    String result = EntityUtils.toString(responseEntity, "utf-8");
+               //     EntityUtils.consume(responseEntity);
+                    System.out.println("------result:" + result);
+                }
+                httpPost.abort();
+            }
+            //下次取的起始位置
+            if (downOffset < Long.valueOf(size)){
+                downOffset += (long)32768;
+                if (!isDownPause) {
+                    FileDown(downOffset);
+                }
+            }
+        } catch (UnsupportedEncodingException e1) {
+            e1.printStackTrace();
+        } catch (ClientProtocolException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
