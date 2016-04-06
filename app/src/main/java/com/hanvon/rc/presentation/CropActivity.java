@@ -30,6 +30,8 @@ import com.hanvon.rc.utils.BitmapUtil;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.DisplayUtil;
 import com.hanvon.rc.utils.FileUtil;
+import com.hanvon.rc.utils.HttpUtilsFiles;
+import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 import com.hanwang.preprocessjava.preprocessdll;
 
@@ -190,13 +192,13 @@ public class CropActivity extends Activity
                 opts1.inSampleSize = BitmapUtil.getImageScale(f.getAbsolutePath());
                 System.out.println(f.getAbsolutePath() +" file path");
                 cropBitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), opts1);
-				/*
+
                 if(connInNet()) //如果连网
 				{
 	                mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
 	                new Thread(textThread).start();
                 }
-                */
+
 				break;
 
 				case R.id.iv_back:
@@ -260,6 +262,22 @@ public class CropActivity extends Activity
 		
 		return str; 
 	
+	}
+
+	public class recoThread implements Runnable
+	{
+		private String mFileName;
+
+		public recoThread(String filename)
+		{
+			mFileName = filename;
+		}
+
+		@Override
+		public void run()
+		{
+			HttpUtilsFiles.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mFileName, mFileName);
+		}
 	}
 
 	Runnable textThread = new Runnable()

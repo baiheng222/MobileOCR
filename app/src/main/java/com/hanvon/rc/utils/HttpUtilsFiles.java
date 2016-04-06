@@ -96,7 +96,7 @@ public class HttpUtilsFiles {
             parmas.put("fileType", "1");
             parmas.put("fid", "");
             parmas.put("fileName", URLEncoder.encode(filename));
-            parmas.put("fileFormat", "jpg");
+            parmas.put("fileFormat", "png");
             parmas.put("fileAmount", "1");
             parmas.put("size", String.valueOf(totalLength));
             parmas.put("length", String.valueOf(readBytes));
