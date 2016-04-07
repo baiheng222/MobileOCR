@@ -15,17 +15,16 @@ import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -46,7 +45,7 @@ public class HttpUtilsFiles {
     private static int offset = 0;  //上传上传的文件长度
     private static boolean isPause;
     private static boolean isDownPause;
-    private static int downOffset  = 0;
+    private static long downOffset  = 0;
 
     public static void UploadFiletoHvn(int type,String path,String filename){
         try {
@@ -101,12 +100,12 @@ public class HttpUtilsFiles {
             parmas.put("size", String.valueOf(totalLength));
             parmas.put("length", String.valueOf(readBytes));
             parmas.put("offset", String.valueOf(offset));
-            parmas.put("checksum", SHA1Util.encodeBySHA(data));
+            parmas.put("checksum", SHA1Util.sha(data));
             parmas.put("iszip", String.valueOf(false));
         //    parmas.put("devid", "123456789");
             Log.i("==234===", parmas.toString());
         }else if(type == InfoMsg.FILE_RECOGINE_TYPE){
-            parmas.put("userid", HanvonApplication.hvnName);
+         //   parmas.put("userid", HanvonApplication.hvnName);
             parmas.put("resType", "1");
             parmas.put("platformType", "4");
             parmas.put("fileName", URLEncoder.encode(filename));
@@ -114,7 +113,7 @@ public class HttpUtilsFiles {
             parmas.put("length", String.valueOf(readBytes));
             parmas.put("size", String.valueOf(totalLength));
             parmas.put("offset", String.valueOf(offset));
-            parmas.put("checksum", SHA1Util.encodeBySHA(data));
+            parmas.put("checksum", SHA1Util.sha(data));
             Log.i("-----", parmas.toString());
         }
 
@@ -216,25 +215,37 @@ public class HttpUtilsFiles {
             attachmentFileName = URLDecoder.decode(attachmentFileName, "UTF-8");
             String downloadPath = "/sdcard/"+attachmentFileName;
             Log.i("---------",downloadPath+"   size:"+size);
-            HttpEntity responseEntity = response.getEntity();
-            if(responseEntity != null){
-                if(responseEntity.isStreaming()){
-                    //下载文件，断点续传，每次的内容追加写入文件
-                    responseEntity.writeTo(new FileOutputStream(
-                            new File("/sdcard/"+attachmentFileName), true));
-                }else{
-                    String result = EntityUtils.toString(responseEntity, "utf-8");
-               //     EntityUtils.consume(responseEntity);
-                    System.out.println("------result:" + result);
+            if (downOffset == 0){
+                File file = new File("/sdcard/"+attachmentFileName);
+                if(file.exists()){
+                    file.delete();
                 }
-                httpPost.abort();
             }
+            InputStream is = response.getEntity().getContent();
+            RandomAccessFile randomFile = new RandomAccessFile("/sdcard/"+attachmentFileName, "rw");
+            long fileLength = randomFile.length();
+            //将写文件指针移到文件尾。
+            randomFile.seek(fileLength);
+
+            int read = 0;
+            byte[] buffer = new byte[32768];
+            int offset = 0;
+            while( (read = is.read(buffer)) > 0) {
+                randomFile.write(buffer,0,read);
+                downOffset = downOffset + read;
+            }
+            Log.i("*********offset:", downOffset + "");
+            randomFile.close();
+            is.close();
             //下次取的起始位置
             if (downOffset < Long.valueOf(size)){
-                downOffset += (long)32768;
-                if (!isDownPause) {
-                    FileDown(downOffset);
+                long length = 0;
+                if(Long.valueOf(size) - downOffset >= 32768){
+                    length = 32768;
+                }else{
+                    length = Long.valueOf(size) - downOffset;
                 }
+                    FileDown(downOffset,length);
             }
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();

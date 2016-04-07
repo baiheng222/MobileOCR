@@ -38,6 +38,7 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
     private TextView TvAllHr;
     private TextView TvWaitPayHr;
     private  TextView TvWaitDownHr;
+    private TextView TvBack;
 
     private TextView TvOrderEmpty;
     private ListView LvOrderList;
@@ -67,10 +68,12 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
         TvAllHr = (TextView)findViewById(R.id.all_hr);
         TvWaitDownHr = (TextView)findViewById(R.id.waitdown_hr);
         TvWaitPayHr = (TextView)findViewById(R.id.waitpay_hr);
+        TvBack = (TextView)findViewById(R.id.orderlist_back);
 
         TvOrderAll.setOnClickListener(this);
         TvOrderWaitPay.setOnClickListener(this);
         TvOrderWaitDown.setOnClickListener(this);
+        TvBack.setOnClickListener(this);
 
         TvWaitDownHr.setVisibility(View.INVISIBLE);
         TvWaitPayHr.setVisibility(View.INVISIBLE);
@@ -192,6 +195,9 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
                 TvWaitPayHr.setVisibility(View.VISIBLE);
                 initDatas("1");
                 status = 3;
+                break;
+            case R.id.orderlist_back:
+                finish();
                 break;
         }
     }

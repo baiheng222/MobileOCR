@@ -26,6 +26,7 @@ import android.widget.Toast;
 //import com.hanvon.common.HWLangDict;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.md.camera.UploadImage;
 import com.hanvon.rc.utils.BitmapUtil;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.DisplayUtil;
@@ -192,11 +193,15 @@ public class CropActivity extends Activity
                 opts1.inSampleSize = BitmapUtil.getImageScale(f.getAbsolutePath());
                 System.out.println(f.getAbsolutePath() +" file path");
                 cropBitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), opts1);
+				Log.d(TAG, "!!!!! saved file path is "  + f.getAbsolutePath());
+				FileUtil.saveBitmap(cropBitmap);
 
                 if(connInNet()) //如果连网
 				{
 	                mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
-	                new Thread(textThread).start();
+	                //new Thread(textThread).start();
+					RecoThread recoThread = new RecoThread(f.getAbsolutePath());
+					new Thread(recoThread).start();
                 }
 
 				break;
@@ -264,11 +269,11 @@ public class CropActivity extends Activity
 	
 	}
 
-	public class recoThread implements Runnable
+	public class RecoThread implements Runnable
 	{
 		private String mFileName;
 
-		public recoThread(String filename)
+		public RecoThread(String filename)
 		{
 			mFileName = filename;
 		}
@@ -276,7 +281,14 @@ public class CropActivity extends Activity
 		@Override
 		public void run()
 		{
-			HttpUtilsFiles.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mFileName, mFileName);
+			String response = UploadImage.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mFileName, mFileName);
+
+			Message msg = new Message();
+			Bundle bundle = new Bundle();
+			bundle.putString("response", response);
+			msg.setData(bundle);
+			CropActivity.this.textHandler.sendMessage(msg);
+
 		}
 	}
 
@@ -311,7 +323,8 @@ public class CropActivity extends Activity
 	Handler textHandler = new Handler()
 	{
 		@Override
-		public void handleMessage(Message msg) {
+		public void handleMessage(Message msg)
+		{
 			super.handleMessage(msg);
 			mProgress.dismiss();
 			Bundle bundle = msg.getData();
@@ -331,6 +344,7 @@ public class CropActivity extends Activity
 				obj = new JSONObject(content);
 				if ("0".equals(obj.getString("code")))
 				{
+					Log.d(TAG, "!!!!!!! get success result");
 					/* //fjm add
 					String result = obj.getString("textResult");
 					System.out.println("textResult:" + result);
@@ -345,6 +359,14 @@ public class CropActivity extends Activity
 	                CropActivity.this.startActivity(backIntent);
 		            CropActivity.this.finish();
 		            */
+				}
+				else if (obj.getString("code").equals("520"))
+				{
+					Log.d(TAG, "!!!!!! server error 520 !!!!!!");
+				}
+				else if (obj.getString("code").equals("524"))
+				{
+					Log.d(TAG, "!!!!!! checksum error 524 !!!!!!");
 				}
 				else
 				{

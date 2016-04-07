@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.activity.LoginActivity;
@@ -86,8 +87,14 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 break;
             case R.id.rl_orders:
                 LogUtil.i("=====Before Click Orders");
-                Intent orderIntent = new Intent(MenuFragment.this.getActivity(), OrderListActivity.class);
-                this.startActivity(orderIntent);
+                if(HanvonApplication.hvnName.equals("")){
+                    Toast.makeText(MenuFragment.this.getContext(),"未登陆,请先登录!",Toast.LENGTH_SHORT).show();
+                    Intent loginIntent = new Intent(MenuFragment.this.getActivity(), LoginActivity.class);
+                    this.startActivity(loginIntent);
+                }else {
+                    Intent orderIntent = new Intent(MenuFragment.this.getActivity(), OrderListActivity.class);
+                    this.startActivity(orderIntent);
+                }
                 break;
         }
     }

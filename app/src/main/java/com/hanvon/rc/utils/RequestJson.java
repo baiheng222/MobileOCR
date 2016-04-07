@@ -88,7 +88,7 @@ public class RequestJson {
         MyHttpUtils.HttpSend(InfoMsg.UrlFileCheckSum,JSuserInfoJson,InfoMsg.FILE_CHECKSUM_TYPE);
     }
 
-    public static void FileDown(long offset){
+    public static void FileDown(long offset,long length){
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
@@ -97,12 +97,12 @@ public class RequestJson {
             JSuserInfoJson.put("fid", "05n7xzvtvntk39");
             JSuserInfoJson.put("filePath", "");
             JSuserInfoJson.put("offset", offset);
-            JSuserInfoJson.put("length", "32768");
+            JSuserInfoJson.put("length", String.valueOf(length));
         } catch(JSONException e) {
             e.printStackTrace();
         }
         Log.i("-----",JSuserInfoJson.toString());
-        MyHttpUtils.HttpDownFile(InfoMsg.UrlFileDown, JSuserInfoJson, InfoMsg.FILE_DOWN_TYPE);
+        HttpUtilsFiles.HttpDownFiles(JSuserInfoJson,InfoMsg.UrlFileDown);
     }
 
     public static void FilesSearch() {

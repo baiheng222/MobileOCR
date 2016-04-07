@@ -1,5 +1,7 @@
 package com.hanvon.rc.utils;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
 import java.security.MessageDigest;
 
 //进行SHA-1加密
@@ -77,4 +79,19 @@ public class SHA1Util {
 		}
 		return string;
 	}
+
+	/**
+	 * 字符串SHA-1加密
+	 *
+	 * @param string
+	 * @return
+	 */
+	public static String sha(String string) {
+		if (string != null && !string.isEmpty()) {
+			string = DigestUtils.shaHex(string);
+		}
+		return string.toUpperCase();
+	}
+
+
 }

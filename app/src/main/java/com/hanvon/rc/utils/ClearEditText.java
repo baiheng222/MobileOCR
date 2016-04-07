@@ -5,7 +5,9 @@ package com.hanvon.rc.utils;
  * @Auth: chenxzhuang
  * @Time: 2016/3/22 0022.
  */
+
 import com.hanvon.rc.R;
+
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
@@ -18,6 +20,7 @@ import android.view.animation.Animation;
 import android.view.animation.CycleInterpolator;
 import android.view.animation.TranslateAnimation;
 import android.widget.EditText;
+
 
 
 public class ClearEditText extends EditText implements OnFocusChangeListener, TextWatcher {
