@@ -200,7 +200,8 @@ public class CropActivity extends Activity
 				{
 	                mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
 	                //new Thread(textThread).start();
-					RecoThread recoThread = new RecoThread(f.getAbsolutePath());
+					Log.d(TAG, "!!!!!!recothred begin");
+					RecoThread recoThread = new RecoThread(f.getName(), f.getAbsolutePath());
 					new Thread(recoThread).start();
                 }
 
@@ -272,17 +273,21 @@ public class CropActivity extends Activity
 	public class RecoThread implements Runnable
 	{
 		private String mFileName;
+		private String mPath;
 
-		public RecoThread(String filename)
+		public RecoThread(String filename, String path)
 		{
 			mFileName = filename;
+			mPath = path;
 		}
 
 		@Override
 		public void run()
 		{
-			String response = UploadImage.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mFileName, mFileName);
+			Log.d(TAG, "!!!!!!!! RecoThread running !!!!!!!");
+			String response = UploadImage.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mPath, mFileName);
 
+			Log.d(TAG, "!!!!!!!! response is " + response);
 			Message msg = new Message();
 			Bundle bundle = new Bundle();
 			bundle.putString("response", response);
@@ -326,6 +331,7 @@ public class CropActivity extends Activity
 		public void handleMessage(Message msg)
 		{
 			super.handleMessage(msg);
+			Log.d(TAG, "!!!!!!! textHandler handle msg");
 			mProgress.dismiss();
 			Bundle bundle = msg.getData();
 			String content = bundle.getString("content");
@@ -335,7 +341,7 @@ public class CropActivity extends Activity
 
 	protected void processResult(String content)
 	{
-		// TODO Auto-generated method stub
+		Log.d(TAG, "!!!!!!! processResult !!!!!!");
 		JSONObject obj = null;
 		try
 		{

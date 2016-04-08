@@ -1,6 +1,7 @@
 package com.hanvon.rc.md.camera;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.Base64Utils;
@@ -66,6 +67,7 @@ public class UploadImage
             FileInputStream fis = new FileInputStream(file);
             int length = fis.available();
 
+            Log.d(TAG, "!!!!! filename is " + filename);
             Log.i("====Start===","offset:"+offset);
             if(offset != 0)
             {
@@ -92,12 +94,21 @@ public class UploadImage
                 {
                     buffer =  new byte[readBytes];
                     readBytes = fis.read(buffer);
-                } catch (IOException e1)
+                }
+                catch (IOException e1)
                 {
                     e1.printStackTrace();
                 }
 
-                Log.i("=======","readBytes:"+readBytes);
+                if (readBytes < 0)
+                {
+                    Log.d(TAG, "!!!!! readBytes < 0");
+                    break;
+                }
+
+
+                Log.i(TAG,"readBytes:"+readBytes);
+                //parmas = GetMapFromType(buffer, filename, offset, length, type, readBytes);
                 parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, type, readBytes);
                 result = dopost(parmas, type, buffer);
             }
@@ -108,7 +119,73 @@ public class UploadImage
             e.printStackTrace();
         }
 
+        if (result != null)
+        {
+
+        }
+
+        Log.d(TAG, "!!!! final result is " + result);
         return result;
+    }
+
+    public static String processUploadRet(String content)
+    {
+        String fid = null;
+        JSONObject obj = null;
+        try
+        {
+            if (content != null)
+            {
+                obj = new JSONObject(content);
+                if ("0".equals(obj.getString("code")))
+                {
+                    Log.d(TAG, "!!!!!!! get success result");
+
+                    fid = obj.getString("fid");
+                    String offset = obj.getString("offset");
+                    Log.d(TAG, "fid is " + fid + ", offset is " + offset);
+
+					/* //fjm add
+					String result = obj.getString("textResult");
+					System.out.println("textResult:" + result);
+					System.out.println("content+---------"+content);
+					Intent backIntent = new Intent(CropActivity.this,OcrRecognizeResultActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putString("textResult", result);
+					backIntent.putExtras(bundle);
+					if(flag){
+						return;
+					}
+	                CropActivity.this.startActivity(backIntent);
+		            CropActivity.this.finish();
+		            */
+                }
+                else if (obj.getString("code").equals("520"))
+                {
+                    Log.d(TAG, "!!!!!! server error 520 !!!!!!");
+                }
+                else if (obj.getString("code").equals("524"))
+                {
+                    Log.d(TAG, "!!!!!! checksum error 524 !!!!!!");
+                }
+                else
+                {
+                    String result = obj.getString("result");
+                    //Toast.makeText(getApplicationContext(), "请重试！", Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "!!!!!! result is " + result);
+                }
+            }
+            else
+            {
+                //Toast.makeText(getApplicationContext(), "请重试！", Toast.LENGTH_SHORT).show();
+            }
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return fid;
     }
 
     public static String getCurDate()
@@ -123,6 +200,10 @@ public class UploadImage
 
     public static Map<String, String> GetMapFromType(String data,String filename,
                                                      int offset, int totalLength, int type,int readBytes)
+
+    /*
+    public static Map<String, String> GetMapFromType(byte[] data,String filename,
+                                                     int offset, int totalLength, int type,int readBytes)*/
     {
         //封装数据
         Map<String, String> parmas = new HashMap<String, String>();
@@ -141,7 +222,7 @@ public class UploadImage
             parmas.put("checksum", SHA1Util.sha(data));
             parmas.put("iszip", String.valueOf(false));
 
-            Log.i("==234===", parmas.toString());
+            Log.i(TAG, parmas.toString());
         }
         else if(type == InfoMsg.FILE_RECOGINE_TYPE)
         {
@@ -153,7 +234,7 @@ public class UploadImage
             parmas.put("size", String.valueOf(totalLength));
             parmas.put("offset", String.valueOf(offset));
             parmas.put("checksum", SHA1Util.sha(data));
-            Log.i("-----", parmas.toString());
+            Log.i(TAG, parmas.toString());
         }
 
         return parmas;
@@ -197,7 +278,7 @@ public class UploadImage
             HttpEntity entity = response.getEntity();
             InputStream content = entity.getContent();
             String returnConnection = convertStreamToString(content);
-            Log.i("=======",returnConnection);
+            Log.i(TAG,"!!!!! return string is " + returnConnection);
             try
             {
                 JSONObject json = new JSONObject(returnConnection);
@@ -205,7 +286,7 @@ public class UploadImage
                 {
                     offset = Integer.valueOf(json.getString("offset"));
                     result = returnConnection;
-                    Log.i("=======",offset+"");
+                    Log.i(TAG,offset+"");
                 }
             }
             catch (JSONException e)

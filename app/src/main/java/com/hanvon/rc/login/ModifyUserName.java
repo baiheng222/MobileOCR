@@ -1,4 +1,4 @@
-package com.hanvon.rc.activity;
+package com.hanvon.rc.login;
 
 import android.app.Activity;
 import android.app.ProgressDialog;

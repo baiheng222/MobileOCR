@@ -9,17 +9,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
-import com.hanvon.rc.activity.LoginActivity;
-import com.hanvon.rc.activity.ShowUserMessage;
+import com.hanvon.rc.login.LoginActivity;
+import com.hanvon.rc.login.ShowUserMessage;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.orders.OrderListActivity;
 import com.hanvon.rc.utils.CircleImageView;
 import com.hanvon.rc.utils.LogUtil;
+import com.lidroid.xutils.BitmapUtils;
+import com.lidroid.xutils.bitmap.BitmapCommonUtils;
 
 /**
  * Created by baiheng222 on 16-3-15.
@@ -147,12 +150,12 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                     HanvonApplication.hvnName = hvnname;
                 }
                 if(!figureurl.isEmpty()){
-               //     BitmapUtils  bitmapUtils = new  BitmapUtils(this);
-                //    bitmapUtils.configDefaultLoadingImage(R.drawable.logicon);
-                //    bitmapUtils.configDefaultBitmapMaxSize(BitmapCommonUtils.getScreenSize(
-                //            this).scaleDown(3));
-                //    bitmapUtils.configDefaultShowOriginal(true);
-                 //   bitmapUtils.display(((ImageView)findViewById(R.id.iv_login_icon)),figureurl);
+                    BitmapUtils bitmapUtils = new BitmapUtils(HanvonApplication.getcontext());
+                    bitmapUtils.configDefaultLoadingImage(R.mipmap.logicon);
+                    bitmapUtils.configDefaultBitmapMaxSize(BitmapCommonUtils.getScreenSize(
+                            HanvonApplication.getcontext()).scaleDown(3));
+                    bitmapUtils.configDefaultShowOriginal(true);
+                    bitmapUtils.display(((ImageView)(this.getActivity()).findViewById(R.id.iv_login_icon)), figureurl);
                 }
             }
         }else{

@@ -1,4 +1,4 @@
-package com.hanvon.rc.activity;
+package com.hanvon.rc.login;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -13,7 +13,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.utils.LogUtil;
+
+import cn.sharesdk.framework.Platform;
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.tencent.qq.QQ;
+import cn.sharesdk.wechat.friends.Wechat;
 
 /**
  * @Desc:
@@ -121,21 +128,17 @@ public class ShowUserMessage extends Activity implements View.OnClickListener {
         HanvonApplication.userFlag = flag;
         if (flag == 0){
         }else if(flag == 1){
-            //	HanvonApplication.plat.removeAccount();
-            //  LoginUtil loginUtil = new LoginUtil(SettingActivity.this,SettingActivity.this);
-            //  loginUtil.QQLoginOut();
-       //     Platform QQplat = ShareSDK.getPlatform(this, QQ.NAME);
-     //       LogUtil.i("---quit:---"+QQplat);
-     //       if (QQplat.isValid ()) {
-      //          QQplat.removeAccount();
-      //      }
+            Platform QQplat = ShareSDK.getPlatform(this, QQ.NAME);
+            LogUtil.i("---quit:---" + QQplat);
+            if (QQplat.isValid ()) {
+                QQplat.removeAccount();
+            }
         }else if (flag == 2){
-            //	HanvonApplication.plat.removeAccount();
-      //      Platform WXplat = ShareSDK.getPlatform(this, Wechat.NAME);
-        //    LogUtil.i("---quit:---"+WXplat.toString());
-       //     if (WXplat.isValid ()) {
-       //         WXplat.removeAccount();
-       //     }
+            Platform WXplat = ShareSDK.getPlatform(this, Wechat.NAME);
+            LogUtil.i("---quit:---" + WXplat.toString());
+            if (WXplat.isValid ()) {
+                WXplat.removeAccount();
+            }
         }
         SharedPreferences.Editor mEditor=	mSharedPreferences.edit();
         mEditor.putInt("status", 0);

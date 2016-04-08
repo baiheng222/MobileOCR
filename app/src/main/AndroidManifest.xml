@@ -38,7 +38,8 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.hanvon.rc.activity.MainActivity">
+        <activity android:name="com.hanvon.rc.activity.MainActivity"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -46,20 +47,20 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.hanvon.rc.activity.LoginActivity"
+            android:name="com.hanvon.rc.login.LoginActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" >
         </activity>
 
-        <activity android:name="com.hanvon.rc.activity.RegisterUserFromEmail" ></activity>
-        <activity android:name="com.hanvon.rc.activity.RegisterUserFromPhone" ></activity>
-        <activity android:name="com.hanvon.rc.activity.RegisterUserGetCodePhone" ></activity>
-        <activity android:name="com.hanvon.rc.activity.RememberPassword" ></activity>
-        <activity android:name="com.hanvon.rc.activity.ResetPasswd" ></activity>
-        <activity android:name="com.hanvon.rc.activity.RmbPwdCheckCode" ></activity>
-        <activity android:name="com.hanvon.rc.activity.ShowUserMessage" ></activity>
-        <activity android:name="com.hanvon.rc.activity.ModifyPassword" ></activity>
-        <activity android:name="com.hanvon.rc.activity.ModifyUserName" ></activity>
+        <activity android:name=".login.RegisterUserFromEmail" ></activity>
+        <activity android:name=".login.RegisterUserFromPhone" ></activity>
+        <activity android:name=".login.RegisterUserGetCodePhone" ></activity>
+        <activity android:name=".login.RememberPassword" ></activity>
+        <activity android:name=".login.ResetPasswd" ></activity>
+        <activity android:name=".login.RmbPwdCheckCode" ></activity>
+        <activity android:name=".login.ShowUserMessage" ></activity>
+        <activity android:name=".login.ModifyPassword" ></activity>
+        <activity android:name=".login.ModifyUserName" ></activity>
         <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"></activity>
         <activity android:name="com.hanvon.rc.bcard.ChooseMorePicturesActivity"></activity>
         <activity android:name="com.hanvon.rc.bcard.PreviewPicActivity"></activity>
@@ -68,6 +69,45 @@
         <activity android:name="com.hanvon.rc.orders.OrderToPay"></activity>
         <activity android:name="com.hanvon.rc.presentation.CropActivity"></activity>
 
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data android:scheme="1105311110" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        </activity>
+        <activity
+            android:name="com.mob.tools.MobUIShell"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:windowSoftInputMode="stateHidden|adjustResize" >
+            <intent-filter>
+                <data android:scheme="tencent100371282" />
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- 微信分享回调 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
     </application>
 
 </manifest>

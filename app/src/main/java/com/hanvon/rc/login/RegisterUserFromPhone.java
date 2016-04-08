@@ -1,4 +1,4 @@
-package com.hanvon.rc.activity;
+package com.hanvon.rc.login;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.ClearEditText;
 import com.hanvon.rc.utils.ConnectionDetector;

@@ -17,11 +17,40 @@ android {
         versionName "1.0.2"
         multiDexEnabled true
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+
+    sourceSets {
+        main {
+            manifest.srcFile 'src/main/AndroidManifest.xml'
+            java.srcDirs = ['src/main/java']
+            resources.srcDirs = ['src/main/java']
+            aidl.srcDirs = ['src/main/java']
+            renderscript.srcDirs = ['src/main/java']
+            res.srcDirs = ['src/main/res']
+            assets.srcDirs = ['src/main/assets']
         }
+
+        // Move the tests to tests/java, tests/res, etc...
+        instrumentTest.setRoot('tests')
+
+        // Move the build types to build-types/<type>
+        // For instance, build-types/debug/java, build-types/debug/AndroidManifest.xml, ...
+        // This moves them out of them default location under src/<type>/... which would
+        // conflict with src/ being used by the main source set.
+        // Adding new build types or product flavors should be accompanied
+        // by a similar customization.
+        debug.setRoot('build-types/debug')
+        release.setRoot('build-types/release')
+    }
+    buildTypes {
+        debug {
+            debuggable true
+        }
+        release {
+        }
+    }
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
     }
     useLibrary 'org.apache.http.legacy'
 }
@@ -37,4 +66,21 @@ dependencies {
     compile files('libs/xutils-3.3.25.jar')
     compile files('libs/httpcore-4.4.3.jar')
     compile files('libs/httpmime-4.3.jar')
+    compile files('libs/ShareSDK-Core-2.6.3.jar')
+    compile files('libs/ShareSDK-QQ-2.6.3.jar')
+    compile files('libs/ShareSDK-QZone-2.6.3.jar')
+    compile files('libs/ShareSDK-ShortMessage-2.6.3.jar')
+    compile files('libs/ShareSDK-TencentWeibo-2.6.3.jar')
+    compile files('libs/ShareSDK-Wechat-2.6.3.jar')
+    compile files('libs/ShareSDK-Wechat-Core-2.6.3.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-2.6.3.jar')
+    compile files('libs/MobTools.jar')
+    compile files('libs/SocialSDK_QQZone_2.jar')
+    compile files('libs/SocialSDK_QQZone_1.jar')
+    compile files('libs/SocialSDK_QQZone_3.jar')
+    compile files('libs/SocialSDK_WeiXin_1.jar')
+    compile files('libs/SocialSDK_WeiXin_2.jar')
+    compile files('libs/MobLogCollector.jar')
+    compile files('libs/commons-codec-1.6.jar')
+    compile files('libs/ShareSDK-Core-2.5.8.jar')
 }

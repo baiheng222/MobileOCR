@@ -25,9 +25,13 @@ import com.nostra13.universalimageloader.cache.memory.impl.LruMemoryCache;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.nostra13.universalimageloader.core.assist.QueueProcessingType;
+import com.tencent.mm.sdk.openapi.IWXAPI;
+import com.tencent.mm.sdk.openapi.WXAPIFactory;
+import com.tencent.tauth.Tencent;
 
 import java.util.List;
 
+import cn.sharesdk.framework.ShareSDK;
 /**
  * @Desc:
  * @Auth: chenxzhuang
@@ -65,17 +69,25 @@ public class HanvonApplication extends FrontiaApplication {
     public static  String mWeather;
 
     private static Context mContext;
+    //三方登录相关
+    public static Tencent mTencent = null;
+    private String QQ_APPID = "1105311110";
+    public static IWXAPI api;
+
     @Override
     public void onCreate() {
-
         super.onCreate();
-     //   ShareSDK.initSDK(this);
+        ShareSDK.initSDK(this);
         UserInfoMessage.setIsOnLine(false);
         mLocationClient = new LocationClient(getApplicationContext());
         myListener = new MyLocationListener();
         mLocationClient.registerLocationListener(myListener);
         InitLocation();
         mLocationClient.start();
+
+        api = WXAPIFactory.createWXAPI(this, "wx021fab5878ea9288", true);
+        api.registerApp("wx021fab5878ea9288");
+        mTencent = Tencent.createInstance(QQ_APPID, HanvonApplication.this);
 
 //		/**获取uid**/
         ActivityManager am = (ActivityManager) getSystemService(this.getApplicationContext().ACTIVITY_SERVICE);
