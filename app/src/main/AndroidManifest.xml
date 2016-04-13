@@ -62,12 +62,14 @@
         <activity android:name=".login.ModifyPassword" ></activity>
         <activity android:name=".login.ModifyUserName" ></activity>
         <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"></activity>
+        <activity android:name="com.hanvon.rc.md.camera.activity.RecResultActivity"></activity>
         <activity android:name="com.hanvon.rc.bcard.ChooseMorePicturesActivity"></activity>
         <activity android:name="com.hanvon.rc.bcard.PreviewPicActivity"></activity>
         <activity android:name="com.hanvon.rc.orders.OrderListActivity"></activity>
         <activity android:name="com.hanvon.rc.orders.OrderDetailActivity"></activity>
         <activity android:name="com.hanvon.rc.orders.OrderToPay"></activity>
         <activity android:name="com.hanvon.rc.presentation.CropActivity"></activity>
+
 
         <activity
             android:name="com.tencent.tauth.AuthActivity"

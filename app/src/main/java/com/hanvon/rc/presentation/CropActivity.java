@@ -27,15 +27,18 @@ import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.md.camera.UploadImage;
+import com.hanvon.rc.md.camera.activity.RecResultActivity;
 import com.hanvon.rc.utils.BitmapUtil;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.DisplayUtil;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.utils.HttpUtilsFiles;
 import com.hanvon.rc.utils.InfoMsg;
+import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 import com.hanwang.preprocessjava.preprocessdll;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -285,14 +288,32 @@ public class CropActivity extends Activity
 		public void run()
 		{
 			Log.d(TAG, "!!!!!!!! RecoThread running !!!!!!!");
-			String response = UploadImage.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mPath, mFileName);
+			String fid = null;
+			fid = UploadImage.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mPath, mFileName);
 
+			if (null == fid)
+			{
+				Log.d(TAG, "upload file failed !!!");
+				Message msg = new Message();
+				msg.what = InfoMsg.FILE_UPLOAD_FAIL;
+				//Bundle bundle = new Bundle();
+				//bundle.putString("response", "");
+				//msg.setData(bundle);
+				CropActivity.this.textHandler.sendMessage(msg);
+				return;
+			}
+
+
+			new UploadImage(textHandler).GetRapidRecogRet("", fid, "1", "4");
+
+			/*
 			Log.d(TAG, "!!!!!!!! response is " + response);
 			Message msg = new Message();
 			Bundle bundle = new Bundle();
 			bundle.putString("response", response);
 			msg.setData(bundle);
 			CropActivity.this.textHandler.sendMessage(msg);
+			*/
 
 		}
 	}
@@ -325,7 +346,7 @@ public class CropActivity extends Activity
 		}
 	};
 	
-	Handler textHandler = new Handler()
+	public Handler textHandler = new Handler()
 	{
 		@Override
 		public void handleMessage(Message msg)
@@ -333,9 +354,35 @@ public class CropActivity extends Activity
 			super.handleMessage(msg);
 			Log.d(TAG, "!!!!!!! textHandler handle msg");
 			mProgress.dismiss();
-			Bundle bundle = msg.getData();
-			String content = bundle.getString("content");
-			processResult(content);
+			switch (msg.what)
+			{
+				case InfoMsg.FILE_UPLOAD_FAIL:
+
+				break;
+
+				case InfoMsg.FILE_RECOGINE_TYPE:
+				{
+					Object obj = msg.obj;
+					Log.i(TAG, obj.toString());
+					processResult(obj.toString());
+					/*
+					JSONObject json = null;
+					try
+					{
+						json = new JSONObject(obj.toString());
+						if (json.get("code").equals("0"))
+						{
+
+						}
+					}
+					catch (JSONException e)
+					{
+						e.printStackTrace();
+					}*/
+				}
+			}
+
+
 		};
 	};
 
@@ -351,6 +398,17 @@ public class CropActivity extends Activity
 				if ("0".equals(obj.getString("code")))
 				{
 					Log.d(TAG, "!!!!!!! get success result");
+					String result = obj.getString("result");
+					Log.d(TAG, " !!!! result is " + result);
+					String offset = obj.getString("offset");
+					Log.d(TAG, "!!!! offset is " + offset);
+
+					Intent backIntent = new Intent(CropActivity.this,RecResultActivity.class);
+					Bundle bundle = new Bundle();
+					bundle.putString("textResult", result);
+					backIntent.putExtras(bundle);
+					CropActivity.this.startActivity(backIntent);
+					CropActivity.this.finish();
 					/* //fjm add
 					String result = obj.getString("textResult");
 					System.out.println("textResult:" + result);

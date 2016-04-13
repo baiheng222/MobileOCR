@@ -92,7 +92,7 @@ public class RegisterUserGetCodePhone extends Activity implements View.OnClickLi
                 }
 
                 if (strPhoneNumber != null){
-                    Pattern p = Pattern.compile("[1][358]+\\d{9}");
+                    Pattern p = Pattern.compile("[1][3578]+\\d{9}");
                     Matcher m = p.matcher(strPhoneNumber);
                     if(!m.matches() ){
                         Toast.makeText(RegisterUserGetCodePhone.this,"手机号码不合法", Toast.LENGTH_SHORT).show();

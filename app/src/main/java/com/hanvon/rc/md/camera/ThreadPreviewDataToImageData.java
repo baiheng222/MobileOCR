@@ -24,25 +24,31 @@ public class ThreadPreviewDataToImageData extends Thread
 	private int offsetX;
 	private int offsetY;
 
-	public ThreadPreviewDataToImageData() {
+	public ThreadPreviewDataToImageData()
+	{
 		setThreadPreviewDataToImageData(this);
 	}
 
 	@Override
-	public void run() {
+	public void run()
+	{
 		// TODO Auto-generated method stub
 		super.run();
-		while (!isQuit()) {
+		while (!isQuit())
+		{
 			// Log.i(TAG, this.getName());
 			long threadStartTime = System.currentTimeMillis();
-			try {
+			try
+			{
 				Thread.sleep(30);
-			} catch (InterruptedException e) {
+			} catch (InterruptedException e)
+			{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			while (null == BlockingQueuePreviewData
-					.getBlockingQueuePreviewData()) {
+
+			while (null == BlockingQueuePreviewData.getBlockingQueuePreviewData())
+			{
 				Log.i(TAG, "BlockingQueuePreviewData is null");
 				try {
 					Thread.sleep(50);
@@ -51,11 +57,15 @@ public class ThreadPreviewDataToImageData extends Thread
 					e.printStackTrace();
 				}
 			}
-			if (!isInit) {
+
+			if (!isInit)
+			{
 				this.initPreviewImageData();
 
 			}
-			if (previewSize == null) {
+
+			if (previewSize == null)
+			{
 				continue;
 			}
 			this.isInit = true;
@@ -68,7 +78,8 @@ public class ThreadPreviewDataToImageData extends Thread
 			// "ImageProcessing.YUV420spToGray-before");//------------------------------
 			// QRcode
 			// 扫码
-			if (ModeCtrl.getUserMode() == UserMode.SCANNING) {
+			if (ModeCtrl.getUserMode() == UserMode.SCANNING)
+			{
 				if (null != BlockingQueueGrayByteData
 						.getBlockingQueueGrayByteData()) {
 					if (BlockingQueueGrayByteData
@@ -135,7 +146,8 @@ public class ThreadPreviewDataToImageData extends Thread
 			}
 
 			// 名片识别
-			if (ModeCtrl.getUserMode() == UserMode.BCARD) {
+			if (ModeCtrl.getUserMode() == UserMode.BCARD)
+			{
 
 				if (null != BlockingQueueGrayByteDataPreviewData
 						.getBlockingQueueGrayByteDataPreviewData()) {
@@ -161,7 +173,8 @@ public class ThreadPreviewDataToImageData extends Thread
 
 	}
 
-	private void initPreviewImageData() {
+	private void initPreviewImageData()
+	{
 		// TODO Auto-generated method stub
 		if (null != CameraManager.getCameraManager()) {
 			if (null != CameraManager.getCameraManager()) {

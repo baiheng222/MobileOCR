@@ -7,6 +7,7 @@ package com.hanvon.rc.utils;
  */
 public class InfoMsg {
     public static final String HanvonUrl = "http://cloud.hwyun.com/aic-cloud/rt/ws/v1";
+    public static final String UrlRapidRecog = HanvonUrl + "/file/web/rapid/recog";
     public static final String UrlFileRecog = HanvonUrl+"/file/quick/recog";
     public static final String UrlFileList = HanvonUrl+"/file/list";
     public static final String UrlFileUpload = HanvonUrl+"/file/upload";
@@ -26,6 +27,7 @@ public class InfoMsg {
     public static final String UrlOrderCancel = HanvonUrl+"/order/cancel";
     public static final String UrlOrderDelete = HanvonUrl+"/order/delete";
 
+
     public static final int FILE_RECOGINE_TYPE = 0x01;
     public static final int FILE_LIST_TYPE = 0x02;
     public static final int FILE_UPLOAD_TYPE = 0x03;
@@ -36,6 +38,7 @@ public class InfoMsg {
     public static final int FILE_DELETE_TYPE = 0x08;
     public static final int FILE_SEARCH_TYPE = 0x09;
 
+
     public static final int ORDER_ADD_TYPE = 0x10;
     public static final int ORDER_EVL_TYPE = 0x11;
     public static final int ORDER_PAY_TYPE = 0x12;
@@ -44,4 +47,7 @@ public class InfoMsg {
     public static final int ORDER_SEARCH_TYPE = 0x15;
     public static final int ORDER_CANCEL_TYPE = 0x16;
     public static final int ORDER_DELETE_TYPE = 0x17;
+
+    //add by fjm
+    public static final int FILE_UPLOAD_FAIL = 0x21;
 }

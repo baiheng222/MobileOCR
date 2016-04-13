@@ -2,6 +2,25 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <SurfaceView
+            android:id="@+id/sv_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"/>
+
+        <com.hanvon.rc.md.camera.draw.DrawManager
+            android:id="@+id/draw_manager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </RelativeLayout>
+
     <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
@@ -33,7 +52,33 @@
         android:id="@+id/rl_bottom"
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_height="100dp"
+        android:background="#3B8D8D">
+
+        <RelativeLayout
+            android:id="@+id/hanvon_camera_usermode"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true" >
+
+            <TextView
+                android:id="@+id/hanvon_camera_scanning"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:text="Single" />
+
+            <TextView
+                android:id="@+id/hanvon_camera_bcard"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_centerInParent="true"
+                android:text="Multi" />
+
+
+        </RelativeLayout>
 
         <ImageView
             android:id="@+id/iv_gallery"
@@ -63,12 +108,7 @@
 
     </RelativeLayout>
 
-    <SurfaceView
-        android:id="@+id/sv_preview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
 
-        android:layout_above="@id/rl_bottom"
-        android:layout_below="@id/rl_top"/>
+
 
 </RelativeLayout>

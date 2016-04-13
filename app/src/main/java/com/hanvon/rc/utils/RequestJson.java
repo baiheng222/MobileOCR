@@ -14,6 +14,26 @@ import org.json.JSONObject;
  */
 public class RequestJson {
 
+    public static void GetRapidRecogRet(String uid, String fid, String restype, String platformtype)
+    {
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSONObject conditionJson = new JSONObject();
+            JSuserInfoJson.put("userid", uid);
+            JSuserInfoJson.put("fid", fid);
+            JSuserInfoJson.put("resType", restype);
+            JSuserInfoJson.put("platformtype", platformtype);
+
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        Log.i("-----",JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlRapidRecog, JSuserInfoJson, InfoMsg.FILE_RECOGINE_TYPE);
+    }
+
     public static void GetFilesList() {
         JSONObject JSuserInfoJson = new JSONObject();
         try

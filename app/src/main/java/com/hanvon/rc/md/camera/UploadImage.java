@@ -1,12 +1,21 @@
 package com.hanvon.rc.md.camera;
 
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.Base64Utils;
 import com.hanvon.rc.utils.InfoMsg;
+import com.hanvon.rc.utils.LogUtil;
+
 import com.hanvon.rc.utils.SHA1Util;
+import com.lidroid.xutils.HttpUtils;
+import com.lidroid.xutils.http.RequestParams;
+import com.lidroid.xutils.http.ResponseInfo;
+import com.lidroid.xutils.http.callback.RequestCallBack;
+import com.lidroid.xutils.http.client.HttpRequest;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -37,6 +46,7 @@ import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Date;
+import android.os.Handler;
 
 import static com.hanvon.rc.utils.RequestJson.FileDown;
 
@@ -53,6 +63,13 @@ public class UploadImage
     private static boolean isDownPause;
     private static long downOffset  = 0;
     private final static String FORMAT_OTHER_YEAR = "yyyyMMdd";
+
+    private static Handler handler;
+
+    public UploadImage(Handler h)
+    {
+        handler = h;
+    }
 
     public static String UploadFiletoHvn(int type,String path,String filename)
     {
@@ -119,13 +136,88 @@ public class UploadImage
             e.printStackTrace();
         }
 
-        if (result != null)
+        if (result == null)
         {
-
+            Log.d(TAG, "!!! result is null, error return");
+            return result;
         }
 
-        Log.d(TAG, "!!!! final result is " + result);
-        return result;
+        String fid = null;
+        fid = processUploadRet(result);
+
+        if (null != fid)
+        {
+            Log.d(TAG, "!!!! final fid is " + fid);
+        }
+
+        return fid;
+        /*
+        if (fid != null)
+        {
+            GetRapidRecogRet("test2345", fid, "1", "4");
+        }
+         */
+
+    }
+
+    public static void GetRapidRecogRet(String uid, String fid, String restype, String platformtype)
+    {
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSONObject conditionJson = new JSONObject();
+            JSuserInfoJson.put("userid", uid);
+            JSuserInfoJson.put("fid", fid);
+            JSuserInfoJson.put("resType", restype);
+            JSuserInfoJson.put("platformtype", platformtype);
+
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        Log.i(TAG,JSuserInfoJson.toString());
+        HttpSend(InfoMsg.UrlRapidRecog, JSuserInfoJson, InfoMsg.FILE_RECOGINE_TYPE);
+    }
+
+
+    public static void HttpSend(String Url, JSONObject json, final int type)
+    {
+        String ret = null;
+        HttpUtils http = new HttpUtils();
+        RequestParams params = new RequestParams();
+        try
+        {
+            params.setBodyEntity(new StringEntity(json.toString()));
+        }
+        catch (UnsupportedEncodingException e)
+        {
+            e.printStackTrace();
+        }
+
+        http.send(HttpRequest.HttpMethod.POST,Url,params, new RequestCallBack<String>()
+        {
+            @Override
+            public void onStart() {
+            }
+            @Override
+            public void onLoading(long total, long current, boolean isUploading) {
+            }
+            @Override
+            public void onSuccess(ResponseInfo<String> responseInfo) {
+                Log.i(TAG, "===onSuccess====="+responseInfo.result.toString());
+
+                Message msg = new Message();
+                msg.what = type;
+                msg.obj = responseInfo.result.toString();
+                handler.sendMessage(msg);
+
+            }
+            @Override
+            public void onFailure(com.lidroid.xutils.exception.HttpException e, String s) {
+                Log.i(TAG, "===onFailure====="+s);
+            }
+        });
     }
 
     public static String processUploadRet(String content)
@@ -198,6 +290,7 @@ public class UploadImage
     }
 
 
+
     public static Map<String, String> GetMapFromType(String data,String filename,
                                                      int offset, int totalLength, int type,int readBytes)
 
@@ -239,6 +332,7 @@ public class UploadImage
 
         return parmas;
     }
+
     private static String  dopost(Map<String, String> parmas,int type,byte[] data)
     {
         String result = null;

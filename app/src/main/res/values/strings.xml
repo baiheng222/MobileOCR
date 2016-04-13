@@ -114,4 +114,9 @@
     <string name="ret_str_copy">Copy</string>
     <string name="ret_str_exact">Exact</string>
     <string name="ret_str_del">Delete</string>
+
+    <string name="dlg_str_ok">OK</string>
+    <string name="dlg_str_cancel">Cancel</string>
+    <string name="dlg_str_yes">Yes</string>
+    <string name="dlg_str_no">No</string>
 </resources>

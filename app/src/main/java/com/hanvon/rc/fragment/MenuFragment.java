@@ -91,7 +91,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             case R.id.rl_orders:
                 LogUtil.i("=====Before Click Orders");
                 if(HanvonApplication.hvnName.equals("")){
-                    Toast.makeText(MenuFragment.this.getContext(),"未登陆,请先登录!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(HanvonApplication.getcontext(),"未登陆,请先登录!",Toast.LENGTH_SHORT).show();
                     Intent loginIntent = new Intent(MenuFragment.this.getActivity(), LoginActivity.class);
                     this.startActivity(loginIntent);
                 }else {

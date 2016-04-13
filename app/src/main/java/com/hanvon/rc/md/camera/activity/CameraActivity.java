@@ -7,19 +7,24 @@ import android.hardware.Camera;
 //import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
 import com.hanvon.rc.md.camera.CameraManager;
 import com.hanvon.rc.md.camera.PreviewDataManager;
+import com.hanvon.rc.md.camera.draw.DrawManager;
 import com.hanvon.rc.utils.FileUtil;
+import com.hanvon.rc.md.camera.DensityUtil;
+import com.hanvon.rc.md.camera.activity.ModeCtrl.UserMode;
 
 import java.io.File;
 
@@ -40,9 +45,23 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private ImageView mCapture;
     private ImageView mCancel;
 
+    private RelativeLayout relativeLayoutUserMode;
+
     private SurfaceView mSurfaceView;
+    private DrawManager drawManager;
+
+
+    private float startX;
 
     private boolean isSurfaceCreated;
+
+
+    private ModeCtrl modeCtrl;
+
+    public static CameraActivity cameraActivity;
+    public static CameraActivity getCameraActivity() {
+        return cameraActivity;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -83,11 +102,15 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mContext = this;
         isSurfaceCreated = false;
 
+        cameraActivity = this;
+        modeCtrl = new ModeCtrl();
+
         initView();
     }
 
     private void initView()
     {
+        drawManager = (DrawManager) findViewById(R.id.draw_manager);
         mLight = (ImageView) findViewById(R.id.iv_light);
         mGallery = (ImageView) findViewById(R.id.iv_gallery);
         mGallery.setOnClickListener(this);
@@ -96,6 +119,115 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mCancel = (ImageView) findViewById(R.id.iv_cancel);
         mCancel.setOnClickListener(this);
 
+        this.relativeLayoutUserMode = (RelativeLayout) this
+                .findViewById(R.id.hanvon_camera_usermode);
+
+
+    }
+
+
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event)
+    {
+        // TODO Auto-generated method stub
+        // DrawManager.setPromptText("touch");
+        if (mCameraManager.isTakePicture() || ModeCtrl.isBCardScanningStop()
+                || ModeCtrl.isBCardScanningStop())
+        {
+            return false;
+        }
+
+        if (event.getAction() == MotionEvent.ACTION_DOWN)
+        {
+
+            startX = event.getRawX();
+
+        }
+        else if (event.getAction() == MotionEvent.ACTION_MOVE)
+        {
+			/*
+			 * float endX = event.getRawX(); if (Math.abs(endX - startX) > 150)
+			 */
+            // relativeLayoutUserMode.setTranslationY(endX-startX);
+			/*
+			 * if (Math.abs(endX - startX) > 150) { if (endX > startX) { if
+			 * (ModeCtrl.getUserMode() == UserMode.SHOPPING) {
+			 * this.userModeSwitchToScanning(); }else if(ModeCtrl.getUserMode()
+			 * == UserMode.SCANNING){ this.userModeSwitchToBCard(); }else
+			 * if(ModeCtrl.getUserMode() == UserMode.BCARD){
+			 * //this.userModeSwitchToBCard(); }
+			 *
+			 * } else {
+			 *
+			 * if (ModeCtrl.getUserMode() == UserMode.SHOPPING) {
+			 * //this.userModeSwitchToBCard(); }else if(ModeCtrl.getUserMode()
+			 * == UserMode.SCANNING){ this.userModeSwitchToImageShopping();
+			 * }else if(ModeCtrl.getUserMode() == UserMode.BCARD){
+			 * this.userModeSwitchToScanning(); } } return true; }
+			 */
+        }
+        else if (event.getAction() == MotionEvent.ACTION_UP)
+        {
+
+            float endX = event.getRawX();
+            if (Math.abs(endX - startX) > 150) {
+                int step = DensityUtil.dip2px(this, 50);
+                if (endX > startX)
+                {
+                    relativeLayoutUserMode.setTranslationX(0);
+					/*
+					 * if (ModeCtrl.getUserMode() == UserMode.SHOPPING)
+					 * {
+					 * this.userModeSwitchToBCard(); } else
+					 */
+                    if (ModeCtrl.getUserMode() == UserMode.SCANNING)
+                    {
+                        //this.userModeSwitchToBCard();
+                    }
+                    else if (ModeCtrl.getUserMode() == UserMode.BCARD)
+                    {
+                        // this.userModeSwitchToScanning();
+                    }
+
+                }
+                else
+                {
+
+                    relativeLayoutUserMode.setTranslationX((-step));
+					/*
+					 * if (ModeCtrl.getUserMode() == UserMode.SHOPPING) { //
+					 * this.userModeSwitchToScanning(); } else
+					 */
+                    if (ModeCtrl.getUserMode() == UserMode.SCANNING)
+                    {
+                        // this.userModeSwitchToBCard();
+                    }
+                    else if (ModeCtrl.getUserMode() == UserMode.BCARD)
+                    {
+                        //this.userModeSwitchToScanning();
+                    }
+                }
+                return true;
+            }
+            else if (ModeCtrl.getUserMode() == UserMode.BCARD)
+            {
+                if (mCameraManager != null)
+                {
+                    mCameraManager.setOnTouchFocus(event);
+                }
+            }
+
+        }
+
+		/*
+		 * if (onTouchManager != null) { if (!this.isScanningStop) {
+		 * onTouchManager.onTouchEvent(event); }
+		 *
+		 * }
+		 */
+
+        return super.onTouchEvent(event);
 
     }
 
@@ -175,6 +307,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 if (mCameraManager.isOpenSuccess())
                 {
                     mCameraManager.setTouchView(50, 100);
+                    mCameraManager.setFocusModeAutoCycle(1750);
                     /*
                     switch (ModeCtrl.getUserMode())
                     {
@@ -192,6 +325,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
                     }
                     */
+
                 }
             }
 
