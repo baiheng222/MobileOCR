@@ -15,9 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.rc.login.ShowUserMessage;
-import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.orders.OrderListActivity;
 import com.hanvon.rc.utils.CircleImageView;
 import com.hanvon.rc.utils.LogUtil;

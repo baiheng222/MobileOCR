@@ -125,8 +125,9 @@ public class LoginUtils {
                         e.printStackTrace();
                     }
                 case UserInfoMessage.USER_DEVICE_UPLOAD_TYPE:
-                    mContext.startActivity(new Intent(mContext, MainActivity.class));
-                    LoginActivity.instance.finish();
+                    GetUserInfo();
+                 //   mContext.startActivity(new Intent(mContext, MainActivity.class));
+                  //  LoginActivity.instance.finish();
                     break;
             }
         }

@@ -26,8 +26,10 @@ import android.widget.Toast;
 //import com.hanvon.common.HWLangDict;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.md.camera.UploadImage;
 import com.hanvon.rc.md.camera.activity.RecResultActivity;
+import com.hanvon.rc.utils.Base64Utils;
 import com.hanvon.rc.utils.BitmapUtil;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.DisplayUtil;
@@ -80,13 +82,29 @@ public class CropActivity extends Activity
 		screen_width = p.x;
 		density = this.getResources().getDisplayMetrics().density;
 		System.out.println("dens==========="+density);
-		//
-		PhotoAlbum album = (PhotoAlbum) this.getIntent().getSerializableExtra("data");
-		int picturePos = this.getIntent().getExtras().getInt("pos");
-		path = album.getBitList().get(picturePos).getPath();
-		//path = this.getIntent().getStringExtra("path");
+
+		String parent = this.getIntent().getStringExtra("parentActivity");
+		Log.i(TAG, "parent is " + parent);
+		if (parent.equals("CameraActivity"))
+		{
+			path = this.getIntent().getStringExtra("path");
+			Log.i(TAG, "!!!! from CameraActivity, path is " + path);
+		}
+		else if (parent.equals("ChooseMorePicturesActivity"))
+		{
+			PhotoAlbum album = (PhotoAlbum) this.getIntent().getSerializableExtra("data");
+			int picturePos = this.getIntent().getExtras().getInt("pos");
+			path = album.getBitList().get(picturePos).getPath();
+			Log.i(TAG, "!!!! from ChooseMorePicturesActivity, path is " + path);
+		}
+		else
+		{
+			Log.i(TAG, "error !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+		}
+
+
 		Log.d(TAG, "!!!!! path is " + path);
-		//path = EXTENDPATH+"universcan/MyGallery/未分类/未命名4.jpg";
+
 		BitmapFactory.Options opt =  new  BitmapFactory.Options();
 		opt.inSampleSize = BitmapUtil.getImageScale(path);
 		backBitmap = BitmapFactory.decodeFile(path,opt);
@@ -303,8 +321,8 @@ public class CropActivity extends Activity
 				return;
 			}
 
-
-			new UploadImage(textHandler).GetRapidRecogRet("", fid, "1", "4");
+			Log.i(TAG, "!!!!!!DEVID is " + HanvonApplication.AppDeviceId);
+			new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.AppDeviceId, fid, "1", "4");
 
 			/*
 			Log.d(TAG, "!!!!!!!! response is " + response);
@@ -360,6 +378,10 @@ public class CropActivity extends Activity
 
 				break;
 
+				case InfoMsg.FILE_RECO_FAIL:
+
+				break;
+
 				case InfoMsg.FILE_RECOGINE_TYPE:
 				{
 					Object obj = msg.obj;
@@ -398,6 +420,8 @@ public class CropActivity extends Activity
 				if ("0".equals(obj.getString("code")))
 				{
 					Log.d(TAG, "!!!!!!! get success result");
+					//byte [] ret = Base64Utils.decode(obj.getString("result"));
+					//String result = new String(ret);
 					String result = obj.getString("result");
 					Log.d(TAG, " !!!! result is " + result);
 					String offset = obj.getString("offset");

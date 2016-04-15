@@ -180,7 +180,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					intent.putExtra("data", allAlbums);
 					intent.putExtra("pos", position);
 					intent.putExtra("from", "big");
-					intent.putExtra("parentActivity", comeFrom);
+					intent.putExtra("parentActivity", "ChooseMorePicturesActivity");
 					startActivityForResult(intent,REQ_PREVIEW);
 
 					/*
@@ -286,7 +286,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			intent.putExtra("data", allAlbums);
 			intent.putExtra("pos", position);
 			intent.putExtra("from", "big");
-			intent.putExtra("parentActivity", comeFrom);
+			intent.putExtra("parentActivity", "ChooseMorePicturesActivity");
 			startActivity(intent);
 			/*
 			paths = new ArrayList<String>();
@@ -350,7 +350,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					intent.putExtra("data", allAlbums);
 					intent.putExtra("pos", pos);
 					intent.putExtra("from", "big");
-					intent.putExtra("parentActivity", comeFrom);
+					intent.putExtra("parentActivity", "ChooseMorePicturesActivity");
 					startActivity(intent);
 				}
 			});
@@ -523,9 +523,9 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			String dir_id = cursor.getString(4);
 			String dir = cursor.getString(5);
 			String pic_date = cursor.getString(6);
-//			Log.e("info", "id==="+id+"==dir_id=="+dir_id+"==dir=="+dir+"==path="+path);
+			Log.i("info", "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
 
-			if(!path.contains("universcan/MyGallery"))
+			if(!path.contains("universcan/MyGallery/"))
 			{
 				if (!countMap.containsKey(dir_id))
 				{

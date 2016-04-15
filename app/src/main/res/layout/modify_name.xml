@@ -51,5 +51,5 @@
          android:background="#3B8D8D"
          android:text="确定"
          android:textSize="15sp"
-         android:textColor="@color/floralwhite"/>
+         android:textColor="@color/white"/>
 </RelativeLayout>

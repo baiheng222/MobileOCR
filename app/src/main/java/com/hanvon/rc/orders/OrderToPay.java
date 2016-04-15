@@ -1,6 +1,7 @@
 package com.hanvon.rc.orders;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -9,6 +10,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.orders.alipay.AliPay;
 
 /**
  * @Desc:
@@ -89,8 +91,16 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                 isZfbPay = true;
                 break;
             case R.id.payinfo_back:
+                finish();
                 break;
             case R.id.payinfo_topay:
+                if (isZfbPay){
+                    Intent intent = new Intent();
+                    intent.setClass(this, AliPay.class);
+                    startActivity(intent);
+                }else{
+
+                }
                 break;
             default:
                 break;

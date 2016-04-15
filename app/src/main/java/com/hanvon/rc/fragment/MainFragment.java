@@ -15,28 +15,32 @@ import com.hanvon.rc.activity.MainActivity;
 /**
  * Created by fanjianmin on 16-3-16.
  */
-public class MainFragment extends BaseFragment
+public class MainFragment extends BaseFragment implements View.OnClickListener
 {
     private final String TAG = "MainFragment";
     private TextView mFastRec ;
     private TextView mExactRec;
     private ImageView mLeftMenu;
+    private ImageView mIvFastRec;
+    private ImageView mIvExactRec;
 
     @Override
     protected View initView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         View view = inflater.inflate(R.layout.main_fragment, container, false);
+
+        mIvFastRec = (ImageView) view.findViewById(R.id.iv_auto);
+        mIvFastRec.setOnClickListener(this);
+
         mFastRec = (TextView) view.findViewById(R.id.tv_auto);
-        mFastRec.setOnClickListener(new View.OnClickListener()
-        {
-            @Override
-            public void onClick(View view)
-            {
-                MainActivity act = (MainActivity)getActivity();
-                act.startCameraActivity();
-            }
-        });
+        mFastRec.setOnClickListener(this);
+
+        mIvExactRec = (ImageView) view.findViewById(R.id.iv_exact);
+        mIvExactRec.setOnClickListener(this);
+
         mExactRec = (TextView) view.findViewById(R.id.tv_exact);
+        mExactRec.setOnClickListener(this);
+
         mLeftMenu = (ImageView) view.findViewById(R.id.iv_left_menu);
         mLeftMenu.setOnClickListener(new View.OnClickListener()
         {
@@ -49,5 +53,24 @@ public class MainFragment extends BaseFragment
             }
         });
         return view;
+    }
+
+    @Override
+    public void onClick(View view)
+    {
+        switch (view.getId())
+        {
+            case R.id.tv_auto:
+            case R.id.iv_auto:
+                MainActivity act = (MainActivity)getActivity();
+                act.startCameraActivity();
+                break;
+
+            case R.id.iv_exact:
+            case R.id.tv_exact:
+
+                break;
+
+        }
     }
 }

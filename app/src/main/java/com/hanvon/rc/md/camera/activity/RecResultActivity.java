@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -14,6 +15,8 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hanvon.rc.R;
+
+import java.nio.InvalidMarkException;
 
 /**
  * Created by baiheng222 on 16-4-5.
@@ -27,10 +30,10 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private ImageView ivBack;
     private TextView tvSave;
 
-    private TextView tvShare;
-    private TextView tvCopy;
-    private TextView tvExact;
-    private TextView tvDel;
+    private ImageView tvShare;
+    private ImageView tvCopy;
+    private ImageView tvExact;
+    private ImageView tvDel;
     private TextView tvTitel;
 
     private EditText etResult;
@@ -67,10 +70,10 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         tvTitel = (TextView) findViewById(R.id.tv_title);
         tvSave = (TextView) findViewById(R.id.tv_save);
 
-        tvShare = (TextView) findViewById(R.id.tv_share);
-        tvCopy = (TextView) findViewById(R.id.tv_copy);
-        tvExact = (TextView) findViewById(R.id.tv_exact);
-        tvDel = (TextView) findViewById(R.id.tv_del);
+        tvShare = (ImageView) findViewById(R.id.iv_share);
+        tvCopy = (ImageView) findViewById(R.id.iv_copy);
+        tvExact = (ImageView) findViewById(R.id.iv_exact);
+        tvDel = (ImageView) findViewById(R.id.iv_del);
 
         etResult = (EditText) findViewById(R.id.et_result);
         if (recResult != null)
@@ -153,17 +156,17 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 showSave();
                 break;
 
-            case R.id.tv_share:
+            case R.id.iv_share:
                 break;
 
-            case R.id.tv_copy:
+            case R.id.iv_copy:
                 break;
 
-            case R.id.tv_del:
+            case R.id.iv_del:
                 showDel();
                 break;
 
-            case R.id.tv_exact:
+            case R.id.iv_exact:
                 break;
         }
     }

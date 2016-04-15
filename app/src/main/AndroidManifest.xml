@@ -68,6 +68,7 @@
         <activity android:name="com.hanvon.rc.orders.OrderListActivity"></activity>
         <activity android:name="com.hanvon.rc.orders.OrderDetailActivity"></activity>
         <activity android:name="com.hanvon.rc.orders.OrderToPay"></activity>
+        <activity android:name="com.hanvon.rc.orders.testpage.OrderList"></activity>
         <activity android:name="com.hanvon.rc.presentation.CropActivity"></activity>
 
 

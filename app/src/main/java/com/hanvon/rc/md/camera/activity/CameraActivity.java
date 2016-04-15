@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.hardware.Camera;
 //import android.hardware.camera2.CameraManager;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -22,6 +23,7 @@ import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
 import com.hanvon.rc.md.camera.CameraManager;
 import com.hanvon.rc.md.camera.PreviewDataManager;
 import com.hanvon.rc.md.camera.draw.DrawManager;
+import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.md.camera.DensityUtil;
 import com.hanvon.rc.md.camera.activity.ModeCtrl.UserMode;
@@ -49,6 +51,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     private SurfaceView mSurfaceView;
     private DrawManager drawManager;
+
+    private CAHandlerManager caHandlerManager;
 
 
     private float startX;
@@ -104,6 +108,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
         cameraActivity = this;
         modeCtrl = new ModeCtrl();
+        this.caHandlerManager = new CAHandlerManager(this);
+
 
         initView();
     }
@@ -366,6 +372,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 "real picture size:"
                         + String.valueOf(param.getPictureSize().width) + "_"
                         + String.valueOf(param.getPictureSize().height));
+
+        new ThreadSaveJPG(cameraActivity, data).start();
         /*
         switch (ModeCtrl.getUserMode()) {
             case SHOPPING:
@@ -481,4 +489,41 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             }
         }
     }
+
+    public void messageToRestartPreview()
+    {
+        if (caHandlerManager != null) {
+            Message message = Message.obtain(caHandlerManager,
+                    CAHandlerManager.RESTART_PREVIEW);
+            caHandlerManager.sendMessageDelayed(message, 10);
+        }
+
+    }
+
+    public void messageToCrop(String path)
+    {
+        if (caHandlerManager != null)
+        {
+            Message message = Message.obtain(caHandlerManager,
+                    CAHandlerManager.JPG_SAVE_COMPLETE);
+
+            Bundle b = new Bundle();
+            b.putString("filepath", path);
+            message.setData(b);
+            caHandlerManager.sendMessage(message);
+        }
+    }
+
+    public void jpgSaveComplete(String path)
+    {
+        Log.i(TAG, "in func jpgSaveComplete, path is " + path);
+        Intent intent = new Intent();
+        intent.setClass(mContext, CropActivity.class);
+        intent.putExtra("parentActivity", "CameraActivity");
+        intent.putExtra("path", path);
+
+        Log.i(TAG, "Start CropActivity !!!1");
+        startActivity(intent);
+    }
+
 }

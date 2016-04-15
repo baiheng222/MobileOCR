@@ -68,11 +68,11 @@
 
         <ImageView
             android:id="@+id/iv_ocr_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/ic_launcher"/>
+            android:src="@mipmap/ocr_icon"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -104,11 +104,11 @@
 
         <ImageView
             android:id="@+id/iv_file_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="24dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/file_icon" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -140,11 +140,11 @@
 
         <ImageView
             android:id="@+id/iv_orders_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="24dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/order_icon" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -176,11 +176,11 @@
 
         <ImageView
             android:id="@+id/iv_settings_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
             android:layout_alignParentLeft="true"
             android:layout_marginLeft="24dp"
-            android:src="@mipmap/ic_launcher" />
+            android:src="@mipmap/setting_icon" />
 
         <TextView
             android:layout_width="wrap_content"

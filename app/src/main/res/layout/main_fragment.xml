@@ -3,8 +3,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
     <RelativeLayout
+        android:id="@+id/rl_top"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="48dp"
         android:background="@color/royalblue"
         android:layout_alignParentTop="true">
 
@@ -28,26 +29,49 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_below="@id/rl_top"
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true">
+
+        <ImageView
+            android:id="@+id/iv_auto"
+            android:layout_width="173dp"
+            android:layout_height="173dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="40dp"
+            android:src="@mipmap/quick_reco"
+
+            />
 
         <TextView
             android:id="@+id/tv_auto"
             android:background="#888888"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_below="@id/iv_auto"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
 
             android:layout_centerHorizontal="true"
             android:text="@string/main_autorec"/>
 
+        <ImageView
+            android:id="@+id/iv_exact"
+            android:layout_width="173dp"
+            android:layout_height="173dp"
+            android:layout_below="@id/tv_auto"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:src="@mipmap/exact_reco"
+
+            />
+
 
         <TextView
             android:id="@+id/tv_exact"
             android:background="#888888"
-            android:layout_below="@id/tv_auto"
+            android:layout_below="@id/iv_exact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

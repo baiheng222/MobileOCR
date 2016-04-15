@@ -82,5 +82,5 @@ dependencies {
     compile files('libs/SocialSDK_WeiXin_2.jar')
     compile files('libs/MobLogCollector.jar')
     compile files('libs/commons-codec-1.6.jar')
-    compile files('libs/ShareSDK-Core-2.5.8.jar')
+    compile files('libs/alipaySdk-20160223.jar')
 }

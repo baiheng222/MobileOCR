@@ -10,7 +10,7 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dip"
+        android:layout_marginTop="60dip"
         android:layout_marginLeft="10dip"
         android:text="@string/account_message"
         android:textSize="15sp"
@@ -19,7 +19,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="85dip"
+        android:layout_marginTop="90dip"
         android:background="@color/white"
         android:orientation="horizontal" >
         <TextView
@@ -49,7 +49,7 @@
         android:id="@+id/name_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="125dip"
+        android:layout_marginTop="135dip"
         android:background="@color/white"
         android:orientation="horizontal" >
         <TextView

@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">RC</string>
-    <string name="main_autorec">Fast Recognize</string>
-    <string name="main_exactrec">Exact Recognize</string>
+    <string name="main_autorec">快速识别</string>
+    <string name="main_exactrec">精准人工</string>
 
     <!-- menu fragment -->
     <string name="menu_main_ocr">OCR</string>

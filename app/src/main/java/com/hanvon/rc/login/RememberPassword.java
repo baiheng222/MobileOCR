@@ -68,7 +68,7 @@ public class RememberPassword extends Activity implements View.OnClickListener {
             case R.id.rmbreset_ensure:
                 strUserCode = CEgetUser.getText().toString();
                 if(strUserCode != null){
-                    Pattern p = Pattern.compile("[1][3578]+\\d{9}");
+                    Pattern p = Pattern.compile("[1][3587]+\\d{9}");
                     Matcher m = p.matcher(strUserCode);
                     if(m.matches() ){
                         //说明输入的不是手机号码，而是邮箱

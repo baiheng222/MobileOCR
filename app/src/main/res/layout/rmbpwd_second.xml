@@ -49,8 +49,8 @@
         android:layout_marginTop="20dip"
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
-        android:background="#3B8D8D"
+        android:background="#5A9B4F"
         android:text="确定"
         android:textSize="15sp"
-        android:textColor="@color/floralwhite"/>
+        android:textColor="@color/white"/>
 </LinearLayout>

@@ -50,45 +50,49 @@
         android:layout_alignParentBottom="true"
         android:background="@color/wboard_folder_manage_color">
 
-        <TextView
-            android:id="@+id/tv_share"
+        <ImageView
+            android:id="@+id/iv_share"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="@string/ret_str_share"
-            android:textColor="@color/white"/>
+            android:src="@mipmap/share_icon"/>
 
-        <TextView
-            android:id="@+id/tv_copy"
+        <ImageView
+            android:id="@+id/iv_copy"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="@string/ret_str_copy"
-            android:textColor="@color/white"/>
+            android:src="@mipmap/copy_icon"/>
 
-        <TextView
-            android:id="@+id/tv_exact"
+        <ImageView
+            android:id="@+id/iv_exact"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="@string/ret_str_exact"
-            android:textColor="@color/white"/>
+            android:src="@mipmap/exact_icon"/>
 
-        <TextView
-            android:id="@+id/tv_del"
+        <ImageView
+            android:id="@+id/iv_del"
             android:layout_weight="1"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_marginLeft="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="8dp"
             android:gravity="center_vertical|center_horizontal"
-            android:text="@string/ret_str_del"
-            android:textColor="@color/white"/>
+            android:src="@mipmap/del_icon"/>
 
 
     </LinearLayout>

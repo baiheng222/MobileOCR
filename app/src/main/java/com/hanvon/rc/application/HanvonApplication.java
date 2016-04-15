@@ -1,6 +1,7 @@
 package com.hanvon.rc.application;
 
 import android.app.ActivityManager;
+import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -11,6 +12,7 @@ import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
+import android.util.Log;
 
 import com.baidu.frontia.FrontiaApplication;
 import com.baidu.location.BDLocation;
@@ -45,6 +47,7 @@ public class HanvonApplication extends FrontiaApplication {
     public String addrDetail="";
     public static String curCity="";
 
+
     /************增加统计需要的国家、省份、城市、区县以及经纬度************************/
     public static String curCountry = "";
     public static String curProvince = "";
@@ -74,6 +77,8 @@ public class HanvonApplication extends FrontiaApplication {
     private String QQ_APPID = "1105311110";
     public static IWXAPI api;
 
+    private static final String TAG = "HanvonApplication";
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -84,6 +89,9 @@ public class HanvonApplication extends FrontiaApplication {
         mLocationClient.registerLocationListener(myListener);
         InitLocation();
         mLocationClient.start();
+
+
+        Log.i("HanvonApplication", "!!!!!!!!!!!!!!!!!1 Application on Create !!!!!!!!!!!!");
 
         api = WXAPIFactory.createWXAPI(this, "wx021fab5878ea9288", true);
         api.registerApp("wx021fab5878ea9288");
@@ -292,31 +300,57 @@ public class HanvonApplication extends FrontiaApplication {
         this.curLatitude = Latitude;
     }
 
-    public void GetDevicedUniqueId(){
+    public void GetDevicedUniqueId()
+    {
+        Log.i(TAG, "in func GetDevicedUniqueId !!!!!!!!!!!!!!!!!!!!!!!!!");
         TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService( this.getApplicationContext().TELEPHONY_SERVICE);
         AppDeviceId =  telephonyManager.getSimSerialNumber();
-        if (null == AppDeviceId){
+        Log.i(TAG, "AppDevid is " + AppDeviceId + "length is " + AppDeviceId.length());
+        if ((null == AppDeviceId) || (AppDeviceId.equals("")))
+        {
             AppDeviceId = telephonyManager.getDeviceId();
-        }else{
+            Log.i(TAG, " !!!!!!!!!!!!!!!! devid1 " + AppDeviceId);
+        }
+        else
+        {
+            Log.i(TAG, " !!!!!!!!!!!!!!!! return devid1 " + AppDeviceId);
             return;
         }
-        if(null == AppDeviceId){
+
+        if ((null == AppDeviceId) || (AppDeviceId.equals("")))
+        {
             AppDeviceId = android.os.Build.SERIAL;
-        }else{
+            Log.i(TAG, " !!!!!!!!!!!!!!!! devid2 " + AppDeviceId);
+        }
+        else
+        {
+            Log.i(TAG, " !!!!!!!!!!!!!!!! return devid2 " + AppDeviceId);
             return;
         }
 
-        if (null == AppDeviceId){
+        if ((null == AppDeviceId) || (AppDeviceId.equals("")))
+        {
             AppDeviceId = android.provider.Settings.System.getString(getContentResolver(), android.provider.Settings.System.ANDROID_ID);
-        }else{
+            Log.i(TAG, " !!!!!!!!!!!!!!!! devid3 " + AppDeviceId);
+        }
+        else
+        {
+            Log.i(TAG, " !!!!!!!!!!!!!!!! return devid3 " + AppDeviceId);
             return;
         }
 
-        if(null == AppDeviceId){
+        if ((null == AppDeviceId) || (AppDeviceId.equals("")))
+        {
             AppDeviceId = "9774d56d682e549MobileOCR";
-        }else{
+            Log.i(TAG, " !!!!!!!!!!!!!!!! devid4 " + AppDeviceId);
+        }
+        else
+        {
+            Log.i(TAG, " !!!!!!!!!!!!!!!! return devid4 " + AppDeviceId);
             return;
         }
+
+        Log.i(TAG, "!!!!!!!!!!!!!!!! devid5 " + AppDeviceId);
 
     }
 

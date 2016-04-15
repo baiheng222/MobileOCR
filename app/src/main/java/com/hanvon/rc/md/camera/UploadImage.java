@@ -214,8 +214,12 @@ public class UploadImage
 
             }
             @Override
-            public void onFailure(com.lidroid.xutils.exception.HttpException e, String s) {
+            public void onFailure(com.lidroid.xutils.exception.HttpException e, String s)
+            {
                 Log.i(TAG, "===onFailure====="+s);
+                Message msg = new Message();
+                msg.what = InfoMsg.FILE_RECO_FAIL;
+                handler.sendMessage(msg);
             }
         });
     }
