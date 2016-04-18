@@ -1,12 +1,18 @@
 package com.hanvon.rc.md.camera.activity;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.hardware.Camera;
 //import android.hardware.camera2.CameraManager;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -16,6 +22,7 @@ import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
@@ -45,7 +52,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private ImageView mLight;
     private ImageView mGallery;
     private ImageView mCapture;
-    private ImageView mCancel;
+    private TextView mCancel;
 
     private RelativeLayout relativeLayoutUserMode;
 
@@ -67,6 +74,9 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         return cameraActivity;
     }
 
+    public static final String FILE_SAVE_DIR_NAME = "savedpic";
+    public static final String FILE_SAVE_PATH = "/MobileOCR/";
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -84,7 +94,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         {
             String sdCardPath = FileUtil.getSDCadrPath();
             // 创建文件的保存路径
-            File f = new File(sdCardPath + "/universcan/MyGallery/未分类");
+            //File f = new File(sdCardPath + "/universcan/MyGallery/未分类");
+            File f = new File(sdCardPath + FILE_SAVE_PATH + FILE_SAVE_DIR_NAME);
             if (!f.exists())
             {
                 f.mkdirs();
@@ -122,7 +133,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mGallery.setOnClickListener(this);
         mCapture = (ImageView) findViewById(R.id.iv_capture);
         mCapture.setOnClickListener(this);
-        mCancel = (ImageView) findViewById(R.id.iv_cancel);
+        mCancel = (TextView) findViewById(R.id.tv_cancel);
         mCancel.setOnClickListener(this);
 
         this.relativeLayoutUserMode = (RelativeLayout) this
@@ -409,7 +420,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 requestTakePicture();
                 break;
 
-            case R.id.iv_cancel:
+            case R.id.tv_cancel:
                 this.finish();
                 break;
 
@@ -502,6 +513,24 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     public void messageToCrop(String path)
     {
+        ContentValues values = new ContentValues();
+        values.put(MediaStore.Images.Media.BUCKET_DISPLAY_NAME, FILE_SAVE_DIR_NAME);//目录名
+        values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        values.put(MediaStore.Images.Media.DATA, path);
+        values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+        CameraActivity.this.getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+        if (Build.VERSION.SDK_INT < 19) //API 19 以前的
+        {
+            //CameraActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + Environment.getExternalStorageDirectory()+"/universcan/MyGallery/未分类")));
+            CameraActivity.this.sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + Environment.getExternalStorageDirectory()+FILE_SAVE_PATH+FILE_SAVE_DIR_NAME)));
+
+        }
+        else
+        {
+            //MediaScannerConnection.scanFile(CameraActivity.this, new String[]{Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath() + "/" + "universcan/MyGallery/未分类"}, null, null);
+            MediaScannerConnection.scanFile(CameraActivity.this, new String[]{Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM).getPath()  + FILE_SAVE_PATH + FILE_SAVE_DIR_NAME}, null, null);
+        }
+
         if (caHandlerManager != null)
         {
             Message message = Message.obtain(caHandlerManager,

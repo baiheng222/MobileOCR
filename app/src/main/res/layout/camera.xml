@@ -97,14 +97,16 @@
             android:layout_centerVertical="true"
             android:src="@mipmap/camera_shutter_on"/>
 
-        <ImageView
-            android:id="@+id/iv_cancel"
-            android:layout_width="40dp"
+        <TextView
+            android:id="@+id/tv_cancel"
+            android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_marginRight="8dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/camera_add_picture_on"/>
+            android:gravity="center_vertical|center_horizontal"
+            android:text="@string/bc_str_cancle"
+            />
 
     </RelativeLayout>
 

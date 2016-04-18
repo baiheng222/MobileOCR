@@ -305,7 +305,7 @@ public class HanvonApplication extends FrontiaApplication {
         Log.i(TAG, "in func GetDevicedUniqueId !!!!!!!!!!!!!!!!!!!!!!!!!");
         TelephonyManager telephonyManager = (TelephonyManager)this.getSystemService( this.getApplicationContext().TELEPHONY_SERVICE);
         AppDeviceId =  telephonyManager.getSimSerialNumber();
-        Log.i(TAG, "AppDevid is " + AppDeviceId + "length is " + AppDeviceId.length());
+        //Log.i(TAG, "AppDevid is " + AppDeviceId + "length is " + AppDeviceId.length());
         if ((null == AppDeviceId) || (AppDeviceId.equals("")))
         {
             AppDeviceId = telephonyManager.getDeviceId();

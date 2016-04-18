@@ -1,6 +1,7 @@
 package com.hanvon.rc.bcard.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 
 public class BcardChoosePicAdapter extends BaseAdapter
 {
+	private static final String TAG = "BcardChoosePicAdapter";
 	private Context context;
 	private PhotoAlbum aibum;
 	private ArrayList<PhotoItem> gl_arr;
@@ -73,6 +75,7 @@ public class BcardChoosePicAdapter extends BaseAdapter
 //			Bitmap bitmap = MediaStore.Images.Thumbnails.getThumbnail(context.getContentResolver(),  aibum.getBitList().get(position).getPhotoID(), Thumbnails.MICRO_KIND, null);
 //			item.SetBitmap(bitmap);
 			String temp = aibum.getBitList().get(position).getPath();
+			Log.i(TAG, "pic path is " + temp);
 //			Constants.imageLoader.displayImage("file://" + aibum.getBitList().get(position).getPath(), item.getImageView(), Constants.image_display_options, animateFirstListener);
 			/*Bitmap bitmap = null;
 			try {

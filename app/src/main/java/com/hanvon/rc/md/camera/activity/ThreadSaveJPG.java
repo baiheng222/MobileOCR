@@ -1,8 +1,15 @@
 package com.hanvon.rc.md.camera.activity;
 
+import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.util.Log;
 
 import com.hanvon.rc.md.camera.BitmapProcess;
@@ -28,7 +35,8 @@ public class ThreadSaveJPG extends Thread
 		this.cameraActivity = cameraActivity;
 		this.data = data;
 		this.context = this.cameraActivity.getApplicationContext();
-		this.path = FileUtil.getSDCadrPath() + "/universcan/MyGallery/未分类/";
+		//this.path = FileUtil.getSDCadrPath() + "/universcan/MyGallery/未分类/";
+		this.path = FileUtil.getSDCadrPath() + CameraActivity.FILE_SAVE_PATH + CameraActivity.FILE_SAVE_DIR_NAME + "/";
 	}
 
 	@Override
@@ -106,6 +114,8 @@ public class ThreadSaveJPG extends Thread
 			e1.printStackTrace();
 			return;
 		}
+
+
 
 
 		this.cameraActivity.messageToCrop(path);

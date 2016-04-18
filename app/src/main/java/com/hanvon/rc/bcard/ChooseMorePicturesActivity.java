@@ -27,12 +27,15 @@ import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter;
 import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter.onGridItemClickListener;
 import com.hanvon.rc.bcard.bean.BcardChooseGridItem;
 //import com.hanvon.md.camera.activity.ThreadBCardListPathProcess;
+import com.hanvon.rc.md.camera.activity.CameraActivity;
 import com.hanvon.rc.presentation.CropActivity;
+import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 
 import com.hanvon.rc.wboard.bean.PhotoItem;
 
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -523,12 +526,20 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			String dir_id = cursor.getString(4);
 			String dir = cursor.getString(5);
 			String pic_date = cursor.getString(6);
-			Log.i("info", "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
+			Log.i(TAG, "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
 
-			if(!path.contains("universcan/MyGallery/"))
+            if (!FileUtil.exit(path))
+            {
+                Log.i(TAG, "no file " + path + "exists");
+                continue;
+            }
+
+			//if(!path.contains("universcan/MyGallery/"))
+            if(path.contains(CameraActivity.FILE_SAVE_PATH + CameraActivity.FILE_SAVE_DIR_NAME))
 			{
 				if (!countMap.containsKey(dir_id))
 				{
+                    //Log.i(TAG, "!!!!!! no dir_id");
 					pa = new PhotoAlbum();
 					pa.setDir_id(dir_id);
 					pa.setName(dir);
@@ -536,10 +547,11 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					pa.setCount("1");
 					pa.getBitList().add(new PhotoItem(Integer.valueOf(id),path,pic_date));
 					countMap.put(dir_id, pa);
-					pa.setPath(path);		
+					pa.setPath(path);
 				}
 				else
 				{
+                    //Log.i(TAG, "!!!!!!! exist dir_id");
 					pa = countMap.get(dir_id);
 					pa.setDir_id(dir_id);
 					pa.setCount(String.valueOf(Integer.parseInt(pa.getCount()) + 1));
@@ -547,6 +559,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					pa.setPath(path);
 				}
 			}
+
 		}
 		cursor.close();
 		Iterable<String> it = countMap.keySet();
