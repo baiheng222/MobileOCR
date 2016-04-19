@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.INotificationSideChannel;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -28,6 +29,7 @@ import android.widget.Toast;
 import com.hanvon.rc.R;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.md.camera.UploadImage;
+import com.hanvon.rc.md.camera.activity.RecFailActivity;
 import com.hanvon.rc.md.camera.activity.RecResultActivity;
 import com.hanvon.rc.utils.Base64Utils;
 import com.hanvon.rc.utils.BitmapUtil;
@@ -55,7 +57,7 @@ public class CropActivity extends Activity
 	private ImageView backImage;
     private Bitmap backBitmap;
     private Bitmap cropBitmap;
-    private Button cancel,ensure,rotate;
+    private Button mBtnReCapture,ensure,rotate;
     private int frameWidth,frameHeight;
     private int screen_width,screen_height,canvas_width,canvas_height,btn_width,btn_height;
 
@@ -110,8 +112,9 @@ public class CropActivity extends Activity
 		backBitmap = BitmapFactory.decodeFile(path,opt);
 		canvas = (Crop_Canvas) findViewById(R.id.myCanvas);
 		canvas.setImageBitmap(backBitmap);
-		cancel = (Button) findViewById(R.id.pt_crop_cancel);
-		rotate = (Button) findViewById(R.id.pt_crop_rotate);
+		mBtnReCapture = (Button) findViewById(R.id.pt_crop_recapture);
+		//cancel = (Button) findViewById(R.id.pt_crop_cancel);
+		//rotate = (Button) findViewById(R.id.pt_crop_rotate);
 		ensure = (Button) findViewById(R.id.pt_crop_ok);
 		backImage = (ImageView) findViewById(R.id.iv_back);
         init();
@@ -142,9 +145,9 @@ public class CropActivity extends Activity
 		hwCloudManagerText = new HWCloudManager(this, "b8ad3ae4-1393-4494-81ea-2851b481ac9a",
 	   			"74e51a88-41ec-413e-b162-bd031fe0407e");
 	   	*/
-        cancel.setOnClickListener(new MyListener());
+        mBtnReCapture.setOnClickListener(new MyListener());
         ensure.setOnClickListener(new MyListener());
-        rotate.setOnClickListener(new MyListener());
+        //rotate.setOnClickListener(new MyListener());
 		backImage.setOnClickListener(new MyListener());
 
 	}
@@ -155,9 +158,9 @@ public class CropActivity extends Activity
 		@Override
 		public void onClick(View v)
 		{
-			// TODO Auto-generated method stub
-			switch (v.getId()) {
-			case R.id.pt_crop_cancel:
+			switch (v.getId())
+			{
+			case R.id.pt_crop_recapture:
 				CropActivity.this.finish();
 				break;
 			case R.id.pt_crop_rotate:
@@ -225,11 +228,15 @@ public class CropActivity extends Activity
 					RecoThread recoThread = new RecoThread(f.getName(), f.getAbsolutePath());
 					new Thread(recoThread).start();
                 }
+				else
+				{
+
+				}
 
 				break;
 
 				case R.id.iv_back:
-
+					CropActivity.this.finish();
 					break;
 
 			default:
@@ -375,38 +382,116 @@ public class CropActivity extends Activity
 			switch (msg.what)
 			{
 				case InfoMsg.FILE_UPLOAD_FAIL:
-
-				break;
-
 				case InfoMsg.FILE_RECO_FAIL:
+					Object msgobj = msg.obj;
+					String msgcontent = msgobj.toString();
+					String errcode = null;
+					JSONObject jsonObject = null;
+					try
+					{
+						jsonObject = new JSONObject(msgcontent);
+						errcode = jsonObject.getString("code");
+					}
+					catch (Exception e)
+					{
+						e.printStackTrace();
+					}
 
+					startRecFailActivity(errcode);
 				break;
 
 				case InfoMsg.FILE_RECOGINE_TYPE:
 				{
 					Object obj = msg.obj;
 					Log.i(TAG, obj.toString());
-					processResult(obj.toString());
-					/*
-					JSONObject json = null;
+					//processResult(obj.toString());
+					String content = obj.toString();
+					JSONObject jobj = null;
 					try
 					{
-						json = new JSONObject(obj.toString());
-						if (json.get("code").equals("0"))
+						if (content != null)
 						{
+							jobj = new JSONObject(content);
+							if ("0".equals(jobj.getString("code")))
+							{
+								byte [] ret = Base64Utils.decode(jobj.getString("result"));
+								String result = new String(ret);
+								//String result = jobj.getString("result");
+								Log.i(TAG, " !!!! result is " + result);
+								String offset = jobj.getString("offset");
 
+								startResultActivity(result);
+							}
+							else
+							{
+								startRecFailActivity(jobj.getString("code"));
+							}
+						}
+						else
+						{
+							Toast.makeText(getApplicationContext(), "请重试！", Toast.LENGTH_SHORT).show();
 						}
 					}
-					catch (JSONException e)
+					catch (Exception e)
 					{
 						e.printStackTrace();
-					}*/
+					}
 				}
 			}
 
 
 		};
 	};
+
+	protected void startRecFailActivity(String retCode)
+	{
+		String errMsg = null;
+		if (null == retCode)
+		{
+			errMsg = InfoMsg.RECO_ERR_UNKNOWN;
+		}
+		else
+		{
+			Log.i(TAG, "result code is " + retCode);
+			if (retCode.equals("520"))
+			{
+				Log.d(TAG, "!!!!!! server error 520 !!!!!!");
+				errMsg = InfoMsg.RECO_ERR_SERVER;
+			}
+			else if (retCode.equals("524"))
+			{
+				Log.d(TAG, "!!!!!! checksum error 524 !!!!!!");
+				errMsg = InfoMsg.RECO_ERR_CHECKSUM;
+			}
+			else
+			{
+				errMsg = InfoMsg.RECO_ERR_UNKNOWN;
+			}
+		}
+
+		Intent retIntent = new Intent(CropActivity.this,RecFailActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putString("errMsg", errMsg);
+		retIntent.putExtras(bundle);
+		CropActivity.this.startActivity(retIntent);
+		CropActivity.this.finish();
+
+		/*
+		String result = jobj.getString("result");
+		Toast.makeText(getApplicationContext(), "请重试！", Toast.LENGTH_SHORT).show();
+		System.out.println(result);
+		*/
+	}
+
+	protected void startResultActivity(String result)
+	{
+		Intent retIntent = new Intent(CropActivity.this,RecResultActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putString("textResult", result);
+		retIntent.putExtras(bundle);
+		CropActivity.this.startActivity(retIntent);
+		CropActivity.this.finish();
+	}
 
 	protected void processResult(String content)
 	{
@@ -420,9 +505,9 @@ public class CropActivity extends Activity
 				if ("0".equals(obj.getString("code")))
 				{
 					Log.d(TAG, "!!!!!!! get success result");
-					//byte [] ret = Base64Utils.decode(obj.getString("result"));
-					//String result = new String(ret);
-					String result = obj.getString("result");
+					byte [] ret = Base64Utils.decode(obj.getString("result"));
+					String result = new String(ret);
+					//String result = obj.getString("result");
 					Log.d(TAG, " !!!! result is " + result);
 					String offset = obj.getString("offset");
 					Log.d(TAG, "!!!! offset is " + offset);
@@ -433,20 +518,7 @@ public class CropActivity extends Activity
 					backIntent.putExtras(bundle);
 					CropActivity.this.startActivity(backIntent);
 					CropActivity.this.finish();
-					/* //fjm add
-					String result = obj.getString("textResult");
-					System.out.println("textResult:" + result);
-					System.out.println("content+---------"+content);
-					Intent backIntent = new Intent(CropActivity.this,OcrRecognizeResultActivity.class);
-					Bundle bundle = new Bundle();
-					bundle.putString("textResult", result);
-					backIntent.putExtras(bundle);
-					if(flag){
-						return;
-					}
-	                CropActivity.this.startActivity(backIntent);
-		            CropActivity.this.finish();
-		            */
+
 				}
 				else if (obj.getString("code").equals("520"))
 				{

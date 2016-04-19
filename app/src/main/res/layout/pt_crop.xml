@@ -48,10 +48,10 @@
 			android:layout_alignParentBottom="true"
 			android:background="@color/wboard_folder_manage_color">
             <Button 
-		         android:id="@+id/pt_crop_cancel"        
+		         android:id="@+id/pt_crop_recapture"
 			     android:layout_width="wrap_content"
 			     android:layout_height="match_parent"
-			     android:text="@string/bc_str_cancle"
+			     android:text="@string/bc_str_recapture"
 			     android:textColor="@color/white"
 			     android:textSize="17sp"
 			     android:gravity="center"

@@ -119,4 +119,7 @@
     <string name="dlg_str_cancel">取消</string>
     <string name="dlg_str_yes">是</string>
     <string name="dlg_str_no">否</string>
+    <string name="reco_fail_continue">继续</string>
+    <string name="reco_recapture">重拍</string>
+    <string name="bc_str_recapture">重拍</string>
 </resources>

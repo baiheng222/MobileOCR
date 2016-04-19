@@ -219,6 +219,7 @@ public class UploadImage
                 Log.i(TAG, "===onFailure====="+s);
                 Message msg = new Message();
                 msg.what = InfoMsg.FILE_RECO_FAIL;
+                msg.obj = s;
                 handler.sendMessage(msg);
             }
         });
