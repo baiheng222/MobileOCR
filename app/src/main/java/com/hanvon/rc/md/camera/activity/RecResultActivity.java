@@ -15,8 +15,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.utils.CustomDialog;
 
 import java.nio.InvalidMarkException;
+import java.util.ArrayList;
 
 /**
  * Created by baiheng222 on 16-4-5.
@@ -115,7 +117,30 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 
     private void showDel()
     {
-        showDlg("Delete file?");
+        new CustomDialog.Builder(RecResultActivity.this)
+                .setTitle("")
+                .setMessage(R.string.rec_ret_del)
+                .setNegativeButton(R.string.bc_str_cancle,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(
+                                    DialogInterface dialog,
+                                    int which) {
+
+                            }
+                        })
+                .setPositiveButton(R.string.bc_str_confirm,
+                        new DialogInterface.OnClickListener()
+                        {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                overridePendingTransition(R.anim.act_delete_enter_anim,
+                                        R.anim.act_delete_exit_anim);
+                            }
+                        }).show();
 
     }
 

@@ -123,4 +123,5 @@
     <string name="reco_fail_continue">Continue</string>
     <string name="reco_recapture">Take a picture</string>
     <string name="bc_str_recapture">Capture</string>
+    <string name="rec_ret_del">Delete file?</string>
 </resources>

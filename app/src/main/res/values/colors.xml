@@ -313,5 +313,7 @@
     <color name="clicked_tv_textcolor">@android:color/darker_gray</color>
     <color name="wboard_folder_manage_color">#092b40</color><!-- 文件管理界面顶部颜色 -->
 
+    <color name="transparent_background">#00000000</color>
+
 
 </resources>

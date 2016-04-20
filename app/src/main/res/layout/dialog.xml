@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp" >
+
+    <!-- 重要！！！ 修改此布局是应考虑是否影响其他 dialog -->
+    <!-- title -->
+
+    <RelativeLayout
+        android:id="@+id/rel_title"
+        style="@style/dialog_title_bar"
+        android:gravity="center" >
+
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="9dp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/icon"
+            android:singleLine="true"
+            android:textColor="@color/dimgray"
+            android:textSize="22dp" />
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical" >
+
+        <!-- content -->
+
+        <LinearLayout
+            android:id="@+id/content"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:minHeight="76dp"
+            android:layout_weight="1"
+            android:orientation="vertical" >
+
+            <ScrollView
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content" >
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <TextView
+                        android:id="@+id/message"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:paddingTop="10dp"
+                        android:textColor="@color/dimgray"
+                        android:textSize="16dp" />
+
+                    <TextView
+                        android:id="@+id/real_warnning"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:textColor="#777777"
+                        android:textSize="12dp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </ScrollView>
+
+            <LinearLayout
+                android:id="@+id/layout_dont_dialog"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:paddingBottom="5dp"
+                android:paddingTop="5dp"
+                android:visibility="gone" >
+
+                <CheckBox
+                    android:id="@+id/checkbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:button="@drawable/assist_selector_checkbox" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/dimgray"
+                    android:textSize="16dp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- 重要！！！ 修改此布局是应考虑是否影响其他 dialog -->
+
+        <LinearLayout
+            android:id="@+id/button"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0"
+            android:orientation="vertical" >
+
+            <!-- splitline -->
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2px"
+                android:background="#a3a3a3" />
+
+            <!-- button -->
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="52dp"
+                android:orientation="horizontal" >
+
+                <!-- 否定 -->
+
+                <TextView
+                    android:id="@+id/negativeButton"
+                    style="@style/dialog_button_generic"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0" />
+                <!-- 中立 -->
+
+                <View
+                    android:id="@+id/negativeButton_line"
+                    android:layout_width="2px"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#a3a3a3" />
+
+                <TextView
+                    android:id="@+id/neutralButton"
+                    style="@style/dialog_button_generic"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0" />
+
+                <View
+                    android:id="@+id/neutralButton_line"
+                    android:layout_width="2px"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center_vertical"
+                    android:background="#a3a3a3" />
+
+                <!-- 确定 -->
+
+                <TextView
+                    android:id="@+id/positiveButton"
+                    style="@style/dialog_button_generic"
+                    android:layout_width="0dip"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

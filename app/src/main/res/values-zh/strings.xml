@@ -122,4 +122,5 @@
     <string name="reco_fail_continue">继续</string>
     <string name="reco_recapture">重拍</string>
     <string name="bc_str_recapture">重拍</string>
+    <string name="rec_ret_del">是否要删除该文件？</string>
 </resources>
