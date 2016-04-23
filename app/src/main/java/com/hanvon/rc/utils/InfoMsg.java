@@ -52,6 +52,7 @@ public class InfoMsg {
     //add by fjm
     public static final int FILE_UPLOAD_FAIL = 0x21;
     public static final int FILE_RECO_FAIL = 0x22;
+    public static final int NETWORK_ERR     = 0x23;
     public static final String RECO_ERR_UNKNOWN = "unknow";
     public static final String RECO_ERR_SERVER = "520";
     public static final String RECO_ERR_CHECKSUM = "524";

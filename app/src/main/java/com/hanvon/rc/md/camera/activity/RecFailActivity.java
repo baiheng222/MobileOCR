@@ -39,10 +39,10 @@ public class RecFailActivity extends Activity implements View.OnClickListener
         switch (view.getId())
         {
             case R.id.btn_continue:
-                    //TODO implement
+
                 break;
             case R.id.btn_retake_pic:
-                    //TODO implement
+                    RecFailActivity.this.finish();
                 break;
         }
     }

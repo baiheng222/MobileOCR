@@ -72,6 +72,7 @@ public class CropActivity extends Activity
     private String pathBefore,pathMid,pathAfter,path;
     private float scale,density;
     private int padding = 10;
+	private boolean isRecognizing = false;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -118,6 +119,7 @@ public class CropActivity extends Activity
 		ensure = (Button) findViewById(R.id.pt_crop_ok);
 		backImage = (ImageView) findViewById(R.id.iv_back);
         init();
+		isRecognizing = false;
 		/*
 		new Thread(new Runnable()
 		{
@@ -172,10 +174,28 @@ public class CropActivity extends Activity
 				*/
 				break;
 			case R.id.pt_crop_ok:
+
+				if (isRecognizing)
+				{
+					Log.i(TAG, "recogize thread already running");
+					return;
+				}
+				else
+				{
+					isRecognizing = true;
+				}
+
 				File tmp = new File(Environment.getExternalStorageDirectory() + "/MyTemp");
                 tmp.mkdirs();
-                File f = new File(Environment.getExternalStorageDirectory() + "/MyTemp/" + "cropAfter" + ".png");
-                try
+				String tmpFileName = Environment.getExternalStorageDirectory() + "/MyTemp/" + "cropAfter" + ".png";
+                if (FileUtil.exit(tmpFileName))
+				{
+					Log.i(TAG, "file " + tmpFileName + " exists, delete it");
+					FileUtil.deleteSDFile(tmpFileName);
+				}
+				//File f = new File(Environment.getExternalStorageDirectory() + "/MyTemp/" + "cropAfter" + ".png");
+                File f = new File(tmpFileName);
+				try
 				{
                     f.createNewFile();
                 }
@@ -220,6 +240,7 @@ public class CropActivity extends Activity
 				Log.d(TAG, "!!!!! saved file path is "  + f.getAbsolutePath());
 				FileUtil.saveBitmap(cropBitmap);
 
+				/*
                 if(connInNet()) //如果连网
 				{
 	                mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
@@ -228,10 +249,11 @@ public class CropActivity extends Activity
 					RecoThread recoThread = new RecoThread(f.getName(), f.getAbsolutePath());
 					new Thread(recoThread).start();
                 }
-				else
-				{
+				*/
 
-				}
+				mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
+				RecoThread recoThread = new RecoThread(f.getName(), f.getAbsolutePath());
+				new Thread(recoThread).start();
 
 				break;
 
@@ -312,7 +334,17 @@ public class CropActivity extends Activity
 		@Override
 		public void run()
 		{
-			Log.d(TAG, "!!!!!!!! RecoThread running !!!!!!!");
+			Log.i(TAG, "!!!!!!!! RecoThread running !!!!!!!");
+
+			if(!connInNet())
+			{
+				Log.i(TAG, "network err ,send msg !!!!!!");
+				Message msg = new Message();
+				msg.what = InfoMsg.NETWORK_ERR;
+				CropActivity.this.textHandler.sendMessage(msg);
+				return;
+			}
+
 			String fid = null;
 			fid = UploadImage.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mPath, mFileName);
 
@@ -321,9 +353,6 @@ public class CropActivity extends Activity
 				Log.d(TAG, "upload file failed !!!");
 				Message msg = new Message();
 				msg.what = InfoMsg.FILE_UPLOAD_FAIL;
-				//Bundle bundle = new Bundle();
-				//bundle.putString("response", "");
-				//msg.setData(bundle);
 				CropActivity.this.textHandler.sendMessage(msg);
 				return;
 			}
@@ -379,9 +408,16 @@ public class CropActivity extends Activity
 			super.handleMessage(msg);
 			Log.d(TAG, "!!!!!!! textHandler handle msg");
 			mProgress.dismiss();
+			isRecognizing = false;
 			switch (msg.what)
 			{
+				case InfoMsg.NETWORK_ERR:
+					Toast.makeText(CropActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
+					break;
+
 				case InfoMsg.FILE_UPLOAD_FAIL:
+					Toast.makeText(CropActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT);
+					break;
 				case InfoMsg.FILE_RECO_FAIL:
 					Object msgobj = msg.obj;
 					String msgcontent = msgobj.toString();
@@ -555,7 +591,7 @@ public class CropActivity extends Activity
 		}
 		else
 		{
-			Toast.makeText(getApplication(), "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
+			//Toast.makeText(getApplication(), "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
 			return false;
 		}		
 	}

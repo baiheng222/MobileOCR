@@ -84,11 +84,13 @@ public class HanvonApplication extends FrontiaApplication {
         super.onCreate();
         ShareSDK.initSDK(this);
         UserInfoMessage.setIsOnLine(false);
-        mLocationClient = new LocationClient(getApplicationContext());
-        myListener = new MyLocationListener();
-        mLocationClient.registerLocationListener(myListener);
-        InitLocation();
-        mLocationClient.start();
+
+        //mLocationClient = new LocationClient(getApplicationContext());
+        //myListener = new MyLocationListener();
+        //mLocationClient.registerLocationListener(myListener);
+        //InitLocation();
+        //mLocationClient.start();
+
 
 
         Log.i("HanvonApplication", "!!!!!!!!!!!!!!!!!1 Application on Create !!!!!!!!!!!!");
@@ -119,18 +121,21 @@ public class HanvonApplication extends FrontiaApplication {
         AppVer = packInfo.versionName;
         //获取设备sn号
         GetDevicedUniqueId();
+        Log.i(TAG, "111111111111111111111111");
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-
+        Log.i(TAG, "2222222222222222222222");
         mContext = getApplicationContext();
-
+        Log.i(TAG, "3333333333");
         if (Constants.Config.DEVELOPER_MODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.GINGERBREAD) {
             StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder().detectAll().penaltyDialog().build());
             StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder().detectAll().penaltyDeath().build());
         }
 
+        Log.i(TAG, "444444444444444");
      //   super.onCreate();
 
         initImageLoader(getApplicationContext());
+        Log.i(TAG, "!!!!! onCreate end !!!!");
     }
 
     public static void initImageLoader(Context context) {

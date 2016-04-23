@@ -1,11 +1,18 @@
 package com.hanvon.rc.md.camera.activity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -13,12 +20,20 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.utils.CustomDialog;
+import com.hanvon.rc.utils.HvnCloudManager;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.InvalidMarkException;
 import java.util.ArrayList;
+
+import cn.sharesdk.framework.ShareSDK;
+import cn.sharesdk.onekeyshare.OnekeyShare;
 
 /**
  * Created by baiheng222 on 16-4-5.
@@ -51,6 +66,45 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private final int DLG_RETURN_INIT = -1;
 
     private int dlgReturn = DLG_RETURN_INIT;
+
+
+
+    private ProgressDialog pd;
+    private String  strLinkPath = null;
+    private Bitmap bitmapLaunch;
+    private Boolean bShareClick = false;
+
+    private final static int UPLLOAD_FILE_CLOUD_SUCCESS = 5;
+    private final static int UPLLOAD_FILE_CLOUD_FAIL = 6;
+
+
+    private Handler handler = new Handler()
+    {
+        @SuppressLint("ShowToast")
+        @Override
+        public void handleMessage(Message msg)
+        {
+            switch (msg.what)
+            {
+
+                case UPLLOAD_FILE_CLOUD_SUCCESS:
+                    pd.dismiss();
+                    showShare();
+
+                    break;
+                case UPLLOAD_FILE_CLOUD_FAIL:
+                    pd.dismiss();
+                    Toast.makeText(RecResultActivity.this, "获取链接失败，不能分享!", Toast.LENGTH_SHORT).show();
+                    bShareClick = false;
+
+                    break;
+
+                default:
+                    break;
+            }
+        }
+    };
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -139,6 +193,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                             {
                                 overridePendingTransition(R.anim.act_delete_enter_anim,
                                         R.anim.act_delete_exit_anim);
+                                RecResultActivity.this.finish();
                             }
                         }).show();
 
@@ -182,6 +237,11 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 break;
 
             case R.id.iv_share:
+                if (!bShareClick)
+                {
+                    pd = ProgressDialog.show(RecResultActivity.this, "", getString(R.string.link_mess));
+                    shareRecoResult();
+                }
                 break;
 
             case R.id.iv_copy:
@@ -194,6 +254,124 @@ public class RecResultActivity extends Activity implements View.OnClickListener
             case R.id.iv_exact:
                 break;
         }
+    }
+
+
+    private void showShare() {
+        ShareSDK.initSDK(this);
+        OnekeyShare oks = new OnekeyShare();
+        //关闭sso授权
+        oks.disableSSOWhenAuthorize();
+        Log.i(TAG, "tong------strLinkPath:"+strLinkPath);
+        // 分享时Notification的图标和文字  2.5.9以后的版本不调用此方法
+        //oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
+        // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
+        oks.setTitle(getString(R.string.share_from_hanvon));
+        // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
+        oks.setTitleUrl(strLinkPath);
+        // text是分享文本，所有平台都需要这个字段
+//		 String title = etNoteTitle.getText().toString();
+//		 if(title == "")
+//		 {
+//			 String strContent = etScanContent.getText().toString();
+//			 title = strContent;
+//		 }
+        oks.setText("recognize!!!");
+        // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
+        String curPath = getApplicationContext().getFilesDir().getPath();
+
+        copyPhoto();
+        String srcPath = curPath + "/"+"image.png";
+        //String newPath= "/sdcard/app_launcher.png";
+        Log.i(TAG, "tong-----------srcPath:"+srcPath);
+
+        //copyFile(srcPath,newPath);
+        oks.setImagePath(srcPath);//确保SDcard下面存在此张图片
+        // url仅在微信（包括好友和朋友圈）中使用
+        oks.setUrl(strLinkPath);
+        // comment是我对这条分享的评论，仅在人人网和QQ空间使用
+        oks.setComment("我是测试评论文本");
+        // site是分享此内容的网站名称，仅在QQ空间使用
+        oks.setSite(getString(R.string.app_name));
+        // siteUrl是分享此内容的网站地址，仅在QQ空间使用
+        oks.setSiteUrl(strLinkPath);
+
+        // 启动分享GUI
+        oks.show(this);
+        bShareClick = false;
+    }
+
+    public void copyPhoto()
+    {
+
+        bitmapLaunch = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
+        FileOutputStream fos = null;
+        try {
+            fos = openFileOutput("image.png", Context.MODE_PRIVATE);
+            bitmapLaunch.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        } catch (FileNotFoundException e) {
+        } finally {
+            if (fos != null) {
+                try {
+                    fos.flush();
+                    fos.close();
+                } catch (IOException e) {
+                }
+            }
+        }
+    }
+
+
+    private void shareRecoResult()
+    {
+        String titleStr = "识别结果";
+        String contentStr = etResult.getText().toString();
+        if (null == contentStr)
+        {
+            Log.d(TAG, "content is null");
+            return;
+        }
+        bShareClick = true;
+        HvnCloudManager hvnCloud = new HvnCloudManager();
+        try
+        {
+            hvnCloud.WriteFileForShareSelect(titleStr, contentStr);
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        UploadFilesToHvnCloudForShare();
+    }
+
+    public void UploadFilesToHvnCloudForShare()
+    {
+        new Thread()
+        {
+            @Override
+            public void run()
+            {
+                String result = null;
+                HvnCloudManager hvnCloud = new HvnCloudManager();
+                result = hvnCloud.ShareForSelect();
+                Log.i(TAG, result);
+
+                if (result == null)
+                {
+                    Message msg = new Message();
+                    msg.what = UPLLOAD_FILE_CLOUD_FAIL;
+                    handler.sendMessage(msg);
+                }
+                else
+                {
+                    strLinkPath = result;
+                    Message msg = new Message();
+                    msg.what = UPLLOAD_FILE_CLOUD_SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            }
+        }.start();
     }
 
 }

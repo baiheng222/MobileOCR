@@ -14,7 +14,7 @@ android {
         minSdkVersion 15
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0.2"
+        versionName "1.0.3"
         multiDexEnabled true
     }
 
@@ -27,6 +27,7 @@ android {
             renderscript.srcDirs = ['src/main/java']
             res.srcDirs = ['src/main/res']
             assets.srcDirs = ['src/main/assets']
+            jniLibs.srcDirs = ['libs']
         }
 
         // Move the tests to tests/java, tests/res, etc...
@@ -66,14 +67,13 @@ dependencies {
     compile files('libs/xutils-3.3.25.jar')
     compile files('libs/httpcore-4.4.3.jar')
     compile files('libs/httpmime-4.3.jar')
-    compile files('libs/ShareSDK-Core-2.6.3.jar')
-    compile files('libs/ShareSDK-QQ-2.6.3.jar')
-    compile files('libs/ShareSDK-QZone-2.6.3.jar')
-    compile files('libs/ShareSDK-ShortMessage-2.6.3.jar')
-    compile files('libs/ShareSDK-TencentWeibo-2.6.3.jar')
-    compile files('libs/ShareSDK-Wechat-2.6.3.jar')
-    compile files('libs/ShareSDK-Wechat-Core-2.6.3.jar')
-    compile files('libs/ShareSDK-Wechat-Moments-2.6.3.jar')
+    compile files('libs/ShareSDK-Core-2.6.6.jar')
+    compile files('libs/ShareSDK-QQ-2.6.6.jar')
+    compile files('libs/ShareSDK-QZone-2.6.6.jar')
+    compile files('libs/ShareSDK-ShortMessage-2.6.6.jar')
+    compile files('libs/ShareSDK-Wechat-2.6.6.jar')
+    compile files('libs/ShareSDK-Wechat-Core-2.6.6.jar')
+    compile files('libs/ShareSDK-Wechat-Moments-2.6.6.jar')
     compile files('libs/MobTools.jar')
     compile files('libs/SocialSDK_QQZone_2.jar')
     compile files('libs/SocialSDK_QQZone_1.jar')

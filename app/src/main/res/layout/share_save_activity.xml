@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/wboard_folder_manage_color">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/back"/>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="@string/title_save_ret"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"/>
+
+        <TextView
+            android:id="@+id/tv_save"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginRight="10dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentRight="true"
+            android:text="@string/bc_str_confirm"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_filename"
+        android:layout_below="@id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_filename_label"
+            android:layout_width="match_parent"
+            android:background="@color/seashell"
+            android:layout_height="30dp"
+            android:paddingLeft="10dp"
+
+            android:gravity="center_vertical"
+            android:text="@string/str_save_filename_tip"/>
+
+        <TextView
+            android:id="@+id/tv_separator"
+            android:layout_below="@id/tv_filename_label"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dimgray"/>
+
+        <EditText
+            android:id="@+id/et_filename"
+            android:layout_below="@id/tv_filename_label"
+            android:layout_width="fill_parent"
+            android:layout_height="45dp"
+
+            android:paddingLeft="10dp"
+            android:background="@null"
+            android:hint="@string/str_input_hint"
+            android:singleLine="true"/>
+
+        <TextView
+            android:id="@+id/tv_separator1"
+            android:layout_below="@id/et_filename"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dimgray"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_list"
+        android:layout_below="@id/rl_filename"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_file_format_tip"
+            android:layout_width="match_parent"
+            android:background="@color/seashell"
+            android:layout_height="30dp"
+            android:paddingLeft="10dp"
+
+            android:gravity="center_vertical"
+            android:text="@string/str_file_format_tip"/>
+
+        <TextView
+            android:id="@+id/tv_separator2"
+            android:layout_below="@id/tv_file_format_tip"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dimgray"/>
+
+        <ListView
+            android:id="@+id/lv_file_format"
+            android:layout_below="@id/tv_separator2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </ListView>
+
+    </RelativeLayout>
+
+</RelativeLayout>

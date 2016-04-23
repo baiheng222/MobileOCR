@@ -110,6 +110,7 @@
     <string name="title_failrec">Reconize fail</string>
     <string name="title_save_ret">Save</string>
     <string name="title_new_reco_result">New</string>
+    <string name="title_share_ret">Share</string>
 
     <string name="ret_str_share">Share</string>
     <string name="ret_str_copy">Copy</string>
@@ -124,4 +125,11 @@
     <string name="reco_recapture">Take a picture</string>
     <string name="bc_str_recapture">Capture</string>
     <string name="rec_ret_del">Delete file?</string>
+    <string name="str_save_filename_tip">File Name</string>
+    <string name="str_input_hint">Input here</string>
+    <string name="str_file_format_tip">File Format</string>
+    <string name="capture_single">Single</string>
+    <string name="capture_multi">Multi</string>
+    <string name="link_mess">生成连接中，请等待...</string>
+    <string name="share_from_hanvon">来自汉王云记忆的分享</string>
 </resources>

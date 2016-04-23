@@ -85,10 +85,11 @@ public class UploadImage
             int length = fis.available();
 
             Log.d(TAG, "!!!!! filename is " + filename);
-            Log.i("====Start===","offset:"+offset);
+            Log.i(TAG,"offset:"+offset);
             if(offset != 0)
             {
-                fis.skip(offset);
+                //fis.skip(offset);
+                offset = 0;
             }
 
             while(true)
@@ -307,7 +308,7 @@ public class UploadImage
         Map<String, String> parmas = new HashMap<String, String>();
         if (type == InfoMsg.FILE_UPLOAD_TYPE)
         {
-            parmas.put("userid", getCurDate());
+            parmas.put("userid", HanvonApplication.AppDeviceId);
             parmas.put("recogType", "1");
             parmas.put("fileType", "1");
             parmas.put("fid", "");
@@ -340,6 +341,7 @@ public class UploadImage
 
     private static String  dopost(Map<String, String> parmas,int type,byte[] data)
     {
+        Log.i(TAG, "!!!!dpost!!!!");
         String result = null;
         MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create();
         mEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
