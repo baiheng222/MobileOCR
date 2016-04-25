@@ -111,6 +111,7 @@
     <string name="title_save_ret">Save</string>
     <string name="title_new_reco_result">New</string>
     <string name="title_share_ret">Share</string>
+    <string name="title_exact">Exact</string>
 
     <string name="ret_str_share">Share</string>
     <string name="ret_str_copy">Copy</string>

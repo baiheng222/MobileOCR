@@ -24,7 +24,7 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:text="@string/title_new_reco_result"
+            android:text="@string/title_exact"
             android:gravity="center_vertical"
             android:textColor="@color/white"/>
 

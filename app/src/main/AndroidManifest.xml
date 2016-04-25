@@ -73,6 +73,7 @@
         <activity android:name=".login.ShowUserMessage" ></activity>
         <activity android:name=".login.ModifyPassword" ></activity>
         <activity android:name=".login.ModifyUserName" ></activity>
+        <activity android:name="com.hanvon.rc.md.camera.activity.ExactActivity"></activity>
         <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"></activity>
         <activity android:name="com.hanvon.rc.md.camera.activity.RecResultActivity"></activity>
         <activity android:name="com.hanvon.rc.md.camera.activity.RecFailActivity"></activity>

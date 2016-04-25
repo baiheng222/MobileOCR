@@ -68,7 +68,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
 
             case R.id.iv_exact:
             case R.id.tv_exact:
-
+                MainActivity act2 = (MainActivity)getActivity();
+                act2.startExactActivity();
                 break;
 
         }

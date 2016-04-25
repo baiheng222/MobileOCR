@@ -109,6 +109,7 @@
     <string name="title_failrec">识别失败</string>
     <string name="title_save_ret">保存</string>
     <string name="title_new_reco_result">新建</string>
+    <string name="title_exact">精准人工</string>
 
     <string name="ret_str_share">分享</string>
     <string name="ret_str_copy">复制</string>

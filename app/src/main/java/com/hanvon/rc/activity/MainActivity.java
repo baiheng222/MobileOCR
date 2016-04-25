@@ -15,6 +15,7 @@ import android.widget.FrameLayout;
 import com.hanvon.rc.R;
 import com.hanvon.rc.fragment.MainFragment;
 import com.hanvon.rc.md.camera.activity.CameraActivity;
+import com.hanvon.rc.md.camera.activity.ExactActivity;
 
 /**
  * Created by fanjianmin on 16-3-15.
@@ -81,6 +82,12 @@ public class MainActivity extends Activity
     public void startCameraActivity()
     {
         Intent intet = new Intent(MainActivity.this, CameraActivity.class);
+        startActivity(intet);
+    }
+
+    public void startExactActivity()
+    {
+        Intent intet = new Intent(MainActivity.this, ExactActivity.class);
         startActivity(intet);
     }
 }
