@@ -34,6 +34,7 @@ import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.md.camera.DensityUtil;
 import com.hanvon.rc.md.camera.activity.ModeCtrl.UserMode;
+import com.hanvon.rc.utils.LogUtil;
 
 import java.io.File;
 
@@ -65,6 +66,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private float startX;
 
     private boolean isSurfaceCreated;
+    private boolean isTakingPicture;
 
 
     private ModeCtrl modeCtrl;
@@ -116,6 +118,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
         mContext = this;
         isSurfaceCreated = false;
+        isTakingPicture = false;
 
         cameraActivity = this;
         modeCtrl = new ModeCtrl();
@@ -438,6 +441,13 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     public void requestTakePicture()
     {
+
+        if (isTakingPicture)
+        {
+            LogUtil.i("taking pic , return");
+            return;
+        }
+        isTakingPicture = true;
         Log.d(TAG, "requestTakePicture");
         if (mCameraManager != null)
         {
@@ -452,6 +462,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 }
                 else
                 {
+                    isTakingPicture = false;
                     Log.d(TAG, "capteru failed !!!1");
                 }
                 /*
@@ -551,6 +562,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         intent.putExtra("parentActivity", "CameraActivity");
         intent.putExtra("path", path);
 
+        isTakingPicture = false;
         Log.i(TAG, "Start CropActivity !!!1");
         startActivity(intent);
     }

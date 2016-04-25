@@ -131,5 +131,6 @@
     <string name="capture_single">Single</string>
     <string name="capture_multi">Multi</string>
     <string name="link_mess">生成连接中，请等待...</string>
-    <string name="share_from_hanvon">来自汉王云记忆的分享</string>
+    <string name="share_from_hanvon">来自汉王识文的分享</string>
+    <string name="exact_tips">功能正在实现中，敬请期待</string>
 </resources>

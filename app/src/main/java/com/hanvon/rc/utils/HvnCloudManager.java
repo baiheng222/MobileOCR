@@ -95,10 +95,26 @@ public class HvnCloudManager {
 		writer.close();
 	}
 	
-	public String ShareForSelect()
+	public String ShareForSelect(String title, String content)
 	{
-		String filename = SHA1Util.encodeBySHA("selectshare")+".txt";
+		//String filename = SHA1Util.encodeBySHA("selectshare")+".txt";
+		String filename = SHA1Util.encodeBySHA(title)+".txt";
 		String path = "/sdcard/" + filename;
+
+		try
+		{
+			FileWriter writer = new FileWriter(path, true);
+			writer.write("<div>/r/n<h1>" + title + "</h1>\r\n<p>" + content + "</p>");
+
+			writer.write("</div>");
+			writer.flush();
+
+			writer.close();
+		}
+		catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 		
 		String result = UploadFiletoHvnForShare(path,"",filename);
 		LogUtil.i("=============test:"+result);

@@ -324,27 +324,43 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 
     private void shareRecoResult()
     {
-        String titleStr = "识别结果";
-        String contentStr = etResult.getText().toString();
+        final String titleStr = "识别结果";
+        final String contentStr = etResult.getText().toString();
         if (null == contentStr)
         {
             Log.d(TAG, "content is null");
             return;
         }
         bShareClick = true;
-        HvnCloudManager hvnCloud = new HvnCloudManager();
-        try
+        new Thread()
         {
-            hvnCloud.WriteFileForShareSelect(titleStr, contentStr);
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+            @Override
+            public void run()
+            {
+                String result = null;
+                HvnCloudManager hvnCloud = new HvnCloudManager();
+                result = hvnCloud.ShareForSelect(titleStr, contentStr);
+                Log.i(TAG, result);
 
-        UploadFilesToHvnCloudForShare();
+                if (result == null)
+                {
+                    Message msg = new Message();
+                    msg.what = UPLLOAD_FILE_CLOUD_FAIL;
+                    handler.sendMessage(msg);
+                }
+                else
+                {
+                    strLinkPath = result;
+                    Message msg = new Message();
+                    msg.what = UPLLOAD_FILE_CLOUD_SUCCESS;
+                    handler.sendMessage(msg);
+                }
+            }
+        }.start();
+
     }
 
+    /*
     public void UploadFilesToHvnCloudForShare()
     {
         new Thread()
@@ -373,5 +389,6 @@ public class RecResultActivity extends Activity implements View.OnClickListener
             }
         }.start();
     }
+    */
 
 }
