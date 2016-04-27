@@ -64,6 +64,8 @@
             android:screenOrientation="portrait" >
         </activity>
 
+        <activity android:name=".activity.FileListActivity" ></activity>
+
         <activity android:name=".login.RegisterUserFromEmail" ></activity>
         <activity android:name=".login.RegisterUserFromPhone" ></activity>
         <activity android:name=".login.RegisterUserGetCodePhone" ></activity>

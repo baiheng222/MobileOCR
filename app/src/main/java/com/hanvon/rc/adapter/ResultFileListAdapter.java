@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.db.FileInfo;
+import com.hanvon.rc.utils.LogUtil;
 
 import java.util.List;
 
@@ -52,31 +53,35 @@ public class ResultFileListAdapter extends BaseAdapter
         ViewHolder viewHolder = null;
         if (convertView == null)
         {
-            /*
-            convertView = mInflater.inflate(R.layout.notebook_list_item, parent, false);
+
+            convertView = mInflater.inflate(R.layout.file_list_item, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mNoteBookName = (TextView) convertView.findViewById(R.id.tv_notebook_name);
-            viewHolder.mNotesNum = (TextView) convertView.findViewById(R.id.tv_notes_in_notebook);
+            viewHolder.mFileName = (TextView) convertView.findViewById(R.id.tv_filename);
+            viewHolder.mFileSize = (TextView) convertView.findViewById(R.id.tv_filesize);
             convertView.setTag(viewHolder);
-            */
+
         }
         else
         {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        /*
-        viewHolder.mNoteBookName.setText(mDatas.get(position).getNoteBookName());
-        int notesNum = getNoteNumInNoteBook(position);
-        viewHolder.mNotesNum.setText(String.valueOf(notesNum));
-        */
+        String filepath = mDatas.get(position).getResultPath();
+        String filename = filepath.substring(filepath.lastIndexOf("/")+1, filepath.length());
+        LogUtil.i("filename is " + filename);
+        viewHolder.mFileName.setText(filename);
+        //int notesNum = getNoteNumInNoteBook(position);
+        int size = (mDatas.get(position).getResultSize() + 1023) /1024;
+        LogUtil.i("file size is " + String.valueOf(size) + "k");
+        viewHolder.mFileSize.setText(String.valueOf(size) + "k");
+
         return convertView;
     }
 
     private final class ViewHolder
     {
-        TextView mNoteBookName;
-        TextView mNotesNum;
+        TextView mFileName;
+        TextView mFileSize;
     }
 
 

@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.FileListActivity;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.rc.login.ShowUserMessage;
@@ -103,7 +104,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.rl_file:
-
+                Intent listIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
+                this.startActivity(listIntent);
                 break;
         }
     }

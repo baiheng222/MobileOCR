@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -30,10 +31,13 @@ import com.hanvon.rc.utils.CustomDialog;
 import com.hanvon.rc.utils.HvnCloudManager;
 import com.hanvon.rc.utils.LogUtil;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.InvalidMarkException;
 import java.util.ArrayList;
 
@@ -79,6 +83,9 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private Bitmap bitmapLaunch;
     private Boolean bShareClick = false;
     private String picturePaht = null;
+
+    private Boolean bReadOnlyMode = false;
+    private FileInfo resultInfo;
 
     private final static int UPLLOAD_FILE_CLOUD_SUCCESS = 5;
     private final static int UPLLOAD_FILE_CLOUD_FAIL = 6;
@@ -132,6 +139,15 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         tvTitel = (TextView) findViewById(R.id.tv_title);
         tvSave = (TextView) findViewById(R.id.tv_save);
 
+        if (bReadOnlyMode)
+        {
+            tvSave.setVisibility(View.GONE);
+        }
+        else
+        {
+            tvSave.setVisibility(View.VISIBLE);
+        }
+
         tvShare = (ImageView) findViewById(R.id.iv_share);
         tvCopy = (ImageView) findViewById(R.id.iv_copy);
         tvExact = (ImageView) findViewById(R.id.iv_exact);
@@ -156,6 +172,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 
     private void initData()
     {
+        bReadOnlyMode = false;
         Intent intent = getIntent();
         if (intent != null)
         {
@@ -167,7 +184,50 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 LogUtil.i("recResult is " + recResult);
                 LogUtil.i("picture path is " + picturePaht);
             }
+            else
+            {
+                bReadOnlyMode = true;
+                resultInfo = (FileInfo) bundle.getSerializable("info");
+                LogUtil.i("received file info is : " + resultInfo.toSting());
+                recResult = readFileToBuf(resultInfo.getResultPath());
+                LogUtil.i("get result from txt: " + recResult);
+            }
         }
+    }
+
+    private String readFileToBuf(String filePath)
+    {
+        try
+        {
+            StringBuffer sb = new StringBuffer("");
+            String encoding="UTF-8";
+            File file=new File(filePath);
+            if(file.isFile() && file.exists())//判断文件是否存在
+            {
+                InputStreamReader read = new InputStreamReader(new FileInputStream(file),encoding);//考虑到编码格式
+                BufferedReader bufferedReader = new BufferedReader(read);
+                String lineTxt = null;
+
+                while((lineTxt = bufferedReader.readLine()) != null)
+                {
+                    //LogUtil.i(lineTxt);
+                    sb.append(lineTxt);
+                }
+                read.close();
+                return sb.toString();
+            }
+            else
+            {
+                LogUtil.i("找不到指定的文件");
+            }
+        }
+        catch (Exception e)
+        {
+            LogUtil.i("读取文件内容出错");
+            e.printStackTrace();
+        }
+
+        return null;
     }
 
     private String genResultFilePath()
@@ -176,7 +236,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         LogUtil.i("picturePath is " + picturePaht);
         LogUtil.i("name is " + name);
         String fullpath = name + ".txt";
-        LogUtil.i("fullpath is " + fullpath);
+        LogUtil.i("full_path is " + fullpath);
 
         return fullpath;
     }
@@ -330,6 +390,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         switch(view.getId())
         {
             case R.id.iv_back:
+                this.finish();
                 break;
 
             case R.id.tv_save:
@@ -345,6 +406,10 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 break;
 
             case R.id.iv_copy:
+                ClipboardManager myClipboard;
+                myClipboard = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                myClipboard.setText(etResult.getText().toString());
+                Toast.makeText(RecResultActivity.this, "已经复制到粘贴板", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.iv_del:
@@ -352,6 +417,9 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 break;
 
             case R.id.iv_exact:
+                Intent exactIntent = new Intent(this, ExactActivity.class);
+                startActivity(exactIntent);
+                this.finish();
                 break;
         }
     }

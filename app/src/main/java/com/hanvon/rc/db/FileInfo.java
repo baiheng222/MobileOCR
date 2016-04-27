@@ -74,6 +74,12 @@ public class FileInfo implements Serializable
         this.resultSize = resultSize;
     }
 
+    public String toSting()
+    {
+        return "user_id: " + userID + " origin_path: " + originPath + " ret_path: " + resultPath +
+            " ret_type: " + resultType + " ret_id: " + resultFUID + " ret_size: " + resultSize;
+    }
+
 
 
 }
