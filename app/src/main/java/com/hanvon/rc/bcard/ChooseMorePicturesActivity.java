@@ -535,7 +535,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
             }
 
 			//if(!path.contains("universcan/MyGallery/"))
-            if(path.contains(CameraActivity.FILE_SAVE_PATH + CameraActivity.FILE_SAVE_DIR_NAME))
+            //if(path.contains(CameraActivity.FILE_SAVE_PATH + CameraActivity.FILE_SAVE_DIR_NAME))
 			{
 				if (!countMap.containsKey(dir_id))
 				{

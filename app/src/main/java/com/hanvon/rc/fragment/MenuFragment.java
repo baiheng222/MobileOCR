@@ -66,7 +66,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             e.printStackTrace();
         }
 
-
+        mRlFile.setOnClickListener(this);
         mRlOrders.setOnClickListener(this);
         return view;
     }
@@ -101,8 +101,14 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 }
                 */
                 break;
+
+            case R.id.rl_file:
+
+                break;
         }
     }
+
+
 
     public void ShowUserInfo(){
         String email = "",phone = "",hvnname = "",figureurl = "",username = "";

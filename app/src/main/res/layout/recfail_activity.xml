@@ -45,13 +45,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:src="@mipmap/camera_shutter_on"
+                android:src="@mipmap/warning"
                 />
             <TextView
                 android:layout_marginTop="30dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="check network please"
+                android:text="@string/str_check_network"
                 android:gravity="center_vertical"/>
 
             <Button
@@ -60,7 +60,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Continue"/>
+                android:background="@mipmap/continue_btn"
+                />
 
             <Button
                 android:id="@+id/btn_retake_pic"
@@ -68,7 +69,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:text="Redo"/>
+                android:background="@mipmap/recapture_btn"/>
 
 
 

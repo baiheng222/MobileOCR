@@ -1,6 +1,7 @@
 package com.hanvon.rc.md.camera.activity;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
@@ -39,10 +40,12 @@ public class RecFailActivity extends Activity implements View.OnClickListener
         switch (view.getId())
         {
             case R.id.btn_continue:
-
+                RecFailActivity.this.finish();
                 break;
             case R.id.btn_retake_pic:
-                    RecFailActivity.this.finish();
+                Intent intent = new Intent(RecFailActivity.this, CameraActivity.class);
+                startActivity(intent);
+                RecFailActivity.this.finish();
                 break;
         }
     }

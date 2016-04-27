@@ -8,7 +8,7 @@
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentTop="true"
-        android:background="@color/wboard_folder_manage_color">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/iv_back"
@@ -27,7 +27,7 @@
             android:layout_centerHorizontal="true"
             android:text="@string/title_new_reco_result"
             android:gravity="center_vertical"
-            android:textColor="@color/white"/>
+            android:textColor="#4d4d4d"/>
 
         <TextView
             android:id="@+id/tv_save"
@@ -38,9 +38,18 @@
             android:layout_alignParentRight="true"
             android:text="@string/title_save_ret"
             android:gravity="center_vertical"
-            android:textColor="@color/white"/>
+            android:textColor="#4d4d4d"/>
 
     </RelativeLayout>
+
+    <TextView
+        android:id="@+id/sepa0"
+        android:layout_below="@id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e2e2e2"/>
+
+
 
     <LinearLayout
         android:id="@+id/ll_bottom"
@@ -48,7 +57,7 @@
         android:layout_height="48dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:background="@color/wboard_folder_manage_color">
+        android:background="@color/white">
 
         <ImageView
             android:id="@+id/iv_share"
@@ -99,10 +108,20 @@
 
     <EditText
         android:id="@+id/et_result"
-        android:layout_below="@id/rl_title"
+        android:layout_below="@id/sepa0"
         android:layout_above="@id/ll_bottom"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@null"/>
+
+
+    <TextView
+        android:id="@+id/sepa1"
+        android:layout_below="@id/et_result"
+        android:layout_above="@id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e2e2e2"/>
+
 
 </RelativeLayout>

@@ -2,6 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
+
     <RelativeLayout
         android:id="@+id/rl_title"
         android:layout_width="match_parent"
@@ -24,7 +25,7 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:text="@string/title_exact"
+            android:text="文件"
             android:gravity="center_vertical"
             android:textColor="@color/white"/>
 
@@ -42,40 +43,12 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <ListView
+        android:id="@+id/lv_file"
+        android:layout_below="@id/rl_title"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/rl_title">
+        android:layout_height="match_parent">
 
-        <ImageView
-            android:id="@+id/iv_tips"
-            android:layout_marginTop="50dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:src="@mipmap/exacttips"/>
-
-        <TextView
-            android:id="@+id/tv_content"
-            android:paddingLeft="15dp"
-            android:paddingRight="10dp"
-            android:layout_below="@id/iv_tips"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="@string/exact_tips"/>
-
-        <TextView
-            android:layout_below="@id/tv_content"
-            android:layout_width="match_parent"
-            android:layout_marginTop="50dp"
-            android:layout_height="wrap_content"
-            android:paddingLeft="15dp"
-            android:paddingRight="10dp"
-            android:autoLink="web"
-            android:textColorLink="@color/green"
-            android:text="@string/auto_link_text"/>
-
-    </RelativeLayout>
-
+    </ListView>
 
 </RelativeLayout>

@@ -25,7 +25,7 @@
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/wboard_folder_manage_color"
+        android:background="#2b2632"
         android:layout_alignParentTop="true">
 
         <ImageView
@@ -53,7 +53,7 @@
         android:layout_alignParentBottom="true"
         android:layout_width="match_parent"
         android:layout_height="100dp"
-        android:background="@color/antiquewhite">
+        android:background="#2b2632">
 
         <RelativeLayout
             android:id="@+id/hanvon_camera_usermode"
@@ -107,6 +107,7 @@
             android:layout_centerVertical="true"
             android:gravity="center_vertical|center_horizontal"
             android:text="@string/bc_str_cancle"
+            android:textColor="#4f9b5a"
             />
 
     </RelativeLayout>

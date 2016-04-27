@@ -129,4 +129,8 @@
     <string name="str_input_hint">请在此输入</string>
     <string name="capture_single">单拍</string>
     <string name="capture_multi">连拍</string>
+    <string name="str_check_network">请检查网络</string>
+    <string name="str_dlg_tip">提示</string>
+    <string name="ret_str_save"></string>
+    <string name="rec_ret_save">是否保存文件？</string>
 </resources>

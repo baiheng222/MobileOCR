@@ -3,6 +3,7 @@ package com.hanvon.rc.md.camera.activity;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.hardware.Camera;
 //import android.hardware.camera2.CameraManager;
@@ -26,11 +27,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
 import com.hanvon.rc.md.camera.CameraManager;
 import com.hanvon.rc.md.camera.PreviewDataManager;
 import com.hanvon.rc.md.camera.draw.DrawManager;
 import com.hanvon.rc.presentation.CropActivity;
+import com.hanvon.rc.utils.CustomDialog;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.md.camera.DensityUtil;
 import com.hanvon.rc.md.camera.activity.ModeCtrl.UserMode;
@@ -305,10 +308,37 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         }
     }
 
+
+    public void showNoRightOpenCamera()
+    {
+        new CustomDialog.Builder(CameraActivity.this)
+                .setTitle("摄像头打开失败")
+                .setMessage("请在设置选项中开启摄像头权限")
+                .setPositiveButton(R.string.bc_str_confirm,
+                        new DialogInterface.OnClickListener()
+                        {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                LogUtil.i("!!!!! kill process");
+                                Intent sysIntent = new Intent(CameraActivity.this, MainActivity.class);
+                                sysIntent.putExtra("key", "value");
+                                //sysIntent.putExtra("exitProgram", "exitProgram");
+                                Bundle bundle = new Bundle();
+                                //bundle.putString("key", "value");
+                                sysIntent.putExtra("msg", bundle);
+                                startActivity(sysIntent);
+                                CameraActivity.this.finish();
+                                //android.os.Process.killProcess(android.os.Process.myPid());
+                                //System.exit(0);
+                            }
+                        }).show();
+    }
+
     @Override
     public void surfaceCreated(SurfaceHolder holder)
     {
-        // TODO Auto-generated method stub
+        boolean isCameraOnped = false;
         Log.i(TAG, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$surfaceCreated");
         if (holder == null)
         {
@@ -321,7 +351,15 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             {
                 if (null != mCameraManager)
                 {
-                    mCameraManager.initCamera(0, holder);
+                    try
+                    {
+                        isCameraOnped = mCameraManager.initCamera(0, holder);
+                    }
+                    catch (RuntimeException e)
+                    {
+                        LogUtil.i("!!!! open camera error !!!!!");
+                        showNoRightOpenCamera();
+                    }
                 }
 
                 if (mCameraManager.isOpenSuccess())

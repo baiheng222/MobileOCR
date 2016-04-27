@@ -13,9 +13,11 @@ import android.widget.FrameLayout;
 
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.db.DBManager;
 import com.hanvon.rc.fragment.MainFragment;
 import com.hanvon.rc.md.camera.activity.CameraActivity;
 import com.hanvon.rc.md.camera.activity.ExactActivity;
+import com.hanvon.rc.utils.LogUtil;
 
 /**
  * Created by fanjianmin on 16-3-15.
@@ -23,6 +25,8 @@ import com.hanvon.rc.md.camera.activity.ExactActivity;
 public class MainActivity extends Activity
 {
     private final String TAG = "MainActivity";
+
+    public static DBManager dbManager;
 
     private FrameLayout mFrameLayout;
     private DrawerLayout mDrawerLayout;
@@ -37,8 +41,36 @@ public class MainActivity extends Activity
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
+        LogUtil.i("on Create called");
+
+        dbManager = new DBManager(this);
+
         initView();
         loadLatest();
+
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        LogUtil.i("onResume called !!!!!!1");
+        //String valueStr = this.getIntent().getStringExtra("key");
+        Bundle bundle = this.getIntent().getBundleExtra("msg");
+        String value = null;
+        if (null != bundle)
+        {
+            LogUtil.i("get bundle");
+            value = bundle.getString("key");
+            LogUtil.i("value is " + value);
+        }
+        //LogUtil.i("valueStr is " + valueStr);
+        if (null != value)
+        {
+
+                LogUtil.i(" !!!!!!exit program");
+                finish();
+        }
 
     }
 
@@ -89,5 +121,11 @@ public class MainActivity extends Activity
     {
         Intent intet = new Intent(MainActivity.this, ExactActivity.class);
         startActivity(intet);
+    }
+
+    public void exitProgram()
+    {
+        android.os.Process.killProcess(android.os.Process.myPid());
+        System.exit(0);
     }
 }

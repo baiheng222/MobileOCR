@@ -6,8 +6,8 @@ package com.hanvon.rc.utils;
  * @Time: 2016/3/25 0025.
  */
 public class InfoMsg {
-    //public static final String HanvonUrl = "http://cloud.hwyun.com/aic-cloud/rt/ws/v1";
-    public static final String HanvonUrl = "http://rc.hwyun.com:9090/aic-cloud/rt/ws/v1";
+    public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
+    //public static final String HanvonUrl = "http://rc.hwyun.com:9090/aic-cloud/rt/ws/v1";
     public static final String UrlRapidRecog = HanvonUrl + "/file/web/rapid/recog";
     public static final String UrlFileRecog = HanvonUrl+"/file/quick/recog";
     public static final String UrlFileList = HanvonUrl+"/file/list";

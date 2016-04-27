@@ -8,7 +8,7 @@
     	<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:background="@color/wboard_folder_manage_color">
+			android:background="#2b2632">
 
 			<ImageView
 				android:id="@+id/iv_back"
@@ -46,7 +46,7 @@
             android:layout_height="48dp"
 			android:layout_marginBottom="0dp"
 			android:layout_alignParentBottom="true"
-			android:background="@color/wboard_folder_manage_color">
+			android:background="#2b2632">
             <Button 
 		         android:id="@+id/pt_crop_recapture"
 			     android:layout_width="wrap_content"

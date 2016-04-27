@@ -117,6 +117,7 @@
     <string name="ret_str_copy">Copy</string>
     <string name="ret_str_exact">Exact</string>
     <string name="ret_str_del">Delete</string>
+    <string name="rec_ret_save">Save</string>
 
     <string name="dlg_str_ok">OK</string>
     <string name="dlg_str_cancel">Cancel</string>
@@ -133,5 +134,8 @@
     <string name="capture_multi">Multi</string>
     <string name="link_mess">生成连接中，请等待...</string>
     <string name="share_from_hanvon">来自汉王识文的分享</string>
-    <string name="exact_tips">功能正在实现中，敬请期待</string>
+    <string name="exact_tips">精准人工识别：通过后台专业的数据加工流水线，让识别结果更加精准，满足专业人员的工作需求。内测阶段，敬请期待。</string>
+    <string name="auto_link_text">网页版已进行公测，体验网址：http://rc.hanvon.com</string>
+    <string name="str_check_network">Please check network</string>
+    <string name="str_dlg_tip">Tip</string>
 </resources>

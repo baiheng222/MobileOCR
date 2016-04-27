@@ -442,6 +442,7 @@ public class CropActivity extends Activity
 					Log.i(TAG, obj.toString());
 					//processResult(obj.toString());
 					String content = obj.toString();
+					LogUtil.i("content is " + content);
 					JSONObject jobj = null;
 					try
 					{
@@ -451,10 +452,12 @@ public class CropActivity extends Activity
 							if ("0".equals(jobj.getString("code")))
 							{
 								byte [] ret = Base64Utils.decode(jobj.getString("result"));
-								String result = new String(ret, "GB2312");
+								String result = new String(ret, "UTF-8");
 								//String result = jobj.getString("result");
-								Log.i(TAG, " !!!! result is " + result);
+								LogUtil.i(" !!!! result is " + result);
 								String offset = jobj.getString("offset");
+								//String fuid = jobj.getString("fuid");
+								//LogUtil.i("fuid is " + fuid + "; offset is " + offset);
 
 								startResultActivity(result);
 							}
@@ -524,6 +527,7 @@ public class CropActivity extends Activity
 		Intent retIntent = new Intent(CropActivity.this,RecResultActivity.class);
 		Bundle bundle = new Bundle();
 		bundle.putString("textResult", result);
+		bundle.putString("path", path);
 		retIntent.putExtras(bundle);
 		CropActivity.this.startActivity(retIntent);
 		CropActivity.this.finish();

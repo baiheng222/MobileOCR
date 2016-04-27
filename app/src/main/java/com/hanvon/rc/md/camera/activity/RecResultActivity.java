@@ -11,6 +11,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -23,9 +24,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.MainActivity;
+import com.hanvon.rc.db.FileInfo;
 import com.hanvon.rc.utils.CustomDialog;
 import com.hanvon.rc.utils.HvnCloudManager;
+import com.hanvon.rc.utils.LogUtil;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -73,6 +78,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private String  strLinkPath = null;
     private Bitmap bitmapLaunch;
     private Boolean bShareClick = false;
+    private String picturePaht = null;
 
     private final static int UPLLOAD_FILE_CLOUD_SUCCESS = 5;
     private final static int UPLLOAD_FILE_CLOUD_FAIL = 6;
@@ -155,24 +161,118 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         {
             Bundle bundle = intent.getExtras();
             recResult = bundle.getString("textResult");
+            picturePaht = bundle.getString("path");
             if (null != recResult)
             {
-                Log.d(TAG, "recResult is " + recResult);
+                LogUtil.i("recResult is " + recResult);
+                LogUtil.i("picture path is " + picturePaht);
             }
         }
     }
 
+    private String genResultFilePath()
+    {
+        String name = picturePaht.substring(0, picturePaht.indexOf("."));
+        LogUtil.i("picturePath is " + picturePaht);
+        LogUtil.i("name is " + name);
+        String fullpath = name + ".txt";
+        LogUtil.i("fullpath is " + fullpath);
+
+        return fullpath;
+    }
+
+    private int saveFile(String str, String filePath)
+    {
+        int fileSize = 0;
+        //String filePath = null;
+        /*
+        boolean hasSDCard = Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED);
+        if (hasSDCard)
+        {
+            filePath = Environment.getExternalStorageDirectory().toString() + File.separator + "hello.txt";
+        }
+        else
+        {
+            filePath = Environment.getDownloadCacheDirectory().toString() + File.separator + "hello.txt";
+        }
+        */
+
+        try
+        {
+            File file = new File(filePath);
+            if (!file.exists())
+            {
+                File dir = new File(file.getParent());
+                dir.mkdirs();
+                file.createNewFile();
+            }
+            FileOutputStream outStream = new FileOutputStream(file);
+            outStream.write(str.getBytes());
+            outStream.close();
+            fileSize = (int)file.length();
+            return fileSize;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+
+        return fileSize;
+    }
+
+
+
+    private void saveRetTofile()
+    {
+        String filepath = genResultFilePath();
+        int size = saveFile(etResult.getText().toString(), filepath);
+
+        FileInfo finfo = new FileInfo();
+        finfo.setOriginPath(picturePaht);
+        finfo.setResultPath(filepath);
+        finfo.setResultSize(size);
+        finfo.setResultType("txt");
+        finfo.setResultFUID("empty");
+        finfo.setUserID("emtpy");
+        MainActivity.dbManager.insertRecord(finfo);
+    }
 
     private void showSave()
     {
-        showDlg("Save file?");
+        new CustomDialog.Builder(RecResultActivity.this)
+                .setTitle(R.string.str_dlg_tip)
+                .setMessage(R.string.rec_ret_save)
+                .setNegativeButton(R.string.bc_str_cancle,
+                        new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(
+                                    DialogInterface dialog,
+                                    int which) {
+
+                            }
+                        })
+                .setPositiveButton(R.string.bc_str_confirm,
+                        new DialogInterface.OnClickListener()
+                        {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which)
+                            {
+                                overridePendingTransition(R.anim.act_delete_enter_anim,
+                                        R.anim.act_delete_exit_anim);
+                                saveRetTofile();
+                                RecResultActivity.this.finish();
+                            }
+                        }).show();
+
 
     }
 
     private void showDel()
     {
         new CustomDialog.Builder(RecResultActivity.this)
-                .setTitle("")
+                .setTitle(R.string.str_dlg_tip)
                 .setMessage(R.string.rec_ret_del)
                 .setNegativeButton(R.string.bc_str_cancle,
                         new DialogInterface.OnClickListener() {
