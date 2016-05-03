@@ -138,4 +138,29 @@
     <string name="auto_link_text">网页版已进行公测，体验网址：http://rc.hanvon.com</string>
     <string name="str_check_network">Please check network</string>
     <string name="str_dlg_tip">Tip</string>
+
+    <string name="setting_clear_buffer">Clear buffers</string>
+    <string name="setting_item_inputmethod">Inputmethod Setting</string>
+    <string name="setting_item_upgrade">Auto Upgrade</string>
+    <string name="setting_item_clear_buffer">Clear Buffers</string>
+    <string name="setting_item_help_manual">Help Manual</string>
+    <string name="setting_item_feedback">Feedback</string>
+    <string name="setting_item_about">About us</string>
+    <string name="title_about">About us</string>
+    <string name="about_advertise">速录笔,有你的日子,学习生活更简单,更轻松,更便捷！</string>
+    <string name="title_feedback">意见反馈</string>
+    <string name="title_help">帮助手册</string>
+    <string name="title_aboutUs">关于我们</string>
+    <string name="feedback_thanks">Thanks</string>
+    <string name="feedback_tip_question">Questions</string>
+    <string name="feedback_tip_email">Email</string>
+    <string name="feedback_tip_inputs_question">Your question</string>
+    <string name="feedback_tip_inputs_email">For replay</string>
+    <string name="feedback_commit">Commit</string>
+    <string name="feedback_content_null">No content</string>
+    <string name="feedback_mail_null">请填写您的邮箱</string>
+    <string name="feedback_mail_addr_err">Mail addr error</string>
+    <string name="feedback_progress">Sending...</string>
+    <string name="feedback_error">Network error</string>
+    <string name="feedback_upload_done">Commit success</string>
 </resources>

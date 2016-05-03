@@ -16,6 +16,8 @@ import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.activity.FileListActivity;
+import com.hanvon.rc.activity.MainActivity;
+import com.hanvon.rc.activity.SettingActivity;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.rc.login.ShowUserMessage;
@@ -69,6 +71,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
 
         mRlFile.setOnClickListener(this);
         mRlOrders.setOnClickListener(this);
+        mRlSettings.setOnClickListener(this);
         return view;
     }
 
@@ -107,6 +110,13 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 Intent listIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
                 this.startActivity(listIntent);
                 break;
+
+            case R.id.rl_settings:
+                Intent settingIntent = new Intent(MenuFragment.this.getActivity(), SettingActivity.class);
+                startActivity(settingIntent);
+                MainActivity act = (MainActivity)getActivity();
+                act.closeMenu();
+            break;
         }
     }
 

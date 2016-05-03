@@ -70,7 +70,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     private boolean isSurfaceCreated;
     private boolean isTakingPicture;
-
+    private boolean isCameraFlashOpen;
 
     private ModeCtrl modeCtrl;
 
@@ -122,6 +122,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mContext = this;
         isSurfaceCreated = false;
         isTakingPicture = false;
+        isCameraFlashOpen = false;
 
         cameraActivity = this;
         modeCtrl = new ModeCtrl();
@@ -135,6 +136,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     {
         drawManager = (DrawManager) findViewById(R.id.draw_manager);
         mLight = (ImageView) findViewById(R.id.iv_light);
+        mLight.setOnClickListener(this);
         mGallery = (ImageView) findViewById(R.id.iv_gallery);
         mGallery.setOnClickListener(this);
         mCapture = (ImageView) findViewById(R.id.iv_capture);
@@ -366,6 +368,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 {
                     mCameraManager.setTouchView(50, 100);
                     mCameraManager.setFocusModeAutoCycle(1750);
+                    setFlashAuto(); //fjm add
                     /*
                     switch (ModeCtrl.getUserMode())
                     {
@@ -473,9 +476,60 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 startActivity(sysIntent);
                 //startActivityForResult(sysIntent, REQ_SYS_PICTURE);
                 break;
+            case R.id.iv_light:
+                setFlashState();
+            break;
         }
     }
 
+    private void turnOffFlash()
+    {
+        if (mCameraManager != null)
+        {
+            //mCameraManager.setFlashOff();
+            Camera.Parameters param = mCameraManager.getCameraParameters();
+            mCameraManager.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+            //param.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+        }
+        mLight.setImageResource(R.mipmap.camera_flash_off);
+    }
+
+    private void turnOnFlash()
+    {
+        if (mCameraManager != null)
+        {
+            Camera.Parameters param = mCameraManager.getCameraParameters();
+            //param.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            mCameraManager.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+        }
+        mLight.setImageResource(R.mipmap.camera_flash_on);
+    }
+
+    private void setFlashAuto()
+    {
+        if (mCameraManager != null)
+        {
+            Camera.Parameters param = mCameraManager.getCameraParameters();
+            //param.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+            mCameraManager.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+        }
+        mLight.setImageResource(R.mipmap.camera_flash_on);
+    }
+
+    private void setFlashState()
+    {
+        if (isCameraFlashOpen)
+        {
+            turnOffFlash();
+            isCameraFlashOpen = false;
+
+        }
+        else
+        {
+            turnOnFlash();
+            isCameraFlashOpen = true;
+        }
+    }
 
     public void requestTakePicture()
     {

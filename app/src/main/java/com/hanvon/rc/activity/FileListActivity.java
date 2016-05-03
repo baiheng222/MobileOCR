@@ -38,6 +38,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
 
         rlTitle = (RelativeLayout) findViewById(R.id.rl_title);
         ivBack = (ImageView) findViewById(R.id.iv_back);
+        ivBack.setOnClickListener(this);
         tvTitle = (TextView) findViewById(R.id.tv_title);
         lvFile = (ListView) findViewById(R.id.lv_file);
 

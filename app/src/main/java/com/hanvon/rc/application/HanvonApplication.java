@@ -1,13 +1,13 @@
 package com.hanvon.rc.application;
 
 import android.app.ActivityManager;
-import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -19,6 +19,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.hanvon.rc.R;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.wboard.Constants;
 import com.hanvon.userinfo.UserInfoMessage;
@@ -31,6 +32,10 @@ import com.tencent.mm.sdk.openapi.IWXAPI;
 import com.tencent.mm.sdk.openapi.WXAPIFactory;
 import com.tencent.tauth.Tencent;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import cn.sharesdk.framework.ShareSDK;
@@ -76,6 +81,9 @@ public class HanvonApplication extends FrontiaApplication {
     public static Tencent mTencent = null;
     private String QQ_APPID = "1105311110";
     public static IWXAPI api;
+    public static String CurrentOid = "";
+    public static boolean isAccurateRecg = false;
+    public static String path;
 
     private static final String TAG = "HanvonApplication";
 
@@ -109,6 +117,12 @@ public class HanvonApplication extends FrontiaApplication {
                 break;
             }
         }
+
+        /*
+        saveBitmapFile(BitmapFactory.decodeResource(getResources(), R.mipmap.txt),0);
+        saveBitmapFile(BitmapFactory.decodeResource(getResources(), R.mipmap.pdf),1);
+        saveBitmapFile(BitmapFactory.decodeResource(getResources(), R.mipmap.doc),2);
+        */
         //获取软件版本
         PackageManager packageManager = this.getApplicationContext().getPackageManager();
         PackageInfo packInfo = null;
@@ -357,6 +371,39 @@ public class HanvonApplication extends FrontiaApplication {
 
         Log.i(TAG, "!!!!!!!!!!!!!!!! devid5 " + AppDeviceId);
 
+    }
+
+    public static String docPath = "";
+    public static String txtPath = "";
+    public static String pdfPath = "";
+    public void saveBitmapFile(Bitmap bitmap,int type){
+        File dir = new File(getApplicationContext().getFilesDir().getAbsolutePath()+"/drawable");
+
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+
+        File file = null;
+        if(type == 0) {
+            file = new File(dir + "/txt.jpg");//将要保存图片的路径  头像文件
+            txtPath = dir + "/txt.jpg";
+        }
+        if(type == 1){
+            file = new File(dir + "/pdf.jpg");//将要保存图片的路径  头像文件
+            pdfPath = dir + "/pdf.jpg";
+        }
+        if(type == 2){
+            file = new File(dir + "/doc.jpg");//将要保存图片的路径  头像文件
+            docPath = dir + "/doc.jpg";
+        }
+        try {
+            BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, bos);
+            bos.flush();
+            bos.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
