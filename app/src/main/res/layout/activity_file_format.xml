@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#f6f6f6">
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="#2b2632">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/back"/>
+
+        <TextView
+            android:id="@+id/tv_title"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="文件"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"/>
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/tv_file_name_tip"
+        android:layout_below="@id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingLeft="10dp"
+        android:gravity="center_vertical"
+        android:text="@string/tip_filename"/>
+
+    <TextView
+        android:id="@+id/tv_2"
+        android:layout_below="@id/tv_file_name_tip"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e1e1e1"/>
+
+    <EditText
+        android:id="@+id/et_input"
+        android:layout_below="@id/tv_2"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingLeft="10dp"
+        android:hint="@string/tip_filename"
+        android:background="@null"/>
+
+    <TextView
+        android:id="@+id/tv_3"
+        android:layout_below="@id/et_input"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e1e1e1"/>
+
+    <TextView
+        android:id="@+id/tv_file_format_tip"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/tv_3"
+        android:text="@string/tip_file_format"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"/>
+    <TextView
+        android:id="@+id/tv_4"
+        android:layout_below="@id/tv_file_format_tip"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e1e1e1"/>
+
+    <ListView
+        android:id="@+id/lv_format"
+        android:layout_below="@id/tv_4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </ListView>
+
+
+
+
+</RelativeLayout>

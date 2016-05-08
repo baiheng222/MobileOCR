@@ -133,4 +133,6 @@
     <string name="str_dlg_tip">提示</string>
     <string name="ret_str_save"></string>
     <string name="rec_ret_save">是否保存文件？</string>
+    <string name="tip_filename">文件名</string>
+    <string name="tip_file_format">选择文件格式</string>
 </resources>

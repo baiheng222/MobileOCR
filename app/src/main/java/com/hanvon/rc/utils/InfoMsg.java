@@ -56,4 +56,9 @@ public class InfoMsg {
     public static final String RECO_ERR_UNKNOWN = "unknow";
     public static final String RECO_ERR_SERVER = "520";
     public static final String RECO_ERR_CHECKSUM = "524";
+
+    public static final int RESULT_TYPE_QUICK_RECO = 0x24;
+    public static final int RESULT_TYPE_EXACT_RECO = 0x25;
+    public static final int RECO_MODE_QUICK_RECO = 0x26;
+    public static final int RECO_MODE_EXACT_RECO = 0x27;
 }

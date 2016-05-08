@@ -69,6 +69,7 @@
         <activity android:name=".activity.AboutActivity" ></activity>
         <activity android:name=".activity.FeedBackActivity" ></activity>
         <activity android:name=".activity.HelpActivity" ></activity>
+        <activity android:name=".activity.ChooseFileFormatActivity" ></activity>
 
         <activity android:name=".login.RegisterUserFromEmail" ></activity>
         <activity android:name=".login.RegisterUserFromPhone" ></activity>

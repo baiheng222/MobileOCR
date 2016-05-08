@@ -163,4 +163,6 @@
     <string name="feedback_progress">Sending...</string>
     <string name="feedback_error">Network error</string>
     <string name="feedback_upload_done">Commit success</string>
+    <string name="tip_filename">File Name</string>
+    <string name="tip_file_format">File format</string>
 </resources>

@@ -252,7 +252,8 @@ public class CropActivity extends Activity
 				*/
 
 				mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
-				RecoThread recoThread = new RecoThread(f.getName(), f.getAbsolutePath());
+				String oriName = path.substring(path.lastIndexOf("/")+1, path.length());
+				RecoThread recoThread = new RecoThread(oriName, f.getAbsolutePath());
 				new Thread(recoThread).start();
 
 				break;

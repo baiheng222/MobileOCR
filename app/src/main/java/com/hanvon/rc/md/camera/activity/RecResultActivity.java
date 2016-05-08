@@ -25,10 +25,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.ChooseFileFormatActivity;
 import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.db.FileInfo;
 import com.hanvon.rc.utils.CustomDialog;
 import com.hanvon.rc.utils.HvnCloudManager;
+import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 
 import java.io.BufferedReader;
@@ -73,6 +75,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private final int DLG_RETURN_OK = 2;
     private final int DLG_RETURN_CANCEL = 3;
     private final int DLG_RETURN_INIT = -1;
+
+    private static final int REQUEST_FILE_FORMAT = 4;
 
     private int dlgReturn = DLG_RETURN_INIT;
 
@@ -232,13 +236,19 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 
     private String genResultFilePath()
     {
-        String name = picturePaht.substring(0, picturePaht.indexOf("."));
+        //String name = picturePaht.substring(0, picturePaht.indexOf("."));
         LogUtil.i("picturePath is " + picturePaht);
-        LogUtil.i("name is " + name);
-        String fullpath = name + ".txt";
-        LogUtil.i("full_path is " + fullpath);
+        String fullpath = picturePaht.substring(0, picturePaht.lastIndexOf("/"));
 
         return fullpath;
+    }
+
+    private String genResultFileName()
+    {
+        String name = picturePaht.substring(picturePaht.lastIndexOf("/") + 1, picturePaht.length());
+        String filename = name.substring(0, name.lastIndexOf("."));
+        LogUtil.i("file name without suffix is :" + filename);
+        return filename;
     }
 
     private int saveFile(String str, String filePath)
@@ -280,11 +290,18 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         return fileSize;
     }
 
-
-
-    private void saveRetTofile()
+    private void startChooseFormatActivity()
     {
-        String filepath = genResultFilePath();
+        Intent intent = new Intent(this, ChooseFileFormatActivity.class);
+        intent.putExtra("resultType", InfoMsg.RESULT_TYPE_QUICK_RECO);
+        intent.putExtra("filename", genResultFileName());
+        startActivityForResult(intent, REQUEST_FILE_FORMAT);
+    }
+
+    private void saveRetTofile(String filename)
+    {
+        String filepath = genResultFilePath() + "/" + filename;
+        LogUtil.i("final file path is " + filepath);
         int size = saveFile(etResult.getText().toString(), filepath);
 
         FileInfo finfo = new FileInfo();
@@ -295,6 +312,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         finfo.setResultFUID("empty");
         finfo.setUserID("emtpy");
         MainActivity.dbManager.insertRecord(finfo);
+
+        Toast.makeText(this, "文件已保存", Toast.LENGTH_SHORT).show();
     }
 
     private void showSave()
@@ -321,7 +340,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                             {
                                 overridePendingTransition(R.anim.act_delete_enter_anim,
                                         R.anim.act_delete_exit_anim);
-                                saveRetTofile();
+                                startChooseFormatActivity();
+                                //saveRetTofile();
                                 RecResultActivity.this.finish();
                             }
                         }).show();
@@ -394,7 +414,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 break;
 
             case R.id.tv_save:
-                showSave();
+                startChooseFormatActivity();
+                //showSave();
                 break;
 
             case R.id.iv_share:
@@ -558,5 +579,21 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         }.start();
     }
     */
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        LogUtil.i("onActivityResult");
+        if (requestCode == REQUEST_FILE_FORMAT)
+        {
+            if (resultCode == RESULT_OK)
+            {
+                String filename = data.getStringExtra("filename");
+                String suffix = data.getStringExtra("suffix");
+                LogUtil.i("get file name is " + filename);
+                saveRetTofile(filename + "." + suffix);
+            }
+        }
+    }
 
 }

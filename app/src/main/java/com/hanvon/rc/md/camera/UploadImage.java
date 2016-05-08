@@ -57,7 +57,7 @@ public class UploadImage
 {
     private static final String TAG = "UploadImage";
 
-    private final static int BUF_SIZE = 32768;
+    private final static int BUF_SIZE = 327680;
     private static int offset = 0;  //上传上传的文件长度
     private static boolean isPause;
     private static boolean isDownPause;
@@ -84,8 +84,8 @@ public class UploadImage
             FileInputStream fis = new FileInputStream(file);
             int length = fis.available();
 
-            Log.d(TAG, "!!!!! filename is " + filename);
-            Log.i(TAG,"offset:"+offset);
+            LogUtil.i("!!!!! filename is " + filename);
+            LogUtil.i("offset:"+offset);
             if(offset != 0)
             {
                 //fis.skip(offset);
@@ -120,12 +120,12 @@ public class UploadImage
 
                 if (readBytes < 0)
                 {
-                    Log.d(TAG, "!!!!! readBytes < 0");
+                    LogUtil.i("!!!!! readBytes < 0");
                     break;
                 }
 
 
-                Log.i(TAG,"readBytes:"+readBytes);
+                LogUtil.i("readBytes:"+readBytes);
                 //parmas = GetMapFromType(buffer, filename, offset, length, type, readBytes);
                 parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, type, readBytes);
                 result = dopost(parmas, type, buffer);
@@ -139,7 +139,7 @@ public class UploadImage
 
         if (result == null)
         {
-            Log.d(TAG, "!!! result is null, error return");
+            LogUtil.i("!!! result is null, error return");
             return result;
         }
 
@@ -148,7 +148,7 @@ public class UploadImage
 
         if (null != fid)
         {
-            Log.d(TAG, "!!!! final fid is " + fid);
+            LogUtil.i("!!!! final fid is " + fid);
         }
 
         return fid;
@@ -237,11 +237,11 @@ public class UploadImage
                 obj = new JSONObject(content);
                 if ("0".equals(obj.getString("code")))
                 {
-                    Log.d(TAG, "!!!!!!! get success result");
+                    LogUtil.i("!!!!!!! get success result");
 
                     fid = obj.getString("fid");
                     String offset = obj.getString("offset");
-                    Log.d(TAG, "fid is " + fid + ", offset is " + offset);
+                    LogUtil.i("fid is " + fid + ", offset is " + offset);
 
 					/* //fjm add
 					String result = obj.getString("textResult");
@@ -260,17 +260,17 @@ public class UploadImage
                 }
                 else if (obj.getString("code").equals("520"))
                 {
-                    Log.d(TAG, "!!!!!! server error 520 !!!!!!");
+                    LogUtil.i("!!!!!! server error 520 !!!!!!");
                 }
                 else if (obj.getString("code").equals("524"))
                 {
-                    Log.d(TAG, "!!!!!! checksum error 524 !!!!!!");
+                    LogUtil.i("!!!!!! checksum error 524 !!!!!!");
                 }
                 else
                 {
                     String result = obj.getString("result");
                     //Toast.makeText(getApplicationContext(), "请重试！", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "!!!!!! result is " + result);
+                    LogUtil.i("!!!!!! result is " + result);
                 }
             }
             else
