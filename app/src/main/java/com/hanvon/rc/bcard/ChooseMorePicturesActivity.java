@@ -21,26 +21,23 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
 import com.hanvon.rc.R;
 import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter;
 import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter.onGridItemClickListener;
 import com.hanvon.rc.bcard.bean.BcardChooseGridItem;
-//import com.hanvon.md.camera.activity.ThreadBCardListPathProcess;
-import com.hanvon.rc.md.camera.activity.CameraActivity;
+import com.hanvon.rc.db.FileInfo;
 import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
-
 import com.hanvon.rc.wboard.bean.PhotoItem;
 
-
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//import com.hanvon.md.camera.activity.ThreadBCardListPathProcess;
 
 public class ChooseMorePicturesActivity extends Activity implements OnClickListener
 {
@@ -111,7 +108,6 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			allAlbums.setName("所有");
 			allAlbums.setCount("0");
 		}
-
 		initUI();
 
 		addUIListener();

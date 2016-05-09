@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
-	 <include 
+	<include
         layout="@layout/bc_choose_pic_top"
         android:id="@+id/choose_top"
         android:layout_width="fill_parent"
@@ -20,11 +20,10 @@
         android:gravity="center"
         android:verticalSpacing="4dp"
         android:columnWidth="85dp"
-        android:numColumns="4"
+        android:numColumns="3"
         android:layout_below="@+id/choose_top" 
         android:layout_above="@+id/choose_bottom"
-        android:layout_margin="4dp"
-        >
+        android:layout_margin="4dp">
     </GridView>
 	<include 
         layout="@layout/bc_choose_pic_bottom"

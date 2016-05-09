@@ -60,45 +60,4 @@ public class MyHttpUtils {
             }
         });
     }
-/*
-    public static void HttpDownFile(String Url, JSONObject json, final int type){
-        HttpUtils http = new HttpUtils();
-        RequestParams params = new RequestParams();
-      //  HttpHandler handler = http.download();
-        try {
-            params.setBodyEntity(new StringEntity(json.toString()));
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        HttpHandler handler = http.download(HttpRequest.HttpMethod.POST,Url,"/sdcard/down.txt",params,
-                true, // 如果目标文件存在，接着未完成的部分继续下载。
-                false, // 如果从请求返回信息中获取到文件名，下载完成后自动重命名。
-                new RequestCallBack<File>() {
-
-                    @Override
-                    public void onStart() {
-                    //    resultText.setText("conn...");
-                        LogUtil.i("====onStart====conn...");
-                    }
-
-                    @Override
-                    public void onSuccess(ResponseInfo<File> responseInfo) {
-                        LogUtil.i("====onSuccess===="+responseInfo.result.toString());
-                        LogUtil.i("====onSuccess===="+responseInfo.result.length()+"");
-                        offset = offset+responseInfo.result.length();
-                        long w = offset;
-                        if (responseInfo.result.length() <= 32768){
-                            LogUtil.i("====onSuccess===="+" Go On......"+w);
-                            RequestJson.FileDown(w);
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(HttpException error, String msg) {
-                      //  resultText.setText(error.getExceptionCode() + ":" + msg);
-                        LogUtil.i("====onFailure===="+msg);
-                    }
-                });
-    }
-    */
 }

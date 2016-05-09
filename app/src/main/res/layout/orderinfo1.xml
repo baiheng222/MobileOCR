@@ -7,89 +7,138 @@
 
     <include layout="@layout/orderinfo_head" />
 
-    <LinearLayout
+    <ImageView
+        android:id="@+id/image_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="10dp">
-        <TextView
-            android:id="@+id/orderinfo_des"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/orderinfo_failedtime"
-            android:textSize="15sp"/>
-        <TextView
-            android:id="@+id/orderinfo_waittime"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="48:30:59"
-            android:textSize="15sp"/>
-    </LinearLayout>
+        android:layout_gravity="center" />
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
     <TextView
+        android:id="@+id/orderinfo_status"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginTop="20dip"
-        android:text="@string/orderinfo_preciseOcr"
+        android:padding="10dp"
+        android:text="@string/orderlist_waitpay"
         android:textColor="#999999"
         android:textSize="15sp"/>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:background="#FFFFFF"
-        android:padding="10dip"
-        android:layout_marginTop="10dip"
-        android:orientation="vertical">
         <TextView
-            android:id="@+id/orderinfo_pages"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="16张"
-            android:textSize="12sp"/>
-        <TextView
-            android:id="@+id/orderinfo_bytes"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginRight="20dip"
-            android:gravity="center_vertical"
-            android:text="692000字节"
-            android:textSize="12sp" />
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#F2F2F2"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <TextView
-                android:id="@+id/orderinfo_change"
-                android:layout_width="wrap_content"
+            android:layout_weight="6"
+            android:background="#FFFFFF"
+            android:padding="10dip"
+            android:orientation="vertical">
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="jpg转WORD"
-                android:textSize="12sp"/>
-            <TextView
-                android:id="@+id/orderinfo_price"
-                android:layout_width="fill_parent"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/fileinfo_filename"
+                    android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/orderinfo_filename"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:gravity="right|center_vertical"
-                android:layout_gravity="center_vertical"
-                android:layout_marginRight="20dip"
-                android:text="¥18"
-                android:textSize="12sp" />
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/fileinfo_pagenumber"
+                    android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/orderinfo_page"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/fileinfo_bytesnumber"
+                    android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/orderinfo_bytes"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+            </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text="@string/fileinfo_waittime"
+                    android:textSize="15sp" />
+                <TextView
+                    android:id="@+id/orderinfo_waittime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:text=""
+                    android:textSize="15sp" />
+            </LinearLayout>
         </LinearLayout>
     </LinearLayout>
 
     <TextView
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:background="#F2F2F2"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dip"
-        android:layout_marginTop="10dip"
+        android:padding="10dp"
         android:text="@string/orderinfo_ordermsg"
         android:textColor="#999999"
         android:textSize="15sp"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#F2F2F2"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -107,46 +156,33 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
+                android:text="@string/orderinfo_itemname"
+                android:textSize="15sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/orderinfo_precise"
+                android:textSize="15sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:text="@string/orderinfo_ordernumber"
-                android:textSize="12sp" />
+                android:textSize="15sp" />
             <TextView
                 android:id="@+id/orderinfo_number"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="20160317140253"
-                android:textSize="12sp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/orderinfo_ordertime"
-                android:textSize="12sp" />
-            <TextView
-                android:id="@+id/orderinfo_createtime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="2016-03-17 14:02:53"
-                android:textSize="12sp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/orderinfo_payMode"
-                android:textSize="12sp" />
+                android:text=""
+                android:textSize="15sp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -158,14 +194,14 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/orderinfo_peceiptname"
-                android:textSize="12sp" />
+                android:textSize="15sp" />
             <TextView
-                android:id="@+id/orderinfo_name"
+                android:id="@+id/orderinfo_fullname"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="李小军"
-                android:textSize="12sp" />
+                android:text=""
+                android:textSize="15sp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -176,16 +212,29 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/orderinfo_phonenumber"
-                android:textSize="12sp" />
+                android:text="@string/orderinfo_payMode"
+                android:textSize="15sp" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
             <TextView
-                android:id="@+id/orderinfo_phone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="18500136672"
-                android:textSize="12sp" />
+                android:text="@string/fileinfo_price"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/orderinfo_price"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text=""
+                android:textSize="15sp" />
         </LinearLayout>
+    </LinearLayout>
     </LinearLayout>
 
     <TextView
@@ -201,37 +250,32 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/orderinfo_deletebtn"
-        android:textSize="15sp"/>
+        android:textSize="15sp"
+        android:visibility="gone"/>
     <RelativeLayout
         android:id="@+id/orderinfo_pay"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dip"
-        android:orientation="horizontal">
-            <TextView
-                android:id="@+id/orderinfo_payprice"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:gravity="left|center_vertical"
-                android:layout_marginLeft="10dp"
-                android:text="18元"
-                android:textSize="15sp" />
-        <LinearLayout
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:visibility="gone">
+        <TextView
+            android:id="@+id/orderinfo_evalprice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:layout_centerVertical="true"
+            android:gravity="center"
+            android:text=""
+            android:textColor="@color/red"
+            android:textSize="20sp"/>
+        <ImageView
             android:id="@+id/orderinfo_topay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right|center_vertical"
             android:layout_alignParentRight="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@color/white">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/fileinfo_toPay"
-                android:textSize="15sp"/>
-        </LinearLayout>
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="10dip"
+            android:layout_centerInParent="true"
+            android:background="@mipmap/fileinfo_pay" />
     </RelativeLayout>
 </LinearLayout>

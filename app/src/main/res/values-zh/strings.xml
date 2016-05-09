@@ -14,22 +14,28 @@
 
 
     <string name="fileinfo_filemsg">文件信息</string>
-    <string name="fileinfo_pagenumber">页数</string>
-    <string name="fileinfo_bytesnumber">字节</string>
+    <string name="fileinfo_pagenumber">张数:&#160;&#160;</string>
+    <string name="fileinfo_bytesnumber">字符数:&#160;&#160;</string>
     <string name="fileinfo_transformat">转换格式</string>
-    <string name="fileinfo_waittime">等待时间</string>
+    <string name="fileinfo_waittime">等待时间：&#160;</string>
+    <string name="fileinfo_preciseOcrinfo1">现在下单，识别结果可在&#160;</string>
+    <string name="fileinfo_preciseOcrinfo2">&#160;后查收，我们将以短信和邮件的形式通知您。</string>
+    <string name="fileinfo_price">金额:&#160;&#160;</string>
     <string name="fileinfo_preciseOcr">精准人工识别</string>
     <string name="fileinfo_info">备注</string>
     <string name="fileinfo_toPay">去支付</string>
+    <string name="fileinfo_filename">文件:&#160;&#160;</string>
     <string name="fileinfo_uploadsuc">上传成功</string>
     <string name="fileinfo_feescale">收费标准</string>
     <string name="orderinfo_failedtime">订单失效时间:&#160;&#160;</string>
     <string name="orderinfo_preciseOcr">精准人工OCR识别文件</string>
+    <string name="orderinfo_precise">精准人工识别文件</string>
     <string name="orderinfo_ordermsg">订单详情</string>
-    <string name="orderinfo_ordernumber">订单号码:&#160;&#160;</string>
+    <string name="orderinfo_ordernumber">订单号:&#160;&#160;</string>
+    <string name="orderinfo_itemname">商品:&#160;&#160;</string>
     <string name="orderinfo_ordertime">订单时间:&#160;&#160;</string>
     <string name="orderinfo_payMode">支付方式:&#160;&#160;在线支付</string>
-    <string name="orderinfo_peceiptname">收货姓名:&#160;&#160;</string>
+    <string name="orderinfo_peceiptname">收货人:&#160;&#160;</string>
     <string name="orderinfo_phonenumber">手机号码:&#160;&#160;</string>
     <string name="orderinfo_customerservice">客服</string>
     <string name="orderinfo_Ocring">人工识别中，已用时:&#160;&#160;</string>
@@ -37,13 +43,14 @@
     <string name="orderlist_allorder">全部订单</string>
     <string name="orderlist_waitpay">待付款</string>
     <string name="orderlist_waitdown">待收取</string>
+
     <string name="orderlist_older">订单</string>
     <string name="payinfo_selectpaymode">选择支付方式</string>
-    <string name="payinfo_wxpaymode">微信</string>
+    <string name="payinfo_wxpaymode">微信支付</string>
     <string name="payinfo_Alipaymode">支付宝</string>
     <string name="payinfo_amountpayable">应付金额:&#160;&#160;</string>
     <string name="payinfo_confirmpayment">确认付款</string>
-    <string name="payinfo_pay">支付</string>
+    <string name="payinfo_pay">付款</string>
 
     <!-- 登录注册用到的标题 -->
     <string name="login_user">邮箱/手机</string>
@@ -105,6 +112,10 @@
     <string name="wb_str_done">完成</string>
     <string name="wb_str_rotate">旋转</string>
     <string name="gallery">相册</string>
+    <string name="shared">分享</string>
+    <string name="all">全选</string>
+    <string name="delete">删除</string>
+    <string name="edit">编辑</string>
 
     <string name="title_failrec">识别失败</string>
     <string name="title_save_ret">保存</string>

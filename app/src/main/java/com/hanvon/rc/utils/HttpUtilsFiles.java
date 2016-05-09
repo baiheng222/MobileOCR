@@ -187,7 +187,7 @@ public class HttpUtilsFiles {
     }
 
 
-    public  static void HttpDownFiles(JSONObject params,String urlStr){
+    public  static void HttpDownFiles(JSONObject params,String urlStr,String path,String fid){
         HttpClient httpClient = new DefaultHttpClient();
         HttpResponse response;
         try { // 模拟调用rest API下载文件接口
@@ -213,16 +213,16 @@ public class HttpUtilsFiles {
                     contentDisposition.lastIndexOf("=")+2,  contentDisposition.lastIndexOf("#")-1);
             // 解决中文文件名乱码问题
             attachmentFileName = URLDecoder.decode(attachmentFileName, "UTF-8");
-            String downloadPath = "/sdcard/"+attachmentFileName;
+            String downloadPath = path;
             Log.i("---------",downloadPath+"   size:"+size);
             if (downOffset == 0){
-                File file = new File("/sdcard/"+attachmentFileName);
+                File file = new File(path);
                 if(file.exists()){
                     file.delete();
                 }
             }
             InputStream is = response.getEntity().getContent();
-            RandomAccessFile randomFile = new RandomAccessFile("/sdcard/"+attachmentFileName, "rw");
+            RandomAccessFile randomFile = new RandomAccessFile(path, "rw");
             long fileLength = randomFile.length();
             //将写文件指针移到文件尾。
             randomFile.seek(fileLength);
@@ -245,7 +245,7 @@ public class HttpUtilsFiles {
                 }else{
                     length = Long.valueOf(size) - downOffset;
                 }
-                    FileDown(downOffset,length);
+                FileDown(downOffset,length,path,fid);
             }
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();

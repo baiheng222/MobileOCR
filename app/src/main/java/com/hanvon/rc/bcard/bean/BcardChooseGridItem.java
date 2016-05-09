@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-
 import com.hanvon.rc.R;
 
 public class BcardChooseGridItem extends RelativeLayout
@@ -16,7 +15,7 @@ public class BcardChooseGridItem extends RelativeLayout
 	private boolean mCheck;
 	private ImageView mImageView;
 	private ImageView mSelect;
-	
+
 	public BcardChooseGridItem(Context context) {
 		this(context, null, 0);
 	}
@@ -44,8 +43,7 @@ public class BcardChooseGridItem extends RelativeLayout
 //		mSelect.setImageDrawable(getResources().getDrawable(R.drawable.cb_on));
 		mSelect.setImageResource(mCheck ? R.mipmap.pic_selected : R.mipmap.pic_unselected);
 		
-	}   
-	
+	}
 
 	public boolean getChecked() {
 		return mCheck;

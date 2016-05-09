@@ -45,4 +45,19 @@
         <item name="android:windowIsFloating">true</item>
     </style>
 
+    <style name="zfbRadioButtonStyles">
+        <item name="android:button">@drawable/payselect</item>
+    </style>
+    <style name="wxRadioButtonStyles">
+        <item name="android:button">@drawable/payselect</item>
+    </style>
+
+    <style name="NavPage">
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:gravity">center_horizontal</item>
+        <!-- <item name="android:background">@drawable/nav_page</item> -->
+        <item name="android:background">#FFE1E8EB</item>
+    </style>
 </resources>

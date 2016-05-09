@@ -1,15 +1,13 @@
 package com.hanvon.rc.md.camera;
 
+import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.hanvon.rc.application.HanvonApplication;
-import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.Base64Utils;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
-
 import com.hanvon.rc.utils.SHA1Util;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.http.RequestParams;
@@ -43,12 +41,9 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Date;
-import android.os.Handler;
-
-import static com.hanvon.rc.utils.RequestJson.FileDown;
 
 /**
  * Created by baiheng222 on 16-4-7.
@@ -71,7 +66,7 @@ public class UploadImage
         handler = h;
     }
 
-    public static String UploadFiletoHvn(int type,String path,String filename)
+    public static String UploadFiletoHvn(String recgType,String path,String filename)
     {
         String result = null;
         try
@@ -84,8 +79,10 @@ public class UploadImage
             FileInputStream fis = new FileInputStream(file);
             int length = fis.available();
 
+
             LogUtil.i("!!!!! filename is " + filename);
-            LogUtil.i("offset:"+offset);
+            LogUtil.i("offset:" + offset);
+
             if(offset != 0)
             {
                 //fis.skip(offset);
@@ -127,8 +124,8 @@ public class UploadImage
 
                 LogUtil.i("readBytes:"+readBytes);
                 //parmas = GetMapFromType(buffer, filename, offset, length, type, readBytes);
-                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, type, readBytes);
-                result = dopost(parmas, type, buffer);
+                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes);
+                result = dopost(parmas, buffer);
             }
         }
         catch (IOException e)
@@ -166,7 +163,6 @@ public class UploadImage
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSONObject conditionJson = new JSONObject();
             JSuserInfoJson.put("userid", uid);
             JSuserInfoJson.put("fid", fid);
             JSuserInfoJson.put("resType", restype);
@@ -179,6 +175,22 @@ public class UploadImage
         }
         Log.i(TAG,JSuserInfoJson.toString());
         HttpSend(InfoMsg.UrlRapidRecog, JSuserInfoJson, InfoMsg.FILE_RECOGINE_TYPE);
+    }
+
+    public static void GetEvaluate(String fid)
+    {
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid",HanvonApplication.hvnName);
+            JSuserInfoJson.put("fid", fid);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        Log.i(TAG,JSuserInfoJson.toString());
+        HttpSend(InfoMsg.UrlOrderEvl, JSuserInfoJson, InfoMsg.ORDER_EVL_TYPE);
     }
 
 
@@ -298,7 +310,7 @@ public class UploadImage
 
 
     public static Map<String, String> GetMapFromType(String data,String filename,
-                                                     int offset, int totalLength, int type,int readBytes)
+                                                     int offset, int totalLength, String type,int readBytes)
 
     /*
     public static Map<String, String> GetMapFromType(byte[] data,String filename,
@@ -306,40 +318,40 @@ public class UploadImage
     {
         //封装数据
         Map<String, String> parmas = new HashMap<String, String>();
-        if (type == InfoMsg.FILE_UPLOAD_TYPE)
+        if ("2".equals(type))
         {
-            parmas.put("userid", HanvonApplication.AppDeviceId);
-            parmas.put("recogType", "1");
-            parmas.put("fileType", "1");
-            parmas.put("fid", "");
-            parmas.put("fileName", URLEncoder.encode(filename));
-            parmas.put("fileFormat", "png");
-            parmas.put("fileAmount", "1");
-            parmas.put("size", String.valueOf(totalLength));
-            parmas.put("length", String.valueOf(readBytes));
-            parmas.put("offset", String.valueOf(offset));
-            parmas.put("checksum", SHA1Util.sha(data));
-            parmas.put("iszip", String.valueOf(false));
+            parmas.put("userid", HanvonApplication.hvnName);
+        }
+        else
+        {
+            if ("".equals(HanvonApplication.hvnName))
+            {
+                parmas.put("userid", HanvonApplication.AppDeviceId);
+            }
+            else
+            {
+                parmas.put("userid", HanvonApplication.hvnName);
+            }
+        }
 
-            Log.i(TAG, parmas.toString());
-        }
-        else if(type == InfoMsg.FILE_RECOGINE_TYPE)
-        {
-            parmas.put("resType", "1");
-            parmas.put("platformType", "4");
-            parmas.put("fileName", URLEncoder.encode(filename));
-            parmas.put("fileFormat", "jpg");
-            parmas.put("length", String.valueOf(readBytes));
-            parmas.put("size", String.valueOf(totalLength));
-            parmas.put("offset", String.valueOf(offset));
-            parmas.put("checksum", SHA1Util.sha(data));
-            Log.i(TAG, parmas.toString());
-        }
+        parmas.put("recogType", type);
+        parmas.put("fileType", "1");
+        parmas.put("fid", "");
+        parmas.put("fileName", URLEncoder.encode(filename));
+        parmas.put("fileFormat", "png");
+        parmas.put("fileAmount", "1");
+        parmas.put("size", String.valueOf(totalLength));
+        parmas.put("length", String.valueOf(readBytes));
+        parmas.put("offset", String.valueOf(offset));
+        parmas.put("checksum", SHA1Util.sha(data));
+        parmas.put("iszip", String.valueOf(false));
+
+        Log.i(TAG, parmas.toString());
 
         return parmas;
     }
 
-    private static String  dopost(Map<String, String> parmas,int type,byte[] data)
+    private static String  dopost(Map<String, String> parmas,byte[] data)
     {
         Log.i(TAG, "!!!!dpost!!!!");
         String result = null;
@@ -355,15 +367,7 @@ public class UploadImage
         DefaultHttpClient client = new DefaultHttpClient();//http客户端
         HttpPost httpPost = null;
 
-        if (type == InfoMsg.FILE_UPLOAD_TYPE)
-        {
-            httpPost = new HttpPost(InfoMsg.UrlFileUpload);
-        }
-        else if (type == InfoMsg.FILE_RECOGINE_TYPE)
-        {
-            httpPost = new HttpPost(InfoMsg.UrlFileRecog);
-        }
-
+        httpPost = new HttpPost(InfoMsg.UrlFileUpload);
         if(parmas != null)
         {
             for (Map.Entry<String, String> e : parmas.entrySet())
@@ -488,7 +492,7 @@ public class UploadImage
                 }else{
                     length = Long.valueOf(size) - downOffset;
                 }
-                FileDown(downOffset,length);
+             //   FileDown(downOffset,length);
             }
         } catch (UnsupportedEncodingException e1) {
             e1.printStackTrace();

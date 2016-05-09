@@ -26,5 +26,18 @@
             android:layout_marginTop="6dp"
             android:gravity="center"
             android:background="@mipmap/back"/>
+        <TextView
+            android:id="@+id/payinfo_priceinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dip"
+            android:layout_marginTop="10dip"
+            android:layout_centerInParent="true"
+            android:text="@string/fileinfo_feescale"
+            android:textSize="20sp"
+            android:textColor="#5A9B4F">
+
+        </TextView>
     </RelativeLayout>
 </LinearLayout>

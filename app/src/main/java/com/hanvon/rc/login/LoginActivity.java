@@ -63,7 +63,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     private String strUserName;
     private String strPassWord;
 
-    private ProgressDialog pd;
+    public static ProgressDialog pd;
 
     private ImageView LLQQUser;
     private ImageView LLWXUser;

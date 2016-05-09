@@ -25,6 +25,6 @@
             android:layout_marginLeft="10dip"
             android:layout_marginTop="6dp"
             android:gravity="center"
-            android:background="@mipmap/back"/>
+            android:background="@mipmap/main_left"/>
     </RelativeLayout>
 </LinearLayout>

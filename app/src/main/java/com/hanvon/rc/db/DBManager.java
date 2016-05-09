@@ -22,6 +22,7 @@ public class DBManager
     public static final String KEY_RESULT_FILE_TYPE = DBHelper.KEY_RESULT_FILE_TYPE;
     public static final String KEY_RESULT_FILE_ID = DBHelper.KEY_RESULT_FILE_ID;
     public static final String KEY_RESULT_FILE_SIZE = DBHelper.KEY_RESULT_FILE_SIZE;
+    public static final String KEY_RESULT_FILE_IsDelete = DBHelper.KEY_RESULT_FILE_ISDELETE;
 
     public DBManager(Context context)
     {
@@ -69,9 +70,58 @@ public class DBManager
 
 
 
-    private void updateRecord(FileInfo info)
+    public void updateResultPathByFid(String Path,String fid)
     {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RESULT_FILE_PATH,Path);
+        db.update(DBHelper.DATABASE_TABLE, values, KEY_RESULT_FILE_ID + "= ?", new String[]{fid});
+    }
 
+    public void updateResultIsDeleteByFid(String fid)
+    {
+        ContentValues values = new ContentValues();
+        values.put(KEY_RESULT_FILE_IsDelete,1);
+        db.update(DBHelper.DATABASE_TABLE, values, KEY_RESULT_FILE_ID + "= ?", new String[]{fid});
+    }
+
+    public void deleteRecordByFid(String fid){
+        db.delete(DBHelper.DATABASE_TABLE, KEY_RESULT_FILE_ID + "= ?", new String[]{fid});
+    }
+
+    public FileInfo queryRecordByFid(String fid){
+        Cursor cursor = db.query(DBHelper.DATABASE_TABLE, null, KEY_RESULT_FILE_ID + " = ?", new String[]{fid}, null, null, null);
+        FileInfo fileInfo = null;
+        if(cursor.moveToFirst()){
+            fileInfo = new FileInfo();
+            do{
+                fileInfo.setResultPath(cursor.getString(cursor.getColumnIndex(KEY_RESULT_FILE_PATH)));
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        return fileInfo;
+    }
+
+    public String GetDeleteFids(){
+        String Fids = "";
+        int num = 0;
+        Cursor cursor = db.rawQuery("SELECT "+KEY_RESULT_FILE_ID+" FROM " + DBHelper.DATABASE_TABLE + " WHERE "+
+                KEY_RESULT_FILE_IsDelete + " = 1"+" ORDER BY " + KEY_RESULT_FILE_ID + " DESC", null);
+        FileInfo fileInfo = null;
+        if(cursor.moveToFirst()){
+            do{
+                num++;
+                if(num == 1){
+                    Fids = "{" + cursor.getString(cursor.getColumnIndex(KEY_RESULT_FILE_ID));
+                }else{
+                    Fids += "," + cursor.getString(cursor.getColumnIndex(KEY_RESULT_FILE_ID));
+                }
+            }while(cursor.moveToNext());
+        }
+        cursor.close();
+        if(num != 0){
+            Fids += "}";
+        }
+        return Fids;
     }
 
 }

@@ -6,8 +6,11 @@ package com.hanvon.rc.utils;
  * @Time: 2016/3/25 0025.
  */
 public class InfoMsg {
+
     public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
-    //public static final String HanvonUrl = "http://rc.hwyun.com:9090/aic-cloud/rt/ws/v1";
+    //public static final String HanvonUrl = "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1";
+
+
     public static final String UrlRapidRecog = HanvonUrl + "/file/web/rapid/recog";
     public static final String UrlFileRecog = HanvonUrl+"/file/quick/recog";
     public static final String UrlFileList = HanvonUrl+"/file/list";
@@ -28,6 +31,11 @@ public class InfoMsg {
     public static final String UrlOrderCancel = HanvonUrl+"/order/cancel";
     public static final String UrlOrderDelete = HanvonUrl+"/order/delete";
 
+    public static final String UrlOrderWxPay = HanvonUrl+"/wxpay/unifiedorder";
+    public static final String UrlOrderWxQuery = HanvonUrl+"/wxpay/query";
+
+    public static final String UrlOrderAliPaySign = HanvonUrl+"/alipay/sign";
+    public static final String UrlOrderAliPayQuery = HanvonUrl+"/alipay/query";
 
     public static final int FILE_RECOGINE_TYPE = 0x01;
     public static final int FILE_LIST_TYPE = 0x02;
@@ -48,6 +56,13 @@ public class InfoMsg {
     public static final int ORDER_SEARCH_TYPE = 0x15;
     public static final int ORDER_CANCEL_TYPE = 0x16;
     public static final int ORDER_DELETE_TYPE = 0x17;
+
+
+    public static final int ORDER_WXPAY_TYPE = 0x18;
+    public static final int ORDER_SEARCH_ORDER_TYPE = 0x19;
+    public static final int ORDER_QUERY_ORDER_TYPE = 0x24;
+    public static final int ORDER_ALIPAY_SIGN_ORDER_TYPE = 0x25;
+    public static final int ORDER_ALIPAY_QUERY_ORDER_TYPE = 0x26;
 
     //add by fjm
     public static final int FILE_UPLOAD_FAIL = 0x21;

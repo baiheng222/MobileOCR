@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hanvon.rc.R;
@@ -22,11 +23,22 @@ public class ResultFileListAdapter extends BaseAdapter
     private Context mContext;
     private List<FileInfo> mDatas;
 
-    public ResultFileListAdapter(Context context, List<FileInfo> info)
+    private static int EDIT_MODE = 2;
+    private static int VIEW_MODE = 1;
+
+    private int mShowMode;
+
+    public ResultFileListAdapter(Context context, List<FileInfo> info, int showmode)
     {
         mContext = context;
         mDatas = info;
         mInflater = LayoutInflater.from(context);
+        mShowMode = showmode;
+    }
+
+    public void setmShowMode(int mode)
+    {
+        mShowMode = mode;
     }
 
     @Override
@@ -53,11 +65,15 @@ public class ResultFileListAdapter extends BaseAdapter
         ViewHolder viewHolder = null;
         if (convertView == null)
         {
-
-            convertView = mInflater.inflate(R.layout.file_list_item, parent, false);
+            convertView = mInflater.inflate(R.layout.file_list_item2, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mFileName = (TextView) convertView.findViewById(R.id.tv_filename);
-            viewHolder.mFileSize = (TextView) convertView.findViewById(R.id.tv_filesize);
+            viewHolder.mImageSelection = (ImageView) convertView.findViewById(R.id.iv_select);
+            viewHolder.mImageFormat = (ImageView) convertView.findViewById(R.id.iv_format_img);
+            viewHolder.mTvFileName = (TextView) convertView.findViewById(R.id.tv_file_name);
+            viewHolder.mTvFileType = (TextView) convertView.findViewById(R.id.tv_filetype);
+            viewHolder.mTvFileSize = (TextView) convertView.findViewById(R.id.tv_filesize);
+            viewHolder.mTvFileCreateTime = (TextView) convertView.findViewById(R.id.tv_creattime);
+            viewHolder.mIvDownLoad = (ImageView) convertView.findViewById(R.id.iv_download);
             convertView.setTag(viewHolder);
 
         }
@@ -66,22 +82,65 @@ public class ResultFileListAdapter extends BaseAdapter
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        if (mShowMode == VIEW_MODE)
+        {
+            viewHolder.mImageSelection.setVisibility(View.GONE);
+        }
+        else
+        {
+            viewHolder.mImageSelection.setVisibility(View.VISIBLE);
+        }
+
+        viewHolder.mImageFormat.setImageResource(getFileTypeIcon(mDatas.get(position).getResultType()));
+
         String filepath = mDatas.get(position).getResultPath();
         String filename = filepath.substring(filepath.lastIndexOf("/")+1, filepath.length());
         LogUtil.i("filename is " + filename);
-        viewHolder.mFileName.setText(filename);
+        viewHolder.mTvFileName.setText(filename);
+
+        viewHolder.mTvFileType.setText(mDatas.get(position).getResultType().toUpperCase());
+
         //int notesNum = getNoteNumInNoteBook(position);
         int size = (mDatas.get(position).getResultSize() + 1023) /1024;
         LogUtil.i("file size is " + String.valueOf(size) + "k");
-        viewHolder.mFileSize.setText(String.valueOf(size) + "k");
+        viewHolder.mTvFileSize.setText(String.valueOf(size) + "k");
 
+        //viewHolder.mTvFileCreateTime.setText(mDatas.get(position).getResultFileCreateTime());
+        viewHolder.mTvFileCreateTime.setText("9:36");
         return convertView;
+    }
+
+    private int getFileTypeIcon(String type)
+    {
+        if (null == type)
+        {
+            return R.mipmap.format_txt;
+        }
+
+        if (type.toLowerCase().equals("doc"))
+        {
+            return R.mipmap.format_doc;
+        }
+        else if (type.toLowerCase().equals("pdf"))
+        {
+            return R.mipmap.format_pdf;
+        }
+        else
+        {
+            return R.mipmap.format_txt;
+        }
+
     }
 
     private final class ViewHolder
     {
-        TextView mFileName;
-        TextView mFileSize;
+        ImageView mImageSelection;
+        ImageView mImageFormat;
+        TextView  mTvFileName;
+        TextView  mTvFileType;
+        TextView  mTvFileSize;
+        TextView  mTvFileCreateTime;
+        ImageView mIvDownLoad;
     }
 
 

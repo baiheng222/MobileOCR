@@ -12,6 +12,28 @@ public class FileInfo implements Serializable
     private String resultPath;
     private String resultType;
     private String resultFUID;
+    private String resultFileCreateTime;
+
+    public String getResultFileCreateTime()
+    {
+        return resultFileCreateTime;
+    }
+
+    public void setResultFileCreateTime(String time)
+    {
+        resultFileCreateTime = time;
+    }
+
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    private String fileName;
     private int  resultSize;
 
     public String getUserID()

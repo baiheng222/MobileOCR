@@ -31,12 +31,79 @@ public class OrderDetail implements Serializable {
     private String OrderFilesBytes;
     private String OrderMethod;
     private String OrderPrice;
-    private String OrderNumber;
+    private String OrderNumber = "";
     private String OrderCreateTime;
     private String OrderPayMethod;
     private String OrderName;
     private String OrderPhone;
     private String OrderAlreadyTime;
+    private String AccurateWords;
+    private String zoom;
+
+    public String getZoom() {
+        return zoom;
+    }
+
+    public void setZoom(String zoom) {
+        this.zoom = zoom;
+    }
+
+    public String getOrderFid() {
+        return OrderFid;
+    }
+
+    public void setOrderFid(String orderFid) {
+        OrderFid = orderFid;
+    }
+
+    private String OrderFid;
+
+    public String getRecogRate() {
+        return RecogRate;
+    }
+
+    public void setRecogRate(String recogRate) {
+        RecogRate = recogRate;
+    }
+
+    public String getAccurateWords() {
+        return AccurateWords;
+    }
+
+    public void setAccurateWords(String accurateWords) {
+        AccurateWords = accurateWords;
+    }
+
+    public String getRecogAngle() {
+        return RecogAngle;
+    }
+
+    public void setRecogAngle(String recogAngle) {
+        RecogAngle = recogAngle;
+    }
+
+    private String RecogRate;
+    private String RecogAngle;
+
+    public String getOrderWaitTime() {
+        return OrderWaitTime;
+    }
+
+    public void setOrderWaitTime(String orderWaitTime) {
+        OrderWaitTime = orderWaitTime;
+    }
+
+    private String OrderWaitTime;
+
+    public String getOrderFinshTime() {
+        return OrderFinshTime;
+    }
+
+    public void setOrderFinshTime(String orderFinshTime) {
+        OrderFinshTime = orderFinshTime;
+    }
+
+    private String OrderFinshTime;
 
     public String getOrderTitle() {
         return OrderTitle;

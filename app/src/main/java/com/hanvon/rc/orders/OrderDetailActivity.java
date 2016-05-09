@@ -6,13 +6,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.utils.ConnectionDetector;
@@ -31,63 +32,51 @@ import org.json.JSONObject;
  */
 public class OrderDetailActivity extends Activity implements View.OnClickListener{
 
-    private TextView TvOrderDes;
-    private TextView TvOrderWaitTime;
+    private TextView TvOrderStatus;
+    private TextView TvOrderName;
     private TextView TvOrderPages;
     private TextView TvOrderBytes;
-    private TextView TvOrderChanges;
-    private TextView TvOrderPrices;
+    private TextView TvOrderWaitTime;
     private TextView TvOrderNumber;
-    private TextView TvOrderCreateTime;
-    private TextView TvOrderName;
-    private TextView TvOrderPhone;
-    private Button BtOrderDelete;
-    private TextView TvOrderPayPrice;
-    private LinearLayout LLToPay;
-    private RelativeLayout RlPay;
-
-    private ImageView IvBack;
+    private TextView TvFullName;
     private Button BtDelete;
-
-    private String OrderWaitTime;
-    private String OrderPages;
-    private String OrderBytes;
-    private String OrderChanges;
-    private String OrderPrices;
-    private String OrderCreateTime;
-    private String OrderName;
-    private String OrderPhone;
-    private String OrderPayPrices;
+    private TextView TvOrderPrices;
+    private TextView TvPayPrices;
+    private ImageView IvBack;
+    private  ImageView IvPay;
+    private RelativeLayout Rlpay;
+    private ImageView IvMsgInfo;
 
     private static Handler handler;
-
     private ProgressDialog pd;
-    private String OrderNumber;
     private int OrderStatus;
-    private int index;
+
+    private OrderDetail orderDetail;
+
+    private String orderNumber;
+
+    public static OrderDetailActivity install = null;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        install = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.orderinfo1);
 
-
-        TvOrderDes = (TextView)findViewById(R.id.orderinfo_des);
-        TvOrderWaitTime = (TextView)findViewById(R.id.orderinfo_waittime);
-        TvOrderPages = (TextView)findViewById(R.id.orderinfo_pages);
+        TvOrderStatus = (TextView)findViewById(R.id.orderinfo_status);
+        TvOrderName = (TextView)findViewById(R.id.orderinfo_filename);
+        TvOrderPages = (TextView)findViewById(R.id.orderinfo_page);
         TvOrderBytes = (TextView)findViewById(R.id.orderinfo_bytes);
-        TvOrderChanges = (TextView)findViewById(R.id.orderinfo_change);
-        TvOrderPrices = (TextView)findViewById(R.id.orderinfo_price);
+        TvOrderWaitTime = (TextView)findViewById(R.id.orderinfo_waittime);
         TvOrderNumber = (TextView)findViewById(R.id.orderinfo_number);
-        TvOrderCreateTime = (TextView)findViewById(R.id.orderinfo_createtime);
-        TvOrderName = (TextView)findViewById(R.id.orderinfo_name);
-        TvOrderPhone = (TextView)findViewById(R.id.orderinfo_phone);
-        BtOrderDelete = (Button)findViewById(R.id.orderinfo_delete);
-        TvOrderPayPrice = (TextView)findViewById(R.id.orderinfo_payprice);
-        LLToPay = (LinearLayout)findViewById(R.id.orderinfo_topay);
-        RlPay = (RelativeLayout)findViewById(R.id.orderinfo_pay);
-        IvBack = (ImageView)findViewById(R.id.orderinfo_back);
+        TvFullName = (TextView)findViewById(R.id.orderinfo_fullname);
+        TvOrderPrices = (TextView)findViewById(R.id.orderinfo_price);
         BtDelete = (Button)findViewById(R.id.orderinfo_delete);
+        TvPayPrices = (TextView)findViewById(R.id.orderinfo_evalprice);
+        IvPay = (ImageView)findViewById(R.id.orderinfo_topay);
+        IvBack = (ImageView)findViewById(R.id.orderinfo_back);
+        Rlpay = (RelativeLayout)findViewById(R.id.orderinfo_pay);
+        IvMsgInfo = (ImageView)findViewById(R.id.image_info);
 
         initHandler();
         new MyHttpUtils(handler);
@@ -95,33 +84,47 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
 
         Intent intent = getIntent();
         if (intent != null) {
-            OrderNumber = intent.getStringExtra("OrderNumber");
-            index = intent.getIntExtra("index",0);
+            orderNumber = intent.getStringExtra("OrderNumber");
+            String from = intent.getStringExtra("from");
+            if("WXPAYACTIVITY".equals(from)){
+                QueryWxPayResult(orderNumber);
+            }else if("ORDERLISTACTIVITY".equals(from)){
+                QueryOrderDetail(orderNumber);
+            }else if("ALIPAYACTIVITY".equals(from)){
+                QueryAliPayResult(orderNumber);
+            }
+            LogUtil.i("------From:" + from+"----ordernumber:"+orderNumber);
         }
 
-        initDatas(OrderNumber);
-
-        TvOrderDes.setOnClickListener(this);
-        TvOrderWaitTime.setOnClickListener(this);
-        TvOrderPages.setOnClickListener(this);
-        TvOrderBytes.setOnClickListener(this);
-        TvOrderChanges.setOnClickListener(this);
-        TvOrderPrices.setOnClickListener(this);
-        TvOrderNumber.setOnClickListener(this);
-        TvOrderCreateTime.setOnClickListener(this);
-        TvOrderName.setOnClickListener(this);
-        TvOrderPhone.setOnClickListener(this);
-        BtOrderDelete.setOnClickListener(this);
-        TvOrderPayPrice.setOnClickListener(this);
-        LLToPay.setOnClickListener(this);
-        IvBack.setOnClickListener(this);
         BtDelete.setOnClickListener(this);
+        IvBack.setOnClickListener(this);
+        IvPay.setOnClickListener(this);
     }
 
-    public void initDatas(String oid){
+    public void QueryWxPayResult(String oid){
         if(new ConnectionDetector(OrderDetailActivity.this).isConnectingTOInternet()){
-            pd = ProgressDialog.show(OrderDetailActivity.this,"","正在查询订单....");
+            pd = ProgressDialog.show(OrderDetailActivity.this,"","");
+            RequestJson.OrderWxQuery(oid);
+        }else{
+            Toast.makeText(OrderDetailActivity.this, "请检查网络是否连通!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void QueryAliPayResult(String oid){
+        if(new ConnectionDetector(OrderDetailActivity.this).isConnectingTOInternet()){
+            pd = ProgressDialog.show(OrderDetailActivity.this,"","");
+            RequestJson.OrderAliPayQuery(oid);
+        }else{
+            Toast.makeText(OrderDetailActivity.this,"请检查网络是否连通!",Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void QueryOrderDetail(String oid){
+        if(new ConnectionDetector(OrderDetailActivity.this).isConnectingTOInternet()){
+            pd = ProgressDialog.show(OrderDetailActivity.this,"","");
             RequestJson.OrderShow(oid);
+        }else{
+            Toast.makeText(OrderDetailActivity.this,"请检查网络是否连通!",Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -134,7 +137,7 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
                 JSONObject json = null;
                 try {
                     json = new JSONObject(obj.toString());
-                    if (!json.get("code").equals("0")){
+                    if ((!json.get("code").equals("0"))&&(!json.get("code").equals("433"))){
                         pd.dismiss();
                         return;
                     }
@@ -142,24 +145,36 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
                     e.printStackTrace();
                 }
                 switch (msg.what) {
+                    case InfoMsg.ORDER_DELETE_TYPE:
+                        finish();
+                        break;
+                    case InfoMsg.ORDER_QUERY_ORDER_TYPE:
+                        LogUtil.i("---QUERY--" + json.toString());
+                        pd.dismiss();
+                        QueryOrderDetail(orderNumber);
+                        break;
                     case InfoMsg.ORDER_SHOW_TYPE:
+                        orderDetail = new OrderDetail();
                         try {
-                            OrderPages = "16"+"张";
-                            OrderBytes = json.getString("wordsRange");
-                            OrderChanges = "转换方式";
-                            OrderPrices = json.getString("price");
-                            OrderCreateTime = json.getString("createTime");
-                            OrderName =  json.getString("fullname");
-                            OrderPhone = json.getString("mobile");
-                            OrderStatus = Integer.valueOf(json.getString("status"));
+                            orderDetail.setOrderFileNanme(json.getString("fileName"));
+                            orderDetail.setOrderFilesPages(json.getString("fileAmount"));
+                            orderDetail.setOrderFilesBytes(json.getString("wordsRange"));
+                            orderDetail.setOrderWaitTime(json.getString("waitTime"));
+                            orderDetail.setOrderStatus(json.getString("status"));
+                            orderDetail.setOrderNumber(json.getString("oid"));
+                            orderDetail.setOrderPhone(json.getString("mobile"));
+                            orderDetail.setOrderName(json.getString("fullname"));
+                            orderDetail.setOrderPrice(json.getString("price"));
+                            pd.dismiss();
+                            initView();
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        pd.dismiss();
-                        initView();
                         break;
-                    case InfoMsg.ORDER_DELETE_TYPE:
-                        finish();
+                    case InfoMsg.ORDER_ALIPAY_QUERY_ORDER_TYPE:
+                        LogUtil.i("---QUERY--" + json.toString());
+                        pd.dismiss();
+                        QueryOrderDetail(orderNumber);
                         break;
                 }
             }
@@ -167,41 +182,52 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
     }
 
     public void initView(){
+        OrderStatus = Integer.valueOf(orderDetail.getOrderStatus());
         if(OrderStatus == 1){
-            TvOrderDes.setText(R.string.orderinfo_failedtime);
-            TvOrderWaitTime.setText(OrderWaitTime);
-            BtOrderDelete.setVisibility(View.GONE);
-        }else if (OrderStatus == 3){
-            TvOrderDes.setText(R.string.orderinfo_Ocring);
-            TvOrderWaitTime.setText(OrderWaitTime);
-            BtOrderDelete.setVisibility(View.GONE);
+            IvMsgInfo.setImageResource(R.mipmap.waitpay_head);
+            TvOrderStatus.setText(R.string.orderlist_waitpay);
+            Rlpay.setVisibility(View.VISIBLE);
+        }else if (OrderStatus == 2){
+            IvMsgInfo.setImageResource(R.mipmap.wait_working_head);
+            TvOrderStatus.setText("待加工");
+        }else if(OrderStatus == 3){
+            IvMsgInfo.setImageResource(R.mipmap.working_head);
+            TvOrderStatus.setText("处理中");
+        }else if(OrderStatus == 4){
+            IvMsgInfo.setImageResource(R.mipmap.waitdown_head);
+            TvOrderStatus.setText("已取消");
         }else if(OrderStatus == 5){
-            TvOrderDes.setText("交易完成 √");
-            TvOrderWaitTime.setVisibility(View.GONE);
-            RlPay.setVisibility(View.GONE);
+            IvMsgInfo.setImageResource(R.mipmap.waitdown_head);
+            TvOrderStatus.setText("已完成");
         }
-        TvOrderPages.setText(OrderPages);
-        TvOrderBytes.setText(OrderBytes);
-        TvOrderChanges.setText(OrderChanges);
-        TvOrderPrices.setText("¥"+OrderPrices);
-        TvOrderNumber.setText(OrderNumber);
-        TvOrderCreateTime.setText(OrderCreateTime);
-        TvOrderName.setText(OrderName);
-        TvOrderPhone.setText(OrderPhone);
+        TvOrderName.setText(orderDetail.getOrderFileNanme());
+        TvOrderPages.setText(orderDetail.getOrderFilesPages() + " 张");
+        TvOrderBytes.setText(orderDetail.getOrderFilesBytes() + " 字节");
+        TvOrderWaitTime.setText(orderDetail.getOrderWaitTime());
+        TvOrderNumber.setText(orderDetail.getOrderNumber());
+        TvFullName.setText(orderDetail.getOrderName()+" "+orderDetail.getOrderPhone());
+        TvOrderPrices.setText(orderDetail.getOrderPrice() + " 元");
+        TvPayPrices.setText("¥"+orderDetail.getOrderPrice());
     }
+
     @Override
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.orderinfo_back:
+                Intent intent1 = new Intent();
+                intent1.setClass(this,OrderListActivity.class);
+                startActivity(intent1);
                 finish();
                 break;
             case R.id.orderinfo_delete:
-                RequestJson.OrderDelete(OrderNumber);
-                break;
+             //   RequestJson.OrderDelete(OrderNumber);
+             //   break;
             case R.id.orderinfo_topay:
                 Intent intent = new Intent();
                 intent.setClass(OrderDetailActivity.this,OrderToPay.class);
-                intent.putExtra("OrderNumber", OrderNumber);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("ordetail", orderDetail);
+                intent.putExtras(bundle);
                 startActivity(intent);
                 break;
         }
@@ -211,5 +237,16 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
     protected void onDestroy() {
         super.onDestroy();
         LogUtil.i("==========onDestroy()============");
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if(keyCode == KeyEvent.KEYCODE_BACK){
+            Intent intent = new Intent();
+            intent.setClass(this,OrderListActivity.class);
+            startActivity(intent);
+            finish();
+        }
+        return true;
     }
 }

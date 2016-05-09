@@ -38,7 +38,6 @@ public class BcardChoosePicAdapter extends BaseAdapter
 		}else{
 			return gl_arr.size();
 		}
-		
 	}
 
 	@Override
@@ -68,7 +67,6 @@ public class BcardChoosePicAdapter extends BaseAdapter
 		}else{
 			item = (BcardChooseGridItem)convertView;
 		}
-		
 		// 通过ID 加载缩略图
 		if (gl_arr==null)
 		{

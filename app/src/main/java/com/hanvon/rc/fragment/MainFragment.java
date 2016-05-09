@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.activity.MainActivity;
+import com.hanvon.rc.application.HanvonApplication;
 
 
 /**
@@ -52,6 +53,8 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
                 act.openMenu();
             }
         });
+
+        HanvonApplication.isAccurateRecg = false;
         return view;
     }
 
@@ -62,14 +65,21 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
         {
             case R.id.tv_auto:
             case R.id.iv_auto:
+                HanvonApplication.isAccurateRecg = false;
                 MainActivity act = (MainActivity)getActivity();
                 act.startCameraActivity();
                 break;
 
             case R.id.iv_exact:
             case R.id.tv_exact:
-                MainActivity act2 = (MainActivity)getActivity();
-                act2.startExactActivity();
+
+                HanvonApplication.isAccurateRecg = true;
+                MainActivity act1 = (MainActivity)getActivity();
+                act1.startCameraActivity();
+
+ //               MainActivity act2 = (MainActivity)getActivity();
+ //               act2.startExactActivity();
+
                 break;
 
         }

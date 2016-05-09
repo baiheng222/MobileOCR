@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#F2F2F2"
+    android:background="#F7F7F7"
     android:orientation="vertical" >
 
     <include layout="@layout/payinfo_head" />
@@ -22,22 +22,22 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:padding="10dip"
         android:orientation="horizontal">
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:text="@string/payinfo_wxpaymode"
-            android:textSize="15sp"/>
+            android:background="@mipmap/wxpay" />
         <RadioButton
             android:id="@+id/payinfo_wxpay"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            style="@style/wxRadioButtonStyles"
             android:layout_marginRight="20dip" />
     </RelativeLayout>
 
@@ -47,15 +47,15 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:padding="10dip"
         android:orientation="horizontal">
-        <TextView
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:layout_alignParentLeft="true"
-            android:text="@string/payinfo_Alipaymode"
+            android:background="@mipmap/alipay"
             android:textSize="15sp"/>
         <RadioButton
             android:id="@+id/payinfo_zfbpay"
@@ -63,9 +63,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            style="@style/zfbRadioButtonStyles"
             android:layout_marginRight="20dip" />
     </RelativeLayout>
-
+<!--
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -122,7 +123,7 @@
                 android:textSize="12sp" />
         </LinearLayout>
     </LinearLayout>
-
+-->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -130,33 +131,53 @@
         android:layout_marginTop="10dip"
         android:text="@string/orderinfo_ordermsg"
         android:textColor="#999999"
-        android:textSize="15sp"/>
+        android:textSize="18sp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="5"
+        android:layout_weight="2"
         android:background="#FFFFFF"
         android:padding="10dip"
         android:layout_marginTop="10dip"
         android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/orderinfo_itemname"
+                android:textSize="15sp" />
+            <TextView
+                android:id="@+id/payinfo_itemname"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:text="@string/orderinfo_precise"
+                android:textSize="15sp" />
+        </LinearLayout>
        <LinearLayout
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_weight="1"
-           android:orientation="horizontal">
+           android:orientation="horizontal"
+           android:visibility="gone">
            <TextView
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_gravity="center_vertical"
                android:text="@string/orderinfo_ordernumber"
-               android:textSize="12sp" />
+               android:textSize="15sp" />
            <TextView
                android:id="@+id/payinfo_number"
                android:layout_width="wrap_content"
                android:layout_height="wrap_content"
                android:layout_gravity="center_vertical"
                android:text=""
-               android:textSize="12sp" />
+               android:textSize="15sp" />
        </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -167,15 +188,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:text="@string/orderinfo_ordertime"
-                android:textSize="12sp" />
+                android:text="@string/orderinfo_peceiptname"
+                android:textSize="15sp" />
             <TextView
-                android:id="@+id/payinfo_cratetime"
+                android:id="@+id/payinfo_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text=""
-                android:textSize="12sp" />
+                android:textSize="15sp" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -187,81 +208,47 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
                 android:text="@string/orderinfo_payMode"
-                android:textSize="12sp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/orderinfo_peceiptname"
-                android:textSize="12sp" />
-            <TextView
-                android:id="@+id/payinfo_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text=""
-                android:textSize="12sp" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text="@string/orderinfo_phonenumber"
-                android:textSize="12sp" />
-            <TextView
-                android:id="@+id/payinfo_phone"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:text=""
-                android:textSize="12sp" />
+                android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>
 
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="4dp" />
+        android:layout_height="wrap_content"
+        android:layout_weight="6"/>
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dip"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
         <TextView
-            android:id="@+id/payinfo_toprices"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:gravity="left|center_vertical"
-            android:layout_marginLeft="10dp"
-            android:text="18元"
-            android:textSize="15sp" />
-        <LinearLayout
+            android:id="@+id/payinfo_evalprice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="right|center_vertical"
+            android:layout_marginLeft="10dip"
+            android:layout_centerVertical="true"
+            android:text=""
+            android:textColor="@color/red"
+            android:textSize="20sp"/>
+        <ImageView
+            android:id="@+id/payinfo_topay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:background="@color/white">
-            <TextView
-                android:id="@+id/payinfo_topay"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                android:gravity="center"
-                android:text="@string/payinfo_confirmpayment"
-                android:textSize="15sp"/>
-        </LinearLayout>
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="10dip"
+            android:layout_centerInParent="true"
+            android:background="@mipmap/ensurepay"/>
+        <!--
+        <ImageView
+            android:id="@+id/payinfo_topay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="10dip"
+            android:layout_marginTop="10dip"
+            android:layout_centerInParent="true"
+            android:background="@mipmap/ensurepay" />
+            -->
     </RelativeLayout>
 </LinearLayout>

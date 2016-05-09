@@ -92,11 +92,14 @@ public class LoginUtils {
                         } else if (json.getString("code").equals("426")) {
                             RegisterToHvn();
                         } else if (json.getString("code").equals("520")) {
+                            LoginActivity.pd.dismiss();
                             Toast.makeText(mContext, "服务器忙，请稍后重试", Toast.LENGTH_SHORT).show();
                         } else {
+                            LoginActivity.pd.dismiss();
                             Toast.makeText(mContext, "注册汉王云失败，请稍后重试", Toast.LENGTH_SHORT).show();
                         }
                     } catch (JSONException e) {
+                        LoginActivity.pd.dismiss();
                         e.printStackTrace();
                     }
                     break;
@@ -122,12 +125,13 @@ public class LoginUtils {
                             break;
                         }
                     } catch (JSONException e) {
+                        LoginActivity.pd.dismiss();
                         e.printStackTrace();
                     }
                 case UserInfoMessage.USER_DEVICE_UPLOAD_TYPE:
-                    GetUserInfo();
-                 //   mContext.startActivity(new Intent(mContext, MainActivity.class));
-                  //  LoginActivity.instance.finish();
+                  //  GetUserInfo();
+                    mContext.startActivity(new Intent(mContext, MainActivity.class));
+                    LoginActivity.instance.finish();
                     break;
             }
         }

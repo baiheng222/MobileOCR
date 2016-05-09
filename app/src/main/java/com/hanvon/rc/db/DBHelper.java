@@ -21,13 +21,15 @@ public class DBHelper extends SQLiteOpenHelper
     public static final String KEY_RESULT_FILE_PATH = "result_file_path";
     public static final String KEY_RESULT_FILE_TYPE = "result_file_type";
     public static final String KEY_RESULT_FILE_ID = "result_file_id";
+    public static final String KEY_RESULT_FILE_ISDELETE = "result_file_isdelete";
+
     public static final String KEY_RESULT_FILE_SIZE = "result_file_size";
 
     private static final String DATABASE_CREATE = "create table " + DATABASE_TABLE + "(" +
             KEY_ID + " integer primary key autoincrement, " +  KEY_USER_ID + " VARCHAR, " +
             KEY_ORIGIN_PIC_PATH + " VARCHAR, " + KEY_RESULT_FILE_PATH + " VARCHAR, " +
             KEY_RESULT_FILE_TYPE + " VARCHAR, " + KEY_RESULT_FILE_ID + " VARCHAR, " +
-            KEY_RESULT_FILE_SIZE + " integer" + ")";
+            KEY_RESULT_FILE_SIZE + " integer" + KEY_RESULT_FILE_ISDELETE + " integer" + ")";
 
 
     public DBHelper(Context context)

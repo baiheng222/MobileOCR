@@ -3,9 +3,13 @@ package com.hanvon.rc.utils;
 import android.util.Log;
 
 import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.orders.OrderDetail;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 
 /**
  * @Desc:
@@ -46,7 +50,7 @@ public class RequestJson {
             JSuserInfoJson.put("pageSize", "100");
             JSuserInfoJson.put("sort", conditionJson);
             JSuserInfoJson.put("fileType", "2");
-            JSuserInfoJson.put("recogType", "1");
+            JSuserInfoJson.put("recogType", "");
         } catch(JSONException e) {
             e.printStackTrace();
         }
@@ -108,13 +112,13 @@ public class RequestJson {
         MyHttpUtils.HttpSend(InfoMsg.UrlFileCheckSum,JSuserInfoJson,InfoMsg.FILE_CHECKSUM_TYPE);
     }
 
-    public static void FileDown(long offset,long length){
+    public static void FileDown(long offset,long length,String fid,String path){
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
             JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("fileType", "2");
-            JSuserInfoJson.put("fid", "05n7xzvtvntk39");
+            JSuserInfoJson.put("fid", fid);
             JSuserInfoJson.put("filePath", "");
             JSuserInfoJson.put("offset", offset);
             JSuserInfoJson.put("length", String.valueOf(length));
@@ -122,7 +126,7 @@ public class RequestJson {
             e.printStackTrace();
         }
         Log.i("-----",JSuserInfoJson.toString());
-        HttpUtilsFiles.HttpDownFiles(JSuserInfoJson,InfoMsg.UrlFileDown);
+        HttpUtilsFiles.HttpDownFiles(JSuserInfoJson, InfoMsg.UrlFileDown, path, fid);
     }
 
     public static void FilesSearch() {
@@ -152,23 +156,36 @@ public class RequestJson {
         MyHttpUtils.HttpSend(InfoMsg.UrlSearch, JSuserInfoJson, InfoMsg.FILE_SEARCH_TYPE);
     }
 
-    public static void OrderAdd() {
+    public static void OrderAdd(OrderDetail ordertail,String paytyep) {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
             JSuserInfoJson.put("userid", HanvonApplication.hvnName);
-            JSuserInfoJson.put("inFid", "123456");
-            JSuserInfoJson.put("recogType", "1");
-            JSuserInfoJson.put("wordsRange", "5100-5200");
-            JSuserInfoJson.put("price", "10");
-            JSuserInfoJson.put("waitTime", "1800");
+            JSuserInfoJson.put("oid", ordertail.getOrderNumber());
+            JSuserInfoJson.put("inFid", ordertail.getOrderFid());
+            JSuserInfoJson.put("recogType", "2");
+            JSuserInfoJson.put("wordsRange", ordertail.getOrderFilesBytes());
+            JSuserInfoJson.put("accurateWords", ordertail.getAccurateWords());
+            JSuserInfoJson.put("recogRate",ordertail.getRecogRate() );
+            JSuserInfoJson.put("recogAngle", ordertail.getRecogAngle());
+            JSuserInfoJson.put("zoom", ordertail.getZoom());
+            JSuserInfoJson.put("payType","1" );
+            JSuserInfoJson.put("payWay", paytyep);
+            JSuserInfoJson.put("price", "0.01");
+            String waitTime = null;
+            try {
+                waitTime = URLEncoder.encode(ordertail.getOrderWaitTime(), "utf-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            JSuserInfoJson.put("waitTime", waitTime);
             JSuserInfoJson.put("outputType", "0");
             JSuserInfoJson.put("level", "3");
             JSuserInfoJson.put("platformType", "4");
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderAdd,JSuserInfoJson,InfoMsg.ORDER_ADD_TYPE);
     }
 
@@ -181,7 +198,7 @@ public class RequestJson {
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderEvl,JSuserInfoJson,InfoMsg.ORDER_EVL_TYPE);
     }
 
@@ -197,7 +214,7 @@ public class RequestJson {
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderPay,JSuserInfoJson,InfoMsg.ORDER_PAY_TYPE);
     }
 
@@ -208,15 +225,15 @@ public class RequestJson {
             JSONObject conditionJson = new JSONObject();
             //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
             //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
-            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("userid", "test2345");
             JSuserInfoJson.put("start", "0");
-            JSuserInfoJson.put("pageSize", "10");
+            JSuserInfoJson.put("pageSize", "100");
             JSuserInfoJson.put("sort", conditionJson);
             JSuserInfoJson.put("status", status);
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----" + JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderList,JSuserInfoJson,InfoMsg.ORDER_LIST_TYPE);
     }
 
@@ -229,7 +246,7 @@ public class RequestJson {
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderShow,JSuserInfoJson,InfoMsg.ORDER_SHOW_TYPE);
     }
 
@@ -254,7 +271,7 @@ public class RequestJson {
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderSearch,JSuserInfoJson,InfoMsg.ORDER_SEARCH_TYPE);
     }
 
@@ -268,7 +285,7 @@ public class RequestJson {
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderCancel,JSuserInfoJson,InfoMsg.ORDER_CANCEL_TYPE);
     }
 
@@ -281,7 +298,62 @@ public class RequestJson {
         } catch(JSONException e) {
             e.printStackTrace();
         }
-        Log.i("-----",JSuserInfoJson.toString());
+        LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderDelete,JSuserInfoJson,InfoMsg.ORDER_DELETE_TYPE);
+    }
+
+    public static void WxPay(String prices,String orderid){
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("oid", orderid);
+            JSuserInfoJson.put("productId", "2");
+            JSuserInfoJson.put("body", URLEncoder.encode("汉王识文-精准人工识别", "UTF-8"));
+            JSuserInfoJson.put("price", "0.01");
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        LogUtil.i("-----"+JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlOrderWxPay,JSuserInfoJson,InfoMsg.ORDER_WXPAY_TYPE);
+    }
+
+    public static void OrderWxQuery(String orderid){
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("oid", orderid);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        LogUtil.i("-----"+JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlOrderWxQuery,JSuserInfoJson,InfoMsg.ORDER_QUERY_ORDER_TYPE);
+    }
+
+    public static void OrderAliPayQuery(String orderid){
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("oid", orderid);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        LogUtil.i("-----"+JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlOrderAliPayQuery,JSuserInfoJson,InfoMsg.ORDER_ALIPAY_QUERY_ORDER_TYPE);
+    }
+
+    public static void GetAliPaySign(String oidinfo){
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("orderInfo", oidinfo);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        LogUtil.i("-----"+JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlOrderAliPaySign,JSuserInfoJson,InfoMsg.ORDER_ALIPAY_SIGN_ORDER_TYPE);
     }
 }

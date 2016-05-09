@@ -1,18 +1,19 @@
 package com.hanvon.rc.orders.alipay;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Toast;
 
 import com.alipay.sdk.app.PayTask;
+import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.orders.OrderDetailActivity;
+import com.hanvon.rc.orders.OrderToPay;
+import com.hanvon.rc.utils.LogUtil;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -21,18 +22,37 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
-public class AliPay extends FragmentActivity {
+public class AliPay  {
 
 	// 商户PID
 	public static final String PARTNER = "2088021262536315";
 	// 商户收款账号
 	public static final String SELLER = "1944971055@qq.com";
 	// 商户私钥，pkcs8格式
-	public static final String RSA_PRIVATE = "";
+	public static final String RSA_PRIVATE = "MIICdgIBADANBgkqhkiG9w0BAQEFAASCAmAwggJcAgEAAoGBAM3GnkudoTEmhCqn" +
+			"IyV+WIYeeh1qTCbN6+TWwVgpo74EvLnKPq/XHzGaEtL8m1SjtQpqQuhvNfV2RZ1c" +
+			"QAQGmXN9grwAcKnyGnfJ3X3Y7Nzo26EbB6Qu2275Cs57Uc7CNCxsTWdodUgsHUI1" +
+			"zzZdD/gug4zap2Uube/nMN1C8yvnAgMBAAECgYB/SG4946EDYAm8wGmzFXX4b/2l" +
+			"GE1Ga3WQtW4e9JK+RPvgCEPCTNSUv/MI4wvJzQF9EcGVOMUtshzZe2h1lQdxFl7L" +
+			"pCrM+S+MU5rqmKVafvAvMjA3wDVzZfuokFq9YZPMzrVunkYLeiNK1PHh1MAOA+Ol" +
+			"NPSgDtc3csUvXgTugQJBAPCG7bDoMimljReq5WBBFsSkQm1ku38F8Kmss4PQ56y1" +
+			"Ci2/bO9/pYzN2Du86fQjBqJ2+mcQpVg2D/hibGVTK2ECQQDbA2WDL//Se1LGDpX5" +
+			"Ls3oO0WN+fGJsi6a2ecBoyUFJVGKfEM5T+eBf43LXFtL+mCNt+sF1Yo5rCVV4HnQ" +
+			"GKRHAkAZyT1eQ+Zs1JTFvsqMgS3hswJ0G+KGAasFZcBxF0pfF6GZufYBzxt+dusB" +
+			"rIUgaUjizgKWXhB73n/jzxlz23DBAkEApgB7DuZw1w7WfHxNvGN3epCCdcx/AUlm" +
+			"/cQvzhPkWXQhy//HzEb+SC9wQDWulXYffQtsPi3O6UvLuL2+VrZ2vQJAeihXIKse" +
+			"9DWLkdqxW8Iq2XD0pbRB6NGzdAqEMWcpxzP1rLd9NHEB4y9tcW7wSOaH9t7DYGlV" +
+			"1HrYMiK1vjF1Pw==";
 	// 支付宝公钥
 	public static final String RSA_PUBLIC = "";
 	private static final int SDK_PAY_FLAG = 1;
 
+	private Context mContext;
+	private Activity mActivity;
+	public AliPay(Context context,Activity activity){
+		this.mContext = context;
+		this.mActivity = activity;
+	}
 	@SuppressLint("HandlerLeak")
 	private Handler mHandler = new Handler() {
 		@SuppressWarnings("unused")
@@ -46,21 +66,26 @@ public class AliPay extends FragmentActivity {
 				 * docType=1) 建议商户依赖异步通知
 				 */
 				String resultInfo = payResult.getResult();// 同步返回需要验证的信息
-
+				LogUtil.i("------resultInfo:"+resultInfo);
 				String resultStatus = payResult.getResultStatus();
 				// 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
 				if (TextUtils.equals(resultStatus, "9000")) {
-					Toast.makeText(AliPay.this, "支付成功", Toast.LENGTH_SHORT).show();
+					Toast.makeText(mContext, "支付成功", Toast.LENGTH_SHORT).show();
+					Intent intent = new Intent();
+					intent.setClass(mContext, OrderDetailActivity.class);
+					intent.putExtra("OrderNumber", HanvonApplication.CurrentOid);
+					intent.putExtra("from", "ALIPAYACTIVITY");
+					HanvonApplication.CurrentOid = "";
+					mContext.startActivity(intent);
+					OrderToPay.instance.finish();
 				} else {
 					// 判断resultStatus 为非"9000"则代表可能支付失败
 					// "8000"代表支付结果因为支付渠道原因或者系统原因还在等待支付结果确认，最终交易是否成功以服务端异步通知为准（小概率状态）
 					if (TextUtils.equals(resultStatus, "8000")) {
-						Toast.makeText(AliPay.this, "支付结果确认中", Toast.LENGTH_SHORT).show();
-
+						Toast.makeText(mContext, "支付结果确认中", Toast.LENGTH_SHORT).show();
 					} else {
 						// 其他值就可以判断为支付失败，包括用户主动取消支付，或者系统返回的错误
-						Toast.makeText(AliPay.this, "支付失败", Toast.LENGTH_SHORT).show();
-
+						Toast.makeText(mContext, "支付失败", Toast.LENGTH_SHORT).show();
 					}
 				}
 				break;
@@ -75,18 +100,8 @@ public class AliPay extends FragmentActivity {
 	 * call alipay sdk pay. 调用SDK支付
 	 * 
 	 */
-	public void pay(View v) {
-		if (TextUtils.isEmpty(PARTNER) || TextUtils.isEmpty(RSA_PRIVATE) || TextUtils.isEmpty(SELLER)) {
-			new AlertDialog.Builder(this).setTitle("警告").setMessage("需要配置PARTNER | RSA_PRIVATE| SELLER")
-					.setPositiveButton("确定", new DialogInterface.OnClickListener() {
-						public void onClick(DialogInterface dialoginterface, int i) {
-							//
-							finish();
-						}
-					}).show();
-			return;
-		}
-		String orderInfo = getOrderInfo("测试的商品", "该测试商品的详细描述", "0.01");
+	public void pay(String price,String oid) {
+		String orderInfo = getOrderInfo("汉王识文-精准人工识别", "汉王识文-精准人工识别", "0.01",oid);
 
 		/**
 		 * 特别注意，这里的签名逻辑需要放在服务端，切勿将私钥泄露在代码中！
@@ -111,7 +126,7 @@ public class AliPay extends FragmentActivity {
 			@Override
 			public void run() {
 				// 构造PayTask 对象
-				PayTask alipay = new PayTask(AliPay.this);
+				PayTask alipay = new PayTask(mActivity);
 				// 调用支付接口，获取支付结果
 				String result = alipay.pay(payInfo, true);
 
@@ -132,37 +147,16 @@ public class AliPay extends FragmentActivity {
 	 * 
 	 */
 	public void getSDKVersion() {
-		PayTask payTask = new PayTask(this);
+		PayTask payTask = new PayTask(mActivity);
 		String version = payTask.getVersion();
-		Toast.makeText(this, version, Toast.LENGTH_SHORT).show();
-	}
-
-	/**
-	 * 原生的H5（手机网页版支付切natvie支付） 【对应页面网页支付按钮】
-	 * 
-	 * @param v
-	 */
-	public void h5Pay(View v) {
-		Intent intent = new Intent(this, H5PayDemoActivity.class);
-		Bundle extras = new Bundle();
-		/**
-		 * url是测试的网站，在app内部打开页面是基于webview打开的，demo中的webview是H5PayDemoActivity，
-		 * demo中拦截url进行支付的逻辑是在H5PayDemoActivity中shouldOverrideUrlLoading方法实现，
-		 * 商户可以根据自己的需求来实现
-		 */
-		String url = "http://m.meituan.com";
-		// url可以是一号店或者美团等第三方的购物wap站点，在该网站的支付过程中，支付宝sdk完成拦截支付
-		extras.putString("url", url);
-		intent.putExtras(extras);
-		startActivity(intent);
-
+		Toast.makeText(mContext, version, Toast.LENGTH_SHORT).show();
 	}
 
 	/**
 	 * create the order info. 创建订单信息
 	 * 
 	 */
-	private String getOrderInfo(String subject, String body, String price) {
+	private String getOrderInfo(String subject, String body, String price,String oid) {
 
 		// 签约合作者身份ID
 		String orderInfo = "partner=" + "\"" + PARTNER + "\"";
@@ -171,7 +165,7 @@ public class AliPay extends FragmentActivity {
 		orderInfo += "&seller_id=" + "\"" + SELLER + "\"";
 
 		// 商户网站唯一订单号
-		orderInfo += "&out_trade_no=" + "\"" + getOutTradeNo() + "\"";
+		orderInfo += "&out_trade_no=" + "\""+ oid + "\"";
 
 		// 商品名称
 		orderInfo += "&subject=" + "\"" + subject + "\"";
@@ -183,7 +177,7 @@ public class AliPay extends FragmentActivity {
 		orderInfo += "&total_fee=" + "\"" + price + "\"";
 
 		// 服务器异步通知页面路径
-		orderInfo += "&notify_url=" + "\"" + "http://notify.msp.hk/notify.htm" + "\"";
+		orderInfo += "&notify_url=" + "\"" + "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1/alipay/notify" + "\"";
 
 		// 服务接口名称， 固定值
 		orderInfo += "&service=\"mobile.securitypay.pay\"";
@@ -205,7 +199,7 @@ public class AliPay extends FragmentActivity {
 		// orderInfo += "&extern_token=" + "\"" + extern_token + "\"";
 
 		// 支付宝处理完请求后，当前页面跳转到商户指定页面的路径，可空
-		orderInfo += "&return_url=\"m.alipay.com\"";
+		//orderInfo += "&return_url=\"\"";
 
 		// 调用银行卡支付，需配置此参数，参与签名， 固定值 （需要签约《无线银行卡快捷支付》才能使用）
 		// orderInfo += "&paymethod=\"expressGateway\"";

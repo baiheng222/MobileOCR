@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.INotificationSideChannel;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -23,32 +22,32 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-//import com.hanvon.HWCloudManager;
-//import com.hanvon.common.HWLangDict;
-
 import com.hanvon.rc.R;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.md.camera.UploadImage;
 import com.hanvon.rc.md.camera.activity.RecFailActivity;
 import com.hanvon.rc.md.camera.activity.RecResultActivity;
+import com.hanvon.rc.orders.OrderDetail;
+import com.hanvon.rc.orders.OrderEvalPrices;
 import com.hanvon.rc.utils.Base64Utils;
 import com.hanvon.rc.utils.BitmapUtil;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.DisplayUtil;
 import com.hanvon.rc.utils.FileUtil;
-import com.hanvon.rc.utils.HttpUtilsFiles;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 import com.hanwang.preprocessjava.preprocessdll;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+
+//import com.hanvon.HWCloudManager;
+//import com.hanvon.common.HWLangDict;
 
 public class CropActivity extends Activity
 {
@@ -74,6 +73,8 @@ public class CropActivity extends Activity
     private int padding = 10;
 	private boolean isRecognizing = false;
 
+	private String oriName;
+	private String fid;
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -250,11 +251,19 @@ public class CropActivity extends Activity
 					new Thread(recoThread).start();
                 }
 				*/
-
-				mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
-				String oriName = path.substring(path.lastIndexOf("/")+1, path.length());
-				RecoThread recoThread = new RecoThread(oriName, f.getAbsolutePath());
+				/**********test by chenxinzhuang************/
+			//	FileName = f.getName();
+				oriName = path.substring(path.lastIndexOf("/") + 1, path.length());
+				RecoThread recoThread = null;
+				if(HanvonApplication.isAccurateRecg){
+					mProgress = ProgressDialog.show(CropActivity.this, "", "正在进行价格评估......");
+					recoThread = new RecoThread(oriName, f.getAbsolutePath(),"2");
+				}else{
+					mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
+					recoThread = new RecoThread(oriName, f.getAbsolutePath(),"1");
+				}
 				new Thread(recoThread).start();
+				/**************END************/
 
 				break;
 
@@ -325,11 +334,13 @@ public class CropActivity extends Activity
 	{
 		private String mFileName;
 		private String mPath;
+		private String mRecgType;
 
-		public RecoThread(String filename, String path)
+		public RecoThread(String filename, String path,String recgtype)
 		{
 			mFileName = filename;
 			mPath = path;
+			mRecgType = recgtype;
 		}
 
 		@Override
@@ -346,8 +357,8 @@ public class CropActivity extends Activity
 				return;
 			}
 
-			String fid = null;
-			fid = UploadImage.UploadFiletoHvn(InfoMsg.FILE_UPLOAD_TYPE, mPath, mFileName);
+		//	String fid = null;
+			fid = UploadImage.UploadFiletoHvn(mRecgType, mPath, mFileName);
 
 			if (null == fid)
 			{
@@ -357,10 +368,18 @@ public class CropActivity extends Activity
 				CropActivity.this.textHandler.sendMessage(msg);
 				return;
 			}
-
-			Log.i(TAG, "!!!!!!DEVID is " + HanvonApplication.AppDeviceId);
-			new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.AppDeviceId, fid, "1", "4");
-
+			/**********test by chenxinzhuang************/
+			if(HanvonApplication.isAccurateRecg) {
+				new UploadImage(textHandler).GetEvaluate(fid);
+			}else {
+				Log.i(TAG, "!!!!!!DEVID is " + HanvonApplication.AppDeviceId);
+				if("".equals(HanvonApplication.hvnName)){
+					new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.AppDeviceId, fid, "1", "4");
+				}else{
+					new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.hvnName, fid, "1", "4");
+				}
+			}
+			/***************END*************/
 			/*
 			Log.d(TAG, "!!!!!!!! response is " + response);
 			Message msg = new Message();
@@ -476,10 +495,47 @@ public class CropActivity extends Activity
 					{
 						e.printStackTrace();
 					}
+					break;
 				}
+				case InfoMsg.ORDER_EVL_TYPE:
+					Object evlobj = msg.obj;
+					String evlcontent = evlobj.toString();
+					try {
+						JSONObject json = new JSONObject(evlcontent);
+						if("0".equals(json.getString("code"))){
+							OrderDetail orderDetail = new OrderDetail();
+							orderDetail.setOrderFileNanme(oriName);
+							orderDetail.setOrderFilesPages(json.getString("fileAmount"));
+							orderDetail.setOrderFilesBytes(json.getString("wordsRange"));
+							orderDetail.setOrderFinshTime(json.getString("finishTime"));
+							orderDetail.setOrderPrice(json.getString("price"));
+							orderDetail.setOrderWaitTime(json.getString("waitTime"));
+							orderDetail.setAccurateWords(json.getString("accurateWords"));
+							orderDetail.setRecogRate(json.getString("recogRate"));
+							orderDetail.setRecogAngle(json.getString("recogAngle"));
+							orderDetail.setOrderNumber(json.getString("oid"));
+							orderDetail.setZoom(json.getString("zoom"));
+							orderDetail.setOrderPhone("18500136685");
+							orderDetail.setOrderFid(fid);
+							orderDetail.setOrderName("李小强");
+							orderDetail.setOrderStatus("1");
+							Intent intent = new Intent();
+							intent.setClass(CropActivity.this, OrderEvalPrices.class);
+							Bundle bundle = new Bundle();
+							bundle.putSerializable("ordetail", orderDetail);
+							intent.putExtras(bundle);
+							startActivity(intent);
+						//	finish();
+						}else if ("8002".equals(json.getString("code"))){
+							Toast.makeText(CropActivity.this,json.getString("result"),Toast.LENGTH_SHORT).show();
+						}else{
+							Toast.makeText(CropActivity.this,"评估过程出现错误!",Toast.LENGTH_SHORT).show();
+						}
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					break;
 			}
-
-
 		};
 	};
 

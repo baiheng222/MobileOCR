@@ -72,6 +72,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         mRlFile.setOnClickListener(this);
         mRlOrders.setOnClickListener(this);
         mRlSettings.setOnClickListener(this);
+
         return view;
     }
 
@@ -93,7 +94,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.rl_orders:
-                /*
+
                 LogUtil.i("=====Before Click Orders");
                 if(HanvonApplication.hvnName.equals("")){
                     Toast.makeText(HanvonApplication.getcontext(),"未登陆,请先登录!",Toast.LENGTH_SHORT).show();
@@ -103,13 +104,18 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                     Intent orderIntent = new Intent(MenuFragment.this.getActivity(), OrderListActivity.class);
                     this.startActivity(orderIntent);
                 }
-                */
                 break;
 
             case R.id.rl_file:
-                Intent listIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
-                this.startActivity(listIntent);
+                Intent fileIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
+                this.startActivity(fileIntent);
                 break;
+
+
+     //       case R.id.rl_file:
+      //          Intent listIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
+     //           this.startActivity(listIntent);
+     //           break;
 
             case R.id.rl_settings:
                 Intent settingIntent = new Intent(MenuFragment.this.getActivity(), SettingActivity.class);

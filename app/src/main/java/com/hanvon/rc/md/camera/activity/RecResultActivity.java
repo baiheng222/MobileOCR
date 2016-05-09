@@ -10,17 +10,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.media.Image;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,8 +36,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.InvalidMarkException;
-import java.util.ArrayList;
 
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.onekeyshare.OnekeyShare;
@@ -93,7 +87,6 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 
     private final static int UPLLOAD_FILE_CLOUD_SUCCESS = 5;
     private final static int UPLLOAD_FILE_CLOUD_FAIL = 6;
-
 
     private Handler handler = new Handler()
     {
@@ -365,12 +358,10 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                             }
                         })
                 .setPositiveButton(R.string.bc_str_confirm,
-                        new DialogInterface.OnClickListener()
-                        {
+                        new DialogInterface.OnClickListener() {
 
                             @Override
-                            public void onClick(DialogInterface dialog, int which)
-                            {
+                            public void onClick(DialogInterface dialog, int which) {
                                 overridePendingTransition(R.anim.act_delete_enter_anim,
                                         R.anim.act_delete_exit_anim);
                                 RecResultActivity.this.finish();

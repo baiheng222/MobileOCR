@@ -24,13 +24,14 @@
                 android:layout_marginTop="15dip"
                 android:layout_centerInParent="true"
                 android:text="@string/orderlist_allorder"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:textColor="@color/black"/>
             <TextView
                 android:id="@+id/all_hr"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/black"/>
+                android:background="@color/green"/>
         </RelativeLayout>
         <TextView
             android:layout_marginTop="10dp"
@@ -49,13 +50,14 @@
                 android:layout_marginTop="15dip"
                 android:layout_centerInParent="true"
                 android:text="@string/orderlist_waitpay"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:textColor="@color/black"/>
             <TextView
                 android:id="@+id/waitpay_hr"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/black"/>
+                android:background="@color/green"/>
         </RelativeLayout>
         <TextView
             android:layout_marginTop="10dp"
@@ -74,13 +76,14 @@
                 android:layout_marginTop="15dip"
                 android:layout_centerInParent="true"
                 android:text="@string/orderlist_waitdown"
-                android:textSize="15sp" />
+                android:textSize="15sp"
+                android:textColor="@color/black"/>
             <TextView
                 android:id="@+id/waitdown_hr"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/black"/>
+                android:background="@color/green"/>
         </RelativeLayout>
     </LinearLayout>
     <RelativeLayout
@@ -104,5 +107,4 @@
             android:visibility="gone" >
         </ListView>
     </RelativeLayout>
-
 </LinearLayout>

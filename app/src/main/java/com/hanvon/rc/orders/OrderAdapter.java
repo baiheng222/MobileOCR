@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hanvon.rc.R;
@@ -48,12 +49,13 @@ public class OrderAdapter extends BaseAdapter {
         ViewHolder viewHolder = null;
         if (convertView == null)
         {
-            convertView = mInflater.inflate(R.layout.ordersimpleinfo, parent, false);
+            convertView = mInflater.inflate(R.layout.orderlistinfo, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mOrderTime = (TextView) convertView.findViewById(R.id.ordersimpleinfo_time);
-            viewHolder.mOrderStatus = (TextView) convertView.findViewById(R.id.ordersimpleinfo_status);
-            viewHolder.mOrderTitle = (TextView) convertView.findViewById(R.id.ordersimpleinfo_title);
-            viewHolder.mOrderPrice = (TextView) convertView.findViewById(R.id.ordersimpleinfo_price);
+            viewHolder.mOrderTime = (TextView) convertView.findViewById(R.id.orderlist_createtime);
+            viewHolder.mOrderStatus = (TextView) convertView.findViewById(R.id.orderlist_status);
+            viewHolder.IvOrderStatusMap = (ImageView) convertView.findViewById(R.id.orderlist_statutsmap);
+            viewHolder.mOrderNumber = (TextView) convertView.findViewById(R.id.orderlist_ordernumber);
+            viewHolder.mOrderPrice = (TextView) convertView.findViewById(R.id.orderlist_price);
             convertView.setTag(viewHolder);
         }
         else
@@ -62,9 +64,24 @@ public class OrderAdapter extends BaseAdapter {
         }
 
         viewHolder.mOrderTime.setText(mDatas.get(position).getOrderCreateTime());
-        viewHolder.mOrderStatus.setText(mDatas.get(position).getOrderStatus());
-        viewHolder.mOrderTitle.setText(mDatas.get(position).getOrderTitle());
-        viewHolder.mOrderPrice.setText(String.valueOf(mDatas.get(position).getOrderPrice()));
+        if("1".equals(mDatas.get(position).getOrderStatus())){
+            viewHolder.IvOrderStatusMap.setImageResource(R.mipmap.wait_pay);
+            viewHolder.mOrderStatus.setText("待支付");
+        }else if("2".equals(mDatas.get(position).getOrderStatus())){
+            viewHolder.IvOrderStatusMap.setImageResource(R.mipmap.working);
+            viewHolder.mOrderStatus.setText("待加工");
+        }else if("3".equals(mDatas.get(position).getOrderStatus())){
+            viewHolder.IvOrderStatusMap.setImageResource(R.mipmap.working);
+            viewHolder.mOrderStatus.setText("处理中");
+        }else if("4".equals(mDatas.get(position).getOrderStatus())){
+            viewHolder.IvOrderStatusMap.setImageResource(R.mipmap.canceling);
+            viewHolder.mOrderStatus.setText("取消");
+        }else if("5".equals(mDatas.get(position).getOrderStatus())){
+            viewHolder.IvOrderStatusMap.setImageResource(R.mipmap.wait_downing);
+            viewHolder.mOrderStatus.setText("待收取");
+        }
+        viewHolder.mOrderNumber.setText(mDatas.get(position).getOrderNumber());
+        viewHolder.mOrderPrice.setText("¥"+String.valueOf(mDatas.get(position).getOrderPrice()));
 
 
         return convertView;
@@ -73,7 +90,8 @@ public class OrderAdapter extends BaseAdapter {
     {
         TextView mOrderTime;
         TextView mOrderStatus;
-        TextView mOrderTitle;
+        TextView mOrderNumber;
         TextView mOrderPrice;
+        ImageView IvOrderStatusMap;
     }
 }
