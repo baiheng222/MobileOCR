@@ -37,6 +37,7 @@ import com.hanvon.rc.utils.CustomDialog;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.md.camera.DensityUtil;
 import com.hanvon.rc.md.camera.activity.ModeCtrl.UserMode;
+import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 
 import java.io.File;
@@ -57,6 +58,9 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private ImageView mGallery;
     private ImageView mCapture;
     private TextView mCancel;
+
+    private TextView mSingleCap;
+    private TextView mMultiCap;
 
     private RelativeLayout relativeLayoutUserMode;
 
@@ -79,8 +83,14 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         return cameraActivity;
     }
 
+    private int recoMode;
+    private int capMode;
+
     public static final String FILE_SAVE_DIR_NAME = "savedpic";
     public static final String FILE_SAVE_PATH = "/MobileOCR/";
+
+    private static final int CAPTURE_SINGLE = 1;
+    private static final int CAPTURE_MULTI = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -89,7 +99,31 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.camera);
 
+        creatDir();
 
+        initData();
+
+        initView();
+    }
+
+    private void initData()
+    {
+        mContext = this;
+        isSurfaceCreated = false;
+        isTakingPicture = false;
+        isCameraFlashOpen = false;
+
+        cameraActivity = this;
+        modeCtrl = new ModeCtrl();
+        this.caHandlerManager = new CAHandlerManager(this);
+
+        Intent intent = getIntent();
+        recoMode = intent.getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
+        capMode = CAPTURE_SINGLE;
+    }
+
+    private void creatDir()
+    {
         if (!FileUtil.isExistSDCard()) // 是否存在sdCard
         {
             Toast.makeText(this, "该手机没有SD卡", Toast.LENGTH_LONG).show();
@@ -118,18 +152,6 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 f2.mkdirs();
             }
         }
-
-        mContext = this;
-        isSurfaceCreated = false;
-        isTakingPicture = false;
-        isCameraFlashOpen = false;
-
-        cameraActivity = this;
-        modeCtrl = new ModeCtrl();
-        this.caHandlerManager = new CAHandlerManager(this);
-
-
-        initView();
     }
 
     private void initView()
@@ -144,9 +166,22 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mCancel = (TextView) findViewById(R.id.tv_cancel);
         mCancel.setOnClickListener(this);
 
-        this.relativeLayoutUserMode = (RelativeLayout) this
-                .findViewById(R.id.hanvon_camera_usermode);
+        mSingleCap = (TextView) findViewById(R.id.hanvon_camera_scanning) ;
+        mSingleCap.setOnClickListener(this);
+        mMultiCap = (TextView) findViewById(R.id.hanvon_camera_bcard);
+        mMultiCap.setOnClickListener(this);
 
+        this.relativeLayoutUserMode = (RelativeLayout) this.findViewById(R.id.hanvon_camera_usermode);
+
+        if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
+        {
+            relativeLayoutUserMode.setVisibility(View.GONE);
+        }
+        else
+        {
+            relativeLayoutUserMode.setVisibility(View.VISIBLE);
+
+        }
 
     }
 
@@ -479,6 +514,14 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             case R.id.iv_light:
                 setFlashState();
             break;
+
+            case R.id.hanvon_camera_bcard:
+
+                break;
+
+            case R.id.hanvon_camera_scanning:
+
+                break;
         }
     }
 

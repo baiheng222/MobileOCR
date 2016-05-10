@@ -17,6 +17,7 @@ import com.hanvon.rc.fragment.MainFragment;
 import com.hanvon.rc.md.camera.activity.CameraActivity;
 import com.hanvon.rc.md.camera.activity.ExactActivity;
 import com.hanvon.rc.utils.ConnectionDetector;
+import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 
 
@@ -32,6 +33,7 @@ public class MainActivity extends Activity
     private FrameLayout mFrameLayout;
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
+
 
 
 
@@ -122,12 +124,14 @@ public class MainActivity extends Activity
     public void startCameraActivity()
     {
         Intent intet = new Intent(MainActivity.this, CameraActivity.class);
+        intet.putExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
         startActivity(intet);
     }
 
     public void startExactActivity()
     {
         Intent intet = new Intent(MainActivity.this, ExactActivity.class);
+        intet.putExtra("recomode", InfoMsg.RECO_MODE_EXACT_RECO);
         startActivity(intet);
     }
 

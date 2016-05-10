@@ -1,14 +1,19 @@
 package com.hanvon.rc.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.FileListActivity;
 import com.hanvon.rc.db.FileInfo;
 import com.hanvon.rc.utils.LogUtil;
 
@@ -60,20 +65,48 @@ public class ResultFileListAdapter extends BaseAdapter
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent)
+    public View getView(final int position, View convertView, ViewGroup parent)
     {
         ViewHolder viewHolder = null;
         if (convertView == null)
         {
             convertView = mInflater.inflate(R.layout.file_list_item2, parent, false);
             viewHolder = new ViewHolder();
-            viewHolder.mImageSelection = (ImageView) convertView.findViewById(R.id.iv_select);
+            viewHolder.mImageSelection = (CheckBox) convertView.findViewById(R.id.iv_select);
+            viewHolder.mImageSelection.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener()
+            {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
+                {
+                    LogUtil.i("itme " + position + " state is " + isChecked);
+                }
+            });
+            viewHolder.mRlFileItem = (RelativeLayout) convertView.findViewById(R.id.rl_fileitem);
+            viewHolder.mRlFileItem.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    FileListActivity act = (FileListActivity)mContext;
+                    act.startRecsultActivity(position);
+                }
+            });
             viewHolder.mImageFormat = (ImageView) convertView.findViewById(R.id.iv_format_img);
             viewHolder.mTvFileName = (TextView) convertView.findViewById(R.id.tv_file_name);
             viewHolder.mTvFileType = (TextView) convertView.findViewById(R.id.tv_filetype);
             viewHolder.mTvFileSize = (TextView) convertView.findViewById(R.id.tv_filesize);
             viewHolder.mTvFileCreateTime = (TextView) convertView.findViewById(R.id.tv_creattime);
             viewHolder.mIvDownLoad = (ImageView) convertView.findViewById(R.id.iv_download);
+            viewHolder.mIvDownLoad.setOnClickListener(new View.OnClickListener()
+            {
+                @Override
+                public void onClick(View view)
+                {
+                    LogUtil.i("!!! download img click, position is " + position);
+                }
+
+            }
+            );
             convertView.setTag(viewHolder);
 
         }
@@ -134,13 +167,14 @@ public class ResultFileListAdapter extends BaseAdapter
 
     private final class ViewHolder
     {
-        ImageView mImageSelection;
+        CheckBox mImageSelection;
         ImageView mImageFormat;
         TextView  mTvFileName;
         TextView  mTvFileType;
         TextView  mTvFileSize;
         TextView  mTvFileCreateTime;
         ImageView mIvDownLoad;
+        RelativeLayout mRlFileItem;
     }
 
 
