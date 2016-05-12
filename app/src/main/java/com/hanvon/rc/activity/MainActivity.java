@@ -12,8 +12,10 @@ import android.view.Window;
 import android.widget.FrameLayout;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.db.DBManager;
 import com.hanvon.rc.fragment.MainFragment;
+import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.rc.md.camera.activity.CameraActivity;
 import com.hanvon.rc.md.camera.activity.ExactActivity;
 import com.hanvon.rc.utils.ConnectionDetector;
@@ -130,9 +132,17 @@ public class MainActivity extends Activity
 
     public void startExactActivity()
     {
-        Intent intet = new Intent(MainActivity.this, ExactActivity.class);
-        intet.putExtra("recomode", InfoMsg.RECO_MODE_EXACT_RECO);
-        startActivity(intet);
+        if (HanvonApplication.hvnName.length() > 0)
+        {
+            Intent intet = new Intent(MainActivity.this, CameraActivity.class);
+            intet.putExtra("recomode", InfoMsg.RECO_MODE_EXACT_RECO);
+            startActivity(intet);
+        }
+        else
+        {
+            Intent intent = new Intent(this, LoginActivity.class);
+            startActivity(intent);
+        }
     }
 
     public void exitProgram()

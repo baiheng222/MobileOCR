@@ -472,7 +472,7 @@ public class CropActivity extends Activity
 							if ("0".equals(jobj.getString("code")))
 							{
 								byte [] ret = Base64Utils.decode(jobj.getString("result"));
-								String result = new String(ret, "UTF-8");
+								String result = new String(ret, "GB2312");
 								//String result = jobj.getString("result");
 								LogUtil.i(" !!!! result is " + result);
 								String offset = jobj.getString("offset");

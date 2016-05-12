@@ -39,6 +39,7 @@ import com.hanvon.rc.md.camera.DensityUtil;
 import com.hanvon.rc.md.camera.activity.ModeCtrl.UserMode;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.widget.BadgeView;
 
 import java.io.File;
 
@@ -58,6 +59,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private ImageView mGallery;
     private ImageView mCapture;
     private TextView mCancel;
+    private BadgeView mSubSuperscript;
 
     private TextView mSingleCap;
     private TextView mMultiCap;
@@ -119,6 +121,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
         Intent intent = getIntent();
         recoMode = intent.getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
+        LogUtil.i("recomode is " + recoMode);
         capMode = CAPTURE_SINGLE;
     }
 
@@ -166,10 +169,20 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mCancel = (TextView) findViewById(R.id.tv_cancel);
         mCancel.setOnClickListener(this);
 
+        mSubSuperscript = new BadgeView(this, mGallery);
+        //mSubSuperscript.setBackgroundResource(R.drawable.badge_ifaux);
+        mSubSuperscript.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);
+        mSubSuperscript.setText("5");
+        mSubSuperscript.setAlpha(1f);
+        mSubSuperscript.setBadgeMargin(0, 0);
+        mSubSuperscript.show();
+
         mSingleCap = (TextView) findViewById(R.id.hanvon_camera_scanning) ;
         mSingleCap.setOnClickListener(this);
+        mSingleCap.setTextColor(getResources().getColor(R.color.white));
         mMultiCap = (TextView) findViewById(R.id.hanvon_camera_bcard);
         mMultiCap.setOnClickListener(this);
+
 
         this.relativeLayoutUserMode = (RelativeLayout) this.findViewById(R.id.hanvon_camera_usermode);
 
@@ -179,6 +192,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         }
         else
         {
+            LogUtil.i("show mode choice");
             relativeLayoutUserMode.setVisibility(View.VISIBLE);
 
         }
@@ -516,13 +530,37 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             break;
 
             case R.id.hanvon_camera_bcard:
+                switchCapMode();
 
                 break;
 
             case R.id.hanvon_camera_scanning:
-
+                switchCapMode();
                 break;
         }
+    }
+
+    void processBtnPress()
+    {
+
+    }
+
+    void switchCapMode()
+    {
+        LogUtil.i("switchCapMode!!!!!");
+        if (capMode == CAPTURE_SINGLE)
+        {
+            capMode = CAPTURE_MULTI;
+            mSingleCap.setTextColor(getResources().getColor(R.color.white));
+            mMultiCap.setTextColor(getResources().getColor(R.color.silver));
+        }
+        else
+        {
+            capMode = CAPTURE_SINGLE;
+            mMultiCap.setTextColor(getResources().getColor(R.color.white));
+            mSingleCap.setTextColor(getResources().getColor(R.color.silver));
+        }
+
     }
 
     private void turnOffFlash()
@@ -691,15 +729,22 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     public void jpgSaveComplete(String path)
     {
-        Log.i(TAG, "in func jpgSaveComplete, path is " + path);
-        Intent intent = new Intent();
-        intent.setClass(mContext, CropActivity.class);
-        intent.putExtra("parentActivity", "CameraActivity");
-        intent.putExtra("path", path);
+        if ((recoMode == InfoMsg.RECO_MODE_QUICK_RECO) || (capMode == CAPTURE_SINGLE))
+        {
+            Log.i(TAG, "in func jpgSaveComplete, path is " + path);
+            Intent intent = new Intent();
+            intent.setClass(mContext, CropActivity.class);
+            intent.putExtra("parentActivity", "CameraActivity");
+            intent.putExtra("path", path);
 
-        isTakingPicture = false;
-        Log.i(TAG, "Start CropActivity !!!1");
-        startActivity(intent);
+            isTakingPicture = false;
+            Log.i(TAG, "Start CropActivity !!!1");
+            startActivity(intent);
+        }
+        else
+        {
+
+        }
     }
 
 }

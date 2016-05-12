@@ -7,8 +7,8 @@ package com.hanvon.rc.utils;
  */
 public class InfoMsg {
 
-    public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
-    //public static final String HanvonUrl = "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1";
+    //public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
+    public static final String HanvonUrl = "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1";
 
 
     public static final String UrlRapidRecog = HanvonUrl + "/file/web/rapid/recog";

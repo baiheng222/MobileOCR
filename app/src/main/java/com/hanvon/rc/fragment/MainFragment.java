@@ -72,14 +72,9 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
 
             case R.id.iv_exact:
             case R.id.tv_exact:
-
                 HanvonApplication.isAccurateRecg = true;
-                MainActivity act1 = (MainActivity)getActivity();
-                act1.startCameraActivity();
-
- //               MainActivity act2 = (MainActivity)getActivity();
- //               act2.startExactActivity();
-
+                MainActivity act2 = (MainActivity)getActivity();
+                act2.startExactActivity();
                 break;
 
         }
