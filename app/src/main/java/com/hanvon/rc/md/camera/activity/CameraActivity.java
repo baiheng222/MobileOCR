@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -87,6 +88,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     private int recoMode;
     private int capMode;
+    private int multiCapNum;
+
 
     public static final String FILE_SAVE_DIR_NAME = "savedpic";
     public static final String FILE_SAVE_PATH = "/MobileOCR/";
@@ -123,6 +126,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         recoMode = intent.getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
         LogUtil.i("recomode is " + recoMode);
         capMode = CAPTURE_SINGLE;
+        multiCapNum = 0;
     }
 
     private void creatDir()
@@ -175,7 +179,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mSubSuperscript.setText("5");
         mSubSuperscript.setAlpha(1f);
         mSubSuperscript.setBadgeMargin(0, 0);
-        mSubSuperscript.show();
+        //mSubSuperscript.show();
 
         mSingleCap = (TextView) findViewById(R.id.hanvon_camera_scanning) ;
         mSingleCap.setOnClickListener(this);
@@ -313,34 +317,36 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         Log.i(TAG, "<<<<<<<<<<<<<<<<<<<<<<<<<<<---onDestroy--->>>>>>>>>>>>>>>>>>");
     }
 
-    @Override
-    protected void onPause()
+    private void reSetCamera()
     {
-        //this.releaseScanningResource();
-        //this.releaseBCardResource();
-        mCameraManager.release();
-        mCameraManager = null;
-        mPreviewDataManager.release();
-        mPreviewDataManager = null;
-        if (!this.isSurfaceCreated)
+        if (mCameraManager != null)
         {
-            SurfaceView surfaceView = (SurfaceView) findViewById(R.id.sv_preview);
-            SurfaceHolder surfaceHolder = surfaceView.getHolder();
-            surfaceHolder.removeCallback(this);
+            //this.releaseScanningResource();
+            //this.releaseBCardResource();
+            mCameraManager.release();
+            mCameraManager = null;
+            mPreviewDataManager.release();
+            mPreviewDataManager = null;
+            if (!this.isSurfaceCreated)
+            {
+                SurfaceView surfaceView = (SurfaceView) findViewById(R.id.sv_preview);
+                SurfaceHolder surfaceHolder = surfaceView.getHolder();
+                surfaceHolder.removeCallback(this);
+            }
         }
-        super.onPause();
-        Log.i(TAG, "<<<<<<<<<<<<<<<<<<<<<<<<<<<---onPause--->>>>>>>>>>>>>>>>>>");
-
-        System.gc();
-
-
     }
 
     @Override
-    protected void onResume()
+    protected void onPause()
     {
-        super.onResume();
+        reSetCamera();
+        super.onPause();
+        System.gc();
+    }
 
+
+    private void initCamera()
+    {
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.sv_preview);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         mPreviewDataManager = new PreviewDataManager();
@@ -357,6 +363,13 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             surfaceHolder.addCallback(this);
             surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
         }
+    }
+
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        initCamera();
     }
 
 
@@ -417,7 +430,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 {
                     mCameraManager.setTouchView(50, 100);
                     mCameraManager.setFocusModeAutoCycle(1750);
-                    setFlashAuto(); //fjm add
+                    //setFlashAuto(); //fjm add
                     /*
                     switch (ModeCtrl.getUserMode())
                     {
@@ -477,6 +490,11 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                         + String.valueOf(param.getPictureSize().width) + "_"
                         + String.valueOf(param.getPictureSize().height));
 
+        if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) || (capMode == CAPTURE_MULTI))
+        {
+            reSetCamera();
+        }
+
         new ThreadSaveJPG(cameraActivity, data).start();
         /*
         switch (ModeCtrl.getUserMode()) {
@@ -514,7 +532,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 break;
 
             case R.id.tv_cancel:
-                this.finish();
+                processBtnPress();
+
                 break;
 
             case R.id.iv_gallery:
@@ -542,7 +561,15 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     void processBtnPress()
     {
-
+        if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) && (capMode == CAPTURE_MULTI))
+        {
+            multiCapNum = 0;
+            mSubSuperscript.hide();
+        }
+        else
+        {
+            this.finish();
+        }
     }
 
     void switchCapMode()
@@ -551,14 +578,18 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         if (capMode == CAPTURE_SINGLE)
         {
             capMode = CAPTURE_MULTI;
-            mSingleCap.setTextColor(getResources().getColor(R.color.white));
-            mMultiCap.setTextColor(getResources().getColor(R.color.silver));
+            mSingleCap.setTextColor(getResources().getColor(R.color.silver));
+            mMultiCap.setTextColor(getResources().getColor(R.color.white));
+            mCancel.setText(getResources().getText(R.string.wb_str_done));
+            //mSubSuperscript.show();
         }
         else
         {
             capMode = CAPTURE_SINGLE;
-            mMultiCap.setTextColor(getResources().getColor(R.color.white));
-            mSingleCap.setTextColor(getResources().getColor(R.color.silver));
+            mMultiCap.setTextColor(getResources().getColor(R.color.silver));
+            mSingleCap.setTextColor(getResources().getColor(R.color.white));
+            mCancel.setText(getResources().getText(R.string.bc_str_cancle));
+            mSubSuperscript.hide();
         }
 
     }
@@ -743,8 +774,31 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         }
         else
         {
+            multiCapNum++;
+            mSubSuperscript.setText(String.valueOf(multiCapNum));
+            mSubSuperscript.show();
 
+            //reSetCamera();
+            try
+            {
+                initCamera();
+            }
+            catch (Exception e)
+            {
+                LogUtil.i("init camera error !!!");
+            }
+
+            isTakingPicture = false;
         }
+    }
+
+    private void getDisplayMetrics()
+    {
+        DisplayMetrics dm = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(dm);
+        //intScreenWidth = dm.widthPixels;
+        //intScreenHeight = dm.heightPixels;
+        //Log.i(TAG, Integer.toString(intScreenWidth));
     }
 
 }
