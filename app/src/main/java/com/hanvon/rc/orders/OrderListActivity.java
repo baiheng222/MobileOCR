@@ -10,7 +10,9 @@ import android.os.Message;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,7 +36,7 @@ import java.util.List;
  * @Auth: chenxzhuang
  * @Time: 2016/3/28 0028.
  */
-public class OrderListActivity extends Activity implements View.OnClickListener{
+public class OrderListActivity extends Activity implements AbsListView.OnScrollListener,View.OnClickListener {
     private TextView TvOrderAll;
     private TextView TvOrderWaitPay;
     private TextView TvOrderWaitDown;
@@ -47,7 +49,7 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
     private ListView LvOrderList;
 
    // private ListView mOrderList;
-    private OrderAdapter mOrderAdapter;
+    private OrderAdapter mOrderAdapter =  null;
     private List<OrderDetail> mOrderDetailList = new ArrayList<OrderDetail>();
 
     private static Handler handler;
@@ -55,10 +57,28 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
     private ProgressDialog pd;
     private int status = 0;
     private  boolean isItem = false;
+
+    private int visibleLastIndex = 0;   //最后的可视项索引
+    private int visibleItemCount;       // 当前窗口可见项总数
+    private View loadMoreView;
+    private Button loadMoreButton;
+
+    private int pages = 0;
+    private ListView listView;
+    private boolean isSameView = false;
+    private boolean isLoadComplate = false;
+    private boolean isScrollBottom = false;
+
+    public static OrderListActivity instance = null;
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        instance = this;
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.orderlist);
+
+        loadMoreView = getLayoutInflater().inflate(R.layout.load_more, null);
+        loadMoreButton = (Button) loadMoreView.findViewById(R.id.loadMoreButton);
 
         initHandler();
 
@@ -85,6 +105,11 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
         TvOrderAll.setTextColor(Color.parseColor("#008000"));
         TvOrderWaitDown.setTextColor(Color.parseColor("#000000"));
         TvOrderWaitPay.setTextColor(Color.parseColor("#000000"));
+
+        listView = LvOrderList;               //获取id是list的ListView
+
+        listView.addFooterView(loadMoreView);   //设置列表底部视图
+        listView.setOnScrollListener(this);     //添加滑动监听
     }
 
     @Override
@@ -92,8 +117,13 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
         super.onResume();
         new MyHttpUtils(handler);
 
+        LogUtil.i("--------------onResume---------Page:"+pages);
+     //   pages = 0;
         if (mOrderDetailList.size() == 0) {
             initDatas("");
+        }else{
+         //   mOrderDetailList.clear();
+         //   initDatas("");
         }
     }
 
@@ -114,10 +144,20 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
                 }
                 switch (msg.what) {
                     case InfoMsg.ORDER_LIST_TYPE:
-                        mOrderDetailList.clear();
+                        int j = 0;
+                        int recordCount = 0;
+                        if(!isSameView) {
+                            mOrderDetailList.clear();
+                            if(mOrderAdapter != null){
+                                mOrderAdapter.clearItem();
+                                mOrderAdapter.notifyDataSetChanged(); //数据集变化后,通知adapter
+                            }
+                            j = 1;
+                        }
                         try {
                             JSONArray jsonArray = new JSONArray(json.getString("list"));
-                            for(int i = 0;i < jsonArray.length();i++) {
+                            recordCount = jsonArray.length();
+                            for(int i = 0;i < recordCount;i++) {
                                 JSONObject orderjson = jsonArray.getJSONObject(i);
                                 OrderDetail orderDetail = new OrderDetail();
                                 orderDetail.setOrderCreateTime(orderjson.getString("createTime"));
@@ -125,12 +165,35 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
                                 orderDetail.setOrderPrice(orderjson.getString("price"));
                                 orderDetail.setOrderNumber(orderjson.getString("oid"));
                                 mOrderDetailList.add(orderDetail);
+                                if(isSameView) {
+                             //       mOrderAdapter.addItem(orderDetail);
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
                         pd.dismiss();
-                        initView();
+                        if(!isSameView) {
+                            initView();
+                        }
+                        if(j == 1){
+                            isSameView = true;
+                            if(recordCount < 10){
+                                loadMoreButton.setText("没有更多订单了!");    //恢复按钮文字
+                                isLoadComplate = true;
+                            }
+                        }else{
+                            mOrderAdapter.notifyDataSetChanged(); //数据集变化后,通知adapter
+                            listView.setSelection(visibleLastIndex - visibleItemCount + 1); //设置选中项
+
+                            if(recordCount < 10){
+                                loadMoreButton.setText("没有更多订单了!");    //恢复按钮文字
+                                isLoadComplate = true;
+                            }else {
+                                loadMoreButton.setText("点击获取更多数据!");    //恢复按钮文字
+                                isLoadComplate = false;
+                            }
+                        }
                         break;
                 }
             }
@@ -142,7 +205,8 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
                 pd.dismiss();
             }
             pd = ProgressDialog.show(OrderListActivity.this,"","正在查询订单....");
-            RequestJson.OrderList(status);
+            RequestJson.OrderList(status,pages);
+            pages = pages + 1;
         }else{
             Toast.makeText(OrderListActivity.this,"请检查网络是否连通!",Toast.LENGTH_SHORT).show();
         }
@@ -186,9 +250,13 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
 
     @Override
     public void onClick(View v) {
+        loadMoreButton.setText("点击获取更多数据!");    //恢复按钮文字
+        isLoadComplate = false;
+        isSameView = false;
+        pages = 0;
         switch (v.getId()){
             case R.id.order_all:
-                if (status == 0){
+                if (status == 0) {
                     break;
                 }
                 TvWaitDownHr.setVisibility(View.INVISIBLE);
@@ -269,54 +337,113 @@ public class OrderListActivity extends Activity implements View.OnClickListener{
             y2 = event.getY();
             if(y1 - y2 > 50) {
              //   Toast.makeText(OrderListActivity.this, "向上滑", Toast.LENGTH_SHORT).show();
+                if(isLoadComplate){
+                    return super.dispatchTouchEvent(event);
+                }
+                if(isScrollBottom) {
+                    isScrollBottom = false;
+                    loadMoreButton.setText("加载中...");   //设置按钮文字loading
+                    if (status == 0) {
+                        initDatas("");
+                    } else if (status == 2) {
+                        initDatas("5");
+                    } else if (status == 3) {
+                        initDatas("1");
+                    }
+                }
             } else if(y2 - y1 > 50) {
              //   Toast.makeText(OrderListActivity.this, "向下滑", Toast.LENGTH_SHORT).show();
             } else if(x1 - x2 > 50) {
               //  Toast.makeText(OrderListActivity.this, "向左滑", Toast.LENGTH_SHORT).show();
                 if(status == 3){
-                    TvAllHr.setVisibility(View.INVISIBLE);
-                    TvWaitPayHr.setVisibility(View.INVISIBLE);
-                    TvWaitDownHr.setVisibility(View.VISIBLE);
-                    TvOrderAll.setTextColor(Color.parseColor("#000000"));
-                    TvOrderWaitDown.setTextColor(Color.parseColor("#008000"));
-                    TvOrderWaitPay.setTextColor(Color.parseColor("#000000"));
-                    initDatas("5");
-                    status = 2;
+                    ResetStatus(3,2);
                 }
                 if(status == 0){
-                    TvWaitDownHr.setVisibility(View.INVISIBLE);
-                    TvAllHr.setVisibility(View.INVISIBLE);
-                    TvWaitPayHr.setVisibility(View.VISIBLE);
-                    TvOrderAll.setTextColor(Color.parseColor("#000000"));
-                    TvOrderWaitDown.setTextColor(Color.parseColor("#000000"));
-                    TvOrderWaitPay.setTextColor(Color.parseColor("#008000"));
-                    initDatas("1");
-                    status = 3;
+                    ResetStatus(0,3);
                 }
             } else if(x2 - x1 > 50) {
               //  Toast.makeText(OrderListActivity.this, "向右滑", Toast.LENGTH_SHORT).show();
                 if(status == 3){
-                    TvWaitDownHr.setVisibility(View.INVISIBLE);
-                    TvWaitPayHr.setVisibility(View.INVISIBLE);
-                    TvAllHr.setVisibility(View.VISIBLE);
-                    TvOrderAll.setTextColor(Color.parseColor("#008000"));
-                    TvOrderWaitDown.setTextColor(Color.parseColor("#000000"));
-                    TvOrderWaitPay.setTextColor(Color.parseColor("#000000"));
-                    initDatas("");
-                    status = 0;
+                    ResetStatus(3,0);
                 }
                 if(status == 2){
-                    TvWaitDownHr.setVisibility(View.INVISIBLE);
-                    TvAllHr.setVisibility(View.INVISIBLE);
-                    TvWaitPayHr.setVisibility(View.VISIBLE);
-                    TvOrderAll.setTextColor(Color.parseColor("#000000"));
-                    TvOrderWaitDown.setTextColor(Color.parseColor("#000000"));
-                    TvOrderWaitPay.setTextColor(Color.parseColor("#008000"));
-                    initDatas("1");
-                    status = 3;
+                    ResetStatus(2,3);
                 }
             }
         }
         return super.dispatchTouchEvent(event);
+    }
+
+    @Override
+    public void onScrollStateChanged(AbsListView view, int scrollState) {
+        int itemsLastIndex = mOrderAdapter.getCount() - 1;    //数据集最后一项的索引
+        int lastIndex = itemsLastIndex + 1;             //加上底部的loadMoreView项
+        if (scrollState == AbsListView.OnScrollListener.SCROLL_STATE_IDLE && visibleLastIndex == lastIndex) {
+            //如果是自动加载,可以在这里放置异步加载数据的代码
+            LogUtil.i("------------loading more-----------");
+        }
+    }
+
+    @Override
+    public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+        LogUtil.i("---firstVisibleItem:"+firstVisibleItem+"--visibleItemCount:"+visibleItemCount+"--totalItemCount:"+totalItemCount);
+        if(firstVisibleItem + visibleItemCount == totalItemCount){
+            isScrollBottom = true;
+        }else{
+            isScrollBottom = false;
+        }
+        this.visibleItemCount = visibleItemCount;
+        visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
+    }
+
+    /**
+     * 点击按钮事件
+     * @param view
+     */
+    public void loadMore(View view) {
+        if(isLoadComplate){
+            return;
+        }
+        loadMoreButton.setText("加载中...");   //设置按钮文字loading
+        if(status == 0) {
+            initDatas("");
+        }else if(status == 2){
+            initDatas("5");
+        }else if(status == 3){
+            initDatas("1");
+        }
+    }
+
+    private void ResetStatus(int srcstatus,int dststatus){
+        loadMoreButton.setText("点击获取更多数据!");    //恢复按钮文字
+        isLoadComplate = false;
+        isSameView = false;
+        pages = 0;
+        if (srcstatus == 0 || srcstatus == 2){
+            TvWaitDownHr.setVisibility(View.INVISIBLE);
+            TvAllHr.setVisibility(View.INVISIBLE);
+            TvWaitPayHr.setVisibility(View.VISIBLE);
+            TvOrderAll.setTextColor(Color.parseColor("#000000"));
+            TvOrderWaitDown.setTextColor(Color.parseColor("#000000"));
+            TvOrderWaitPay.setTextColor(Color.parseColor("#008000"));
+            initDatas("1");
+        }else if(srcstatus == 3){
+            TvWaitPayHr.setVisibility(View.INVISIBLE);
+            TvOrderWaitPay.setTextColor(Color.parseColor("#000000"));
+            if(dststatus == 2){
+                TvAllHr.setVisibility(View.INVISIBLE);
+                TvWaitDownHr.setVisibility(View.VISIBLE);
+                TvOrderAll.setTextColor(Color.parseColor("#000000"));
+                TvOrderWaitDown.setTextColor(Color.parseColor("#008000"));
+                initDatas("5");
+            }else if(dststatus == 0){
+                TvWaitDownHr.setVisibility(View.INVISIBLE);
+                TvAllHr.setVisibility(View.VISIBLE);
+                TvOrderAll.setTextColor(Color.parseColor("#008000"));
+                TvOrderWaitDown.setTextColor(Color.parseColor("#000000"));
+                initDatas("");
+            }
+        }
+        status = dststatus;
     }
 }

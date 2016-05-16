@@ -32,6 +32,15 @@ public class DBHelper extends SQLiteOpenHelper
             KEY_RESULT_FILE_SIZE + " integer" + KEY_RESULT_FILE_ISDELETE + " integer" + ")";
 
 
+    //查询订单支付状态
+    public static final String KEY_QUERY_ORDER_ID = "_id";
+    public static final String KEY_QUERY_ORDER_NUMBER = "ordernumber";
+    public static final String KEY_QUERY_ORDER_PAYMODE = "paymode";
+    public static final String DATABASE_ORDER_TABLE = "order_table";
+    public static final String DATABASE_CREATE_ORDER_TABLE = "create table " + DATABASE_ORDER_TABLE + "(" +
+            KEY_QUERY_ORDER_ID + " integer primary key autoincrement, " +  KEY_QUERY_ORDER_NUMBER + " VARCHAR, " +
+            KEY_QUERY_ORDER_PAYMODE + " VARCHAR " + ")";
+
     public DBHelper(Context context)
     {
         super(context, DATABASE_NAME, null, DATABASE_VERSINO);
@@ -42,6 +51,7 @@ public class DBHelper extends SQLiteOpenHelper
     {
         LogUtil.i("create tabel string is : " + DATABASE_CREATE);
         db.execSQL(DATABASE_CREATE);
+        db.execSQL(DATABASE_CREATE_ORDER_TABLE);
     }
 
     @Override

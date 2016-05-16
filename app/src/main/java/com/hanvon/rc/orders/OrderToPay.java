@@ -18,8 +18,8 @@ import android.widget.Toast;
 import com.alipay.sdk.app.PayTask;
 import com.hanvon.rc.R;
 import com.hanvon.rc.application.HanvonApplication;
-import com.hanvon.rc.orders.alipay.AliPay;
 import com.hanvon.rc.orders.alipay.PayResult;
+import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.utils.MyHttpUtils;
@@ -55,12 +55,15 @@ public class OrderToPay extends Activity implements View.OnClickListener {
     private ProgressDialog pd;
     public static OrderToPay instance = null;
 
+    public boolean isOrderChange = false;
+
     // 商户PID
     public static final String PARTNER = "2088021262536315";
     // 商户收款账号
     public static final String SELLER = "1944971055@qq.com";
     private static final int SDK_PAY_FLAG = 1;
     private String orderInfo;
+    private int InFrom = 0; //0 from evalprices  1 from orderdetail
 
     private Handler mHandler = new Handler() {
         @SuppressWarnings("unused")
@@ -80,6 +83,9 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                     // 判断resultStatus 为“9000”则代表支付成功，具体状态码代表含义可参考接口文档
                     if (TextUtils.equals(resultStatus, "9000")) {
                         Toast.makeText(OrderToPay.this, "支付成功", Toast.LENGTH_SHORT).show();
+                        if(OrderDetailActivity.install != null) {
+                            OrderDetailActivity.install.finish();
+                        }
                         Intent intent = new Intent();
                         intent.setClass(OrderToPay.this, OrderDetailActivity.class);
                         intent.putExtra("OrderNumber", HanvonApplication.CurrentOid);
@@ -114,6 +120,13 @@ public class OrderToPay extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         if (intent != null) {
             orderDetail = (OrderDetail)intent.getSerializableExtra("ordetail");
+            String from = intent.getStringExtra("from");
+            if("EVAL_PRICES".equals(from)){
+                InFrom = 0;
+            }else{
+                InFrom = 1;
+            }
+
         }
 
         InitView();
@@ -145,10 +158,10 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                                 HanvonApplication.CurrentOid = json.getString("oid");
                                 LogUtil.i("----CurrentOid:"+HanvonApplication.CurrentOid);
                                 if (isZfbPay){
-                                  //  GetAliPaySign();
-                                  //  RequestJson.GetAliPaySign(orderInfo);
-                                   AliPay aliPay = new AliPay(OrderToPay.this,OrderToPay.this);
-                                    aliPay.pay(orderDetail.getOrderPrice(), orderDetail.getOrderNumber());
+                                    GetAliPaySign();
+                                    RequestJson.GetAliPaySign(orderInfo);
+                              //     AliPay aliPay = new AliPay(OrderToPay.this,OrderToPay.this);
+                               //     aliPay.pay(orderDetail.getOrderPrice(), orderDetail.getOrderNumber());
                                 }else{
                                     RequestJson.WxPay(orderDetail.getOrderPrice(), orderDetail.getOrderNumber());
                                 }
@@ -260,19 +273,30 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                 isZfbPay = true;
                 break;
             case R.id.payinfo_back:
-                Intent intent = new Intent();
-                intent.setClass(this,OrderListActivity.class);
-                startActivity(intent);
+                if(InFrom == 1) {
+                    if (isOrderChange) {
+                        OrderListActivity.instance.finish();
+                        isOrderChange = false;
+                    }
+                    Intent intent = new Intent();
+                    intent.setClass(this, OrderListActivity.class);
+                    startActivity(intent);
+                }
                 finish();
                 break;
             case R.id.payinfo_topay:
-                //支付宝支付 11  微信支付 12
-                if (isZfbPay){
-                        pd = ProgressDialog.show(this,"","");
+                if(new ConnectionDetector(OrderToPay.this).isConnectingTOInternet()) {
+                    isOrderChange = true;
+                    //支付宝支付 11  微信支付 12
+                    if (isZfbPay) {
+                        pd = ProgressDialog.show(this, "", "");
                         RequestJson.OrderAdd(orderDetail, "11");
-                }else{
-                        pd = ProgressDialog.show(this,"","");
+                    } else {
+                        pd = ProgressDialog.show(this, "", "");
                         RequestJson.OrderAdd(orderDetail, "12");
+                    }
+                }else{
+                    Toast.makeText(this,"请检查网络是否连通!",Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:
@@ -290,9 +314,15 @@ public class OrderToPay extends Activity implements View.OnClickListener {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         LogUtil.i("----------------------------------");
         if(keyCode == KeyEvent.KEYCODE_BACK){
-            Intent intent = new Intent();
-            intent.setClass(this,OrderListActivity.class);
-            startActivity(intent);
+            if(InFrom == 1) {
+                if (isOrderChange) {
+                    OrderListActivity.instance.finish();
+                    isOrderChange = false;
+                }
+                Intent intent = new Intent();
+                intent.setClass(this, OrderListActivity.class);
+                startActivity(intent);
+            }
             finish();
         }
         return true;
@@ -318,7 +348,7 @@ public class OrderToPay extends Activity implements View.OnClickListener {
         orderInfo += "&total_fee=" + "\"" + "0.01" + "\"";
 
         // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1/alipay/notify" + "\"";
+        orderInfo += "&notify_url=" + "\"" + "http://rc.hwyun.com:9090/rws-cloud/alipay/notify" + "\"";
 
         // 服务接口名称， 固定值
         orderInfo += "&service=\"mobile.securitypay.pay\"";

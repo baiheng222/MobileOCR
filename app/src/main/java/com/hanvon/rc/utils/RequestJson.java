@@ -218,7 +218,7 @@ public class RequestJson {
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderPay,JSuserInfoJson,InfoMsg.ORDER_PAY_TYPE);
     }
 
-    public static void OrderList(String status) {
+    public static void OrderList(String status,int start) {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
@@ -226,8 +226,8 @@ public class RequestJson {
             //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
             //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
             JSuserInfoJson.put("userid", "test2345");
-            JSuserInfoJson.put("start", "0");
-            JSuserInfoJson.put("pageSize", "100");
+            JSuserInfoJson.put("start", String.valueOf(start*10));
+            JSuserInfoJson.put("pageSize", "10");
             JSuserInfoJson.put("sort", conditionJson);
             JSuserInfoJson.put("status", status);
         } catch(JSONException e) {
@@ -349,11 +349,27 @@ public class RequestJson {
         try
         {
             JSuserInfoJson.put("userid", HanvonApplication.hvnName);
-            JSuserInfoJson.put("orderInfo", oidinfo);
+            JSuserInfoJson.put("orderInfo", URLEncoder.encode(oidinfo, "UTF-8"));
         } catch(Exception e) {
             e.printStackTrace();
         }
         LogUtil.i("-----"+JSuserInfoJson.toString());
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderAliPaySign,JSuserInfoJson,InfoMsg.ORDER_ALIPAY_SIGN_ORDER_TYPE);
+    }
+
+
+    public static void ModifyContactsMsg(String name,String phone,String email){
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("fullname", URLEncoder.encode(name, "UTF-8"));
+            JSuserInfoJson.put("mobile",phone);
+            JSuserInfoJson.put("email",phone);
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        LogUtil.i("-----"+JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlContactsModify, JSuserInfoJson, InfoMsg.ORDER_CONTACTS_MODIFY_TYPE);
     }
 }

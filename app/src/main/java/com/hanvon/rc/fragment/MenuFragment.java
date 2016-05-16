@@ -63,6 +63,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
         try
         {
             mVersion.setText("Version" + getCurVersion());
+            LogUtil.i("********Version:"+getCurVersion());
         }
         catch (Exception e)
         {

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#e2e2e2"
+    android:orientation="vertical">
+    <Button
+        android:id="@+id/loadMoreButton"
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:text="点击获取更多数据!"
+        android:textSize="15sp"
+        android:onClick="loadMore"
+        android:background="#e2e2e2"/>
+</LinearLayout>

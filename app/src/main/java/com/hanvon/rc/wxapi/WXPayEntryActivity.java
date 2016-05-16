@@ -58,6 +58,9 @@ public class WXPayEntryActivity extends Activity implements IWXAPIEventHandler{
 			if (resp.errCode == 0){
 				//查询支付结果
 				OrderToPay.instance.finish();
+				if(OrderDetailActivity.install != null) {
+					OrderDetailActivity.install.finish();
+				}
 				Intent intent = new Intent();
 				intent.setClass(WXPayEntryActivity.this, OrderDetailActivity.class);
 				intent.putExtra("OrderNumber", HanvonApplication.CurrentOid);

@@ -28,6 +28,8 @@ import com.hanvon.rc.bcard.bean.BcardChooseGridItem;
 import com.hanvon.rc.db.FileInfo;
 import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.FileUtil;
+import com.hanvon.rc.utils.InfoMsg;
+import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 import com.hanvon.rc.wboard.bean.PhotoItem;
 
@@ -61,6 +63,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	private final static int REQ_PREVIEW = 1;
 	private PhotoAlbum previewPhotoAlum;
 	private String comeFrom = "";
+	private int recoMode;
 	private Context mContext;
 
 	private final static int MAX_PIC_NUM = 9;
@@ -90,6 +93,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		}
 
 		comeFrom = this.getIntent().getExtras().getString("parentActivity");
+		recoMode = this.getIntent().getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
+		LogUtil.i("recomode is " + recoMode);
 		setContentView(R.layout.bc_choose_more_picture_main);
 		
 		mContext = this;

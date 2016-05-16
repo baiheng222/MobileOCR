@@ -37,6 +37,8 @@ public class InfoMsg {
     public static final String UrlOrderAliPaySign = HanvonUrl+"/alipay/sign";
     public static final String UrlOrderAliPayQuery = HanvonUrl+"/alipay/query";
 
+    public static final String UrlContactsModify = HanvonUrl+"/user/info/edit";
+
     public static final int FILE_RECOGINE_TYPE = 0x01;
     public static final int FILE_LIST_TYPE = 0x02;
     public static final int FILE_UPLOAD_TYPE = 0x03;
@@ -63,6 +65,7 @@ public class InfoMsg {
     public static final int ORDER_QUERY_ORDER_TYPE = 0x24;
     public static final int ORDER_ALIPAY_SIGN_ORDER_TYPE = 0x25;
     public static final int ORDER_ALIPAY_QUERY_ORDER_TYPE = 0x26;
+    public static final int ORDER_CONTACTS_MODIFY_TYPE = 0x28;
 
     //add by fjm
     public static final int FILE_UPLOAD_FAIL = 0x21;

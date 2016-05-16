@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@mipmap/pic_selected"
+    <item android:drawable="@mipmap/selected_icon"
         android:state_checked="true"
         android:state_enabled="true"></item>
-    <item android:drawable="@mipmap/pic_unselected"
+    <item android:drawable="@mipmap/unselect_icon"
         android:state_checked="false"
         android:state_enabled="true"></item>
 </selector>

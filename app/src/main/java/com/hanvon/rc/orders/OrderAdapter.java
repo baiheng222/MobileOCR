@@ -69,7 +69,7 @@ public class OrderAdapter extends BaseAdapter {
             viewHolder.mOrderStatus.setText("待支付");
         }else if("2".equals(mDatas.get(position).getOrderStatus())){
             viewHolder.IvOrderStatusMap.setImageResource(R.mipmap.working);
-            viewHolder.mOrderStatus.setText("待加工");
+            viewHolder.mOrderStatus.setText("处理中");
         }else if("3".equals(mDatas.get(position).getOrderStatus())){
             viewHolder.IvOrderStatusMap.setImageResource(R.mipmap.working);
             viewHolder.mOrderStatus.setText("处理中");
@@ -93,5 +93,18 @@ public class OrderAdapter extends BaseAdapter {
         TextView mOrderNumber;
         TextView mOrderPrice;
         ImageView IvOrderStatusMap;
+    }
+
+
+    /**
+     * 添加列表项
+     * @param item
+     */
+    public void addItem(OrderDetail item) {
+        mDatas.add(item);
+    }
+
+    public void clearItem(){
+        mDatas.clear();
     }
 }

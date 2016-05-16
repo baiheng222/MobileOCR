@@ -36,7 +36,7 @@
     <string name="orderinfo_ordertime">订单时间:&#160;&#160;</string>
     <string name="orderinfo_payMode">支付方式:&#160;&#160;在线支付</string>
     <string name="orderinfo_peceiptname">收货人:&#160;&#160;</string>
-    <string name="orderinfo_phonenumber">手机号码:&#160;&#160;</string>
+    <string name="orderinfo_phonenumber">电话:&#160;&#160;</string>
     <string name="orderinfo_customerservice">客服</string>
     <string name="orderinfo_Ocring">人工识别中，已用时:&#160;&#160;</string>
     <string name="orderinfo_deletebtn">删除</string>
@@ -146,4 +146,9 @@
     <string name="rec_ret_save">是否保存文件？</string>
     <string name="tip_filename">文件名</string>
     <string name="tip_file_format">选择文件格式</string>
+
+
+    <string name="contacts_name">联系人姓名</string>
+    <string name="contacts_phone">联系人电话</string>
+    <string name="contacts_title">修改联系方式</string>
 </resources>

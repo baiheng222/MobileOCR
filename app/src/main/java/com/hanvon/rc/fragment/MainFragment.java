@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.hanvon.rc.R;
 import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.utils.LogUtil;
 
 
 /**
@@ -78,5 +79,12 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
                 break;
 
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        LogUtil.i("---------------------------------");
+        HanvonApplication.StopService();
     }
 }

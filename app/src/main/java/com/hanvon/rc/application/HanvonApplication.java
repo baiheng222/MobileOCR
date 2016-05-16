@@ -2,12 +2,12 @@ package com.hanvon.rc.application;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.StrictMode;
 import android.preference.PreferenceManager;
@@ -19,7 +19,7 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
-import com.hanvon.rc.R;
+import com.hanvon.rc.orders.OrderQueryService;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.wboard.Constants;
 import com.hanvon.userinfo.UserInfoMessage;
@@ -92,6 +92,7 @@ public class HanvonApplication extends FrontiaApplication {
         super.onCreate();
         ShareSDK.initSDK(this);
         UserInfoMessage.setIsOnLine(false);
+        OrderQueryService.startService(this);
 
         //mLocationClient = new LocationClient(getApplicationContext());
         //myListener = new MyLocationListener();
@@ -404,6 +405,10 @@ public class HanvonApplication extends FrontiaApplication {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static void StopService(){
+        getcontext().stopService(new Intent(getcontext(),OrderQueryService.class));
     }
 
 }

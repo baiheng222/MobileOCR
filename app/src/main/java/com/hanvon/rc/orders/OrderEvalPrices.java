@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -12,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.utils.LogUtil;
 
 /**
  * @Desc:
@@ -30,6 +32,10 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
     private TextView TvPrices;
     private TextView TvOrderPrices;
     private ImageView TvPay;
+
+    private TextView TvContactsName;
+    private TextView TvContactsPhone;
+    private TextView TvContactsModify;
 
     private OrderDetail orderDetail;
 
@@ -60,11 +66,23 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
         ETinfo = (EditText)findViewById(R.id.evalprice_editinfo);
         TvOrderPrices = (TextView)findViewById(R.id.evalprice_evalprice);
         TvPay = (ImageView)findViewById(R.id.evalprice_topay);
+        TvContactsModify = (TextView)findViewById(R.id.modify_name);
+        TvContactsName = (TextView)findViewById(R.id.eval_name);
+        TvContactsPhone = (TextView)findViewById(R.id.eval_phone);
 
         IvBack.setOnClickListener(this);
         TvPay.setOnClickListener(this);
         TvPricesInfo.setOnClickListener(this);
+        TvContactsModify.setOnClickListener(this);
 
+        SharedPreferences mSharedPreferences=getSharedPreferences("BitMapUrl", Activity.MODE_MULTI_PROCESS);
+        String name = mSharedPreferences.getString("contactsname", "");
+        String phone = mSharedPreferences.getString("contactsphone","");
+        orderDetail.setOrderPhone(phone);
+        orderDetail.setOrderName(name);
+
+        TvContactsName.setText(orderDetail.getOrderName());
+        TvContactsPhone.setText(orderDetail.getOrderPhone());
         TvFilename.setText(orderDetail.getOrderFileNanme());
         TvPages.setText(orderDetail.getOrderFilesPages()+" 张");
         TvBytes.setText(orderDetail.getOrderFilesBytes()+" 字节");
@@ -99,8 +117,32 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("ordetail", orderDetail);
                 intent.putExtras(bundle);
+                intent.putExtra("from","EVAL_PRICES");
                 startActivity(intent);
                 finish();
+                break;
+            case R.id.modify_name:
+                Intent intent1 = new Intent();
+                intent1.setClass(this,ModifyContacts.class);
+                intent1.putExtra("name", orderDetail.getOrderName());
+                intent1.putExtra("phone",orderDetail.getOrderPhone());
+                startActivityForResult(intent1, 1);
+                break;
+            default:
+                break;
+        }
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        LogUtil.i("------------------");
+        switch (resultCode) { //resultCode为回传的标记，我在B中回传的是RESULT_OK
+            case 2:
+                String name = data.getStringExtra("name");
+                String phone = data.getStringExtra("phone");
+                orderDetail.setOrderName(name);
+                orderDetail.setOrderPhone(phone);
+                TvContactsName.setText(orderDetail.getOrderName());
+                TvContactsPhone.setText(orderDetail.getOrderPhone());
                 break;
             default:
                 break;

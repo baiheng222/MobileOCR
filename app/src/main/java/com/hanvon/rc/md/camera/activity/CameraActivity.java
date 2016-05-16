@@ -541,6 +541,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 Intent sysIntent = new Intent();
                 sysIntent.setClass(CameraActivity.this, ChooseMorePicturesActivity.class);
                 sysIntent.putExtra("parentActivity", "cameraActivity");
+                sysIntent.putExtra("recomode", recoMode);
                 startActivity(sysIntent);
                 //startActivityForResult(sysIntent, REQ_SYS_PICTURE);
                 break;

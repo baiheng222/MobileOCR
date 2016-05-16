@@ -24,6 +24,9 @@ public class DBManager
     public static final String KEY_RESULT_FILE_SIZE = DBHelper.KEY_RESULT_FILE_SIZE;
     public static final String KEY_RESULT_FILE_IsDelete = DBHelper.KEY_RESULT_FILE_ISDELETE;
 
+    public static final String KEY_ORDER_NUMBER = DBHelper.KEY_QUERY_ORDER_NUMBER;
+    public static final String KEY_ORDER_PAY_MODE = DBHelper.KEY_QUERY_ORDER_PAYMODE;
+
     public DBManager(Context context)
     {
         dbHelper = new DBHelper(context);
@@ -104,8 +107,8 @@ public class DBManager
     public String GetDeleteFids(){
         String Fids = "";
         int num = 0;
-        Cursor cursor = db.rawQuery("SELECT "+KEY_RESULT_FILE_ID+" FROM " + DBHelper.DATABASE_TABLE + " WHERE "+
-                KEY_RESULT_FILE_IsDelete + " = 1"+" ORDER BY " + KEY_RESULT_FILE_ID + " DESC", null);
+        Cursor cursor = db.rawQuery("SELECT " + KEY_RESULT_FILE_ID + " FROM " + DBHelper.DATABASE_TABLE + " WHERE " +
+                KEY_RESULT_FILE_IsDelete + " = 1" + " ORDER BY " + KEY_RESULT_FILE_ID + " DESC", null);
         FileInfo fileInfo = null;
         if(cursor.moveToFirst()){
             do{
@@ -124,4 +127,31 @@ public class DBManager
         return Fids;
     }
 
+    public List<OrderInfo> QueryAllOrder(){
+        Cursor c = db.rawQuery("SELECT * FROM " + DBHelper.DATABASE_CREATE_ORDER_TABLE + " ORDER BY " +
+                DBHelper.KEY_QUERY_ORDER_PAYMODE + " DESC", null);
+        List<OrderInfo> orderlist = new ArrayList<OrderInfo>();
+        while (c.moveToNext())
+        {
+            OrderInfo orderInfo = new OrderInfo();
+            orderInfo.setOrderNumber(c.getString(c.getColumnIndex(KEY_ORDER_NUMBER)));
+            orderInfo.setPayMode(c.getString(c.getColumnIndex(KEY_ORDER_PAY_MODE)));
+
+            orderlist.add(orderInfo);
+        }
+        c.close();
+        return orderlist;
+    }
+
+    public void insertOrder(OrderInfo info)
+    {
+        ContentValues value = new ContentValues();
+        value.put(KEY_ORDER_NUMBER, info.getOrderNumber());
+        value.put(KEY_ORDER_PAY_MODE, info.getPayMode());
+        db.insert(DBHelper.DATABASE_ORDER_TABLE, null, value);
+    }
+
+    public void deleteOrderFromId(String ordernumber){
+        db.delete(DBHelper.DATABASE_CREATE_ORDER_TABLE, KEY_ORDER_NUMBER + "= ?", new String[]{ordernumber});
+    }
 }

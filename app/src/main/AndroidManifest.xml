@@ -5,6 +5,7 @@
     android:versionName="1.0.0.1">
 
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -26,6 +27,7 @@
     <!-- 用于读取手机当前的状态 -->
     <uses-permission android:name="android.permission.READ_PHONE_STATE" >
     </uses-permission>
+    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
     <!-- 写入扩展存储，向扩展卡写入数据，用于写入离线定位数据 -->
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" >
     </uses-permission>
@@ -104,6 +106,9 @@
         <activity android:name="com.hanvon.rc.orders.OrderEvalPrices"
             android:launchMode="singleTask"></activity>
         <activity android:name="com.hanvon.rc.presentation.CropActivity"></activity>
+        <activity android:name=".orders.ModifyContacts"></activity>
+
+        <service android:name=".orders.OrderQueryService"></service>
 
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"

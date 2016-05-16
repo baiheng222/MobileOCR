@@ -40,6 +40,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
@@ -307,7 +309,9 @@ public class LoginActivity  extends Activity implements Handler.Callback,
             if (!TextUtils.isEmpty(userId)) {
                 UIHandler.sendEmptyMessage(MSG_USERID_FOUND, this);
                 nickname = plat.getDb().getUserName();
-                openid = plat.getDb().getUserId();
+                if(userflag == 1) {
+                    openid = plat.getDb().getUserId();
+                }
                 figureurl = plat.getDb().getUserIcon();
 
                 LogUtil.i("---nickname:" + nickname+"  openid:"+openid);
@@ -328,15 +332,33 @@ public class LoginActivity  extends Activity implements Handler.Callback,
         if (action == Platform.ACTION_USER_INFOR) {
             UIHandler.sendEmptyMessage(MSG_AUTH_COMPLETE, this);
             nickname = platform.getDb().getUserName();
-            openid = platform.getDb().getUserId();
+            if(userflag == 1) {
+                openid = platform.getDb().getUserId();
+            }
             figureurl = platform.getDb().getUserIcon();
+
+            if(userflag == 2) {
+                Set<String> mapSet = res.keySet();    //获取所有的key值 为set的集合
+                Iterator<String> itor = mapSet.iterator();//获取key的Iterator便利
+                while (itor.hasNext()) {//存在下一个值
+                    Object key = itor.next();//当前key值
+                    if (key.equals("unionid")) {
+                        Object obj = res.get(key);
+                        LogUtil.i("----sulupen----key:" + key + "----value:" + obj);
+                        openid = obj.toString();
+                        break;
+                    }
+                }
+            }
 
             LogUtil.i("---nickname:" + nickname+"  openid:"+openid);
             login(platform.getName(), platform.getDb().getUserId(), res);
         }
         LogUtil.i(res.toString());
         nickname = platform.getDb().getUserName();
-        openid = platform.getDb().getUserId();
+        if(userflag == 1) {
+            openid = platform.getDb().getUserId();
+        }
         figureurl = platform.getDb().getUserIcon();
 
         LogUtil.i("---nickname:" + nickname+"  openid:"+openid);
