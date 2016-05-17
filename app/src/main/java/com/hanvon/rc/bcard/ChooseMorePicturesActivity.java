@@ -66,6 +66,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	private int recoMode;
 	private Context mContext;
 
+	private int lastImageSelectItem;
+
 	private final static int MAX_PIC_NUM = 9;
 
 	// 设置获取图片的字段信息
@@ -116,6 +118,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		initUI();
 
 		addUIListener();
+
+		lastImageSelectItem = -1;
 
 		//初始化图片适配器
 		adapter = new BcardChoosePicAdapter(this,allAlbums,null);
@@ -187,39 +191,17 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					intent.putExtra("parentActivity", "ChooseMorePicturesActivity");
 					startActivityForResult(intent,REQ_PREVIEW);
 
-					/*
-					Log.d(TAG, " !!!!!!! onGridItemClick !!!!!!!!!!");
-					Intent intent = new Intent();
-					intent.setClass(mContext,CropActivity.class);
-					intent.putExtra("data", allAlbums);
-					intent.putExtra("pos", position);
-					intent.putExtra("from", "big");
-					intent.putExtra("parentActivity", comeFrom);
-					startActivity(intent);
-					*/
 					break;
 
 					case R.id.photo_select:
-					if( allAlbums.getBitList().get(position).isSelect())
-					{
-						allAlbums.getBitList().get(position).setSelect(false);
-						chooseNum--;
-					}
-					else
-					{
-						chooseNum++;
-						if(chooseNum<= MAX_PIC_NUM)
+						if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
 						{
-							allAlbums.getBitList().get(position).setSelect(true);
+							quickImageSelect(v, position);
 						}
 						else
 						{
-							popHintDialog();//如果超过9张照片
+							exactImageSelect(v, position);
 						}
-					}
-					setSelectedCount();
-					setBottomStatus();
-					adapter.notifyDataSetChanged();
 					break;
 
 				default:
@@ -227,6 +209,63 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 				}
 			}
 		});
+	}
+
+	private void quickImageSelect(View v, int position)
+	{
+		LogUtil.i("quickImageSelect");
+		if (-1 != lastImageSelectItem)
+		{
+			if (position != lastImageSelectItem)
+			{
+				allAlbums.getBitList().get(lastImageSelectItem).setSelect(false);
+				allAlbums.getBitList().get(position).setSelect(true);
+				lastImageSelectItem = position;
+				chooseNum = 1;
+			}
+			else
+			{
+				allAlbums.getBitList().get(lastImageSelectItem).setSelect(false);
+				chooseNum = 0;
+				lastImageSelectItem = -1;
+			}
+		}
+		else
+		{
+			allAlbums.getBitList().get(position).setSelect(true);
+			chooseNum = 1;
+			lastImageSelectItem = position;
+		}
+
+		setSelectedCount();
+		setBottomStatus();
+		adapter.notifyDataSetChanged();
+
+	}
+
+	private void exactImageSelect(View v, int position)
+	{
+		LogUtil.i("exactImageSelect func");
+		if( allAlbums.getBitList().get(position).isSelect())
+		{
+			allAlbums.getBitList().get(position).setSelect(false);
+			chooseNum--;
+		}
+		else
+		{
+			chooseNum++;
+			if(chooseNum<= MAX_PIC_NUM)
+			{
+				allAlbums.getBitList().get(position).setSelect(true);
+			}
+			else
+			{
+				popHintDialog();//如果超过9张照片
+			}
+		}
+		setSelectedCount();
+		setBottomStatus();
+		adapter.notifyDataSetChanged();
 	}
 
 	@Override
@@ -266,6 +305,16 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 		case R.id.bc_bottom_confirm:
 		{
+			if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
+			{
+				quickRecoConfirm();
+			}
+			else
+			{
+				exactRecoConfirm();
+			}
+
+			/*
 			Log.d(TAG, " !!!!!!! onGridItemClick !!!!!!!!!!");
 			int position = -1;
 			paths = new ArrayList<String>();
@@ -292,6 +341,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			intent.putExtra("from", "big");
 			intent.putExtra("parentActivity", "ChooseMorePicturesActivity");
 			startActivity(intent);
+			*/
+
 			/*
 			paths = new ArrayList<String>();
 			for(int i = 0;i<allAlbums.getBitList().size();i++){
@@ -320,6 +371,53 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			break;
 		}
 		
+	}
+
+	private void quickRecoConfirm()
+	{
+		LogUtil.i("quickRecoConfirm");
+
+		if (lastImageSelectItem == -1)
+		{
+			LogUtil.i("no item selected !!!");
+			return;
+		}
+
+		paths = new ArrayList<String>();
+		paths.add(allAlbums.getBitList().get(lastImageSelectItem).getPath());
+
+		/*
+		int position = -1;
+		paths = new ArrayList<String>();
+		for(int i = 0;i<allAlbums.getBitList().size();i++)
+		{
+			if(allAlbums.getBitList().get(i).isSelect())
+			{
+				paths.add(allAlbums.getBitList().get(i).getPath());
+				position = i;
+				break;
+			}
+		}
+
+		if ((position < 0) || (position >=allAlbums.getBitList().size()) )
+		{
+			return;
+		}
+		*/
+
+		Intent intent = new Intent();
+		intent.setClass(mContext,CropActivity.class);
+		intent.putExtra("data", allAlbums);
+		//intent.putExtra("pos", position);
+		intent.putExtra("pos", lastImageSelectItem);
+		intent.putExtra("from", "big");
+		intent.putExtra("parentActivity", "ChooseMorePicturesActivity");
+		startActivity(intent);
+	}
+
+	private void exactRecoConfirm()
+	{
+		LogUtil.i("exactRecoConfirm func");
 	}
 	
 	private OnItemClickListener gvItemClickListener = new OnItemClickListener() {

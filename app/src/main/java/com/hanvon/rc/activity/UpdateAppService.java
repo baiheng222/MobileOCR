@@ -85,12 +85,12 @@ public class UpdateAppService {
             int length = conn.getContentLength();
             InputStream is = conn.getInputStream();
 
-            File f = new File("/sdcard/"+"SuluPen.apk");
+            File f = new File("/sdcard/"+"RC-release.apk");
             if (f.exists()){
                 LogUtil.i("---Environment:PATH---"+"/sdcard/"+"RC-release.apk");
                 f.delete();
             }
-            file = new File("/sdcard/", "SuluPen.apk");
+            file = new File("/sdcard/", "RC-release.apk");
             LogUtil.i("---Environment:PATH---"+"/sdcard/"+"RC-release.apk");
 
             LogUtil.i("---Environment:PATH---"+"/sdcard/");
@@ -118,6 +118,7 @@ public class UpdateAppService {
             is.close();
             if (isCancel){
                 isCancel = false;
+                SoftUpdate.pd.dismiss();
                 return null;
             }
             if (downnum==length) {

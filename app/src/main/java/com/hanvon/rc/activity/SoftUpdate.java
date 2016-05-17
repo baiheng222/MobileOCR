@@ -35,7 +35,7 @@ public class SoftUpdate extends Activity implements DialogInterface.OnClickListe
     private final int GET_UNDATAINFO_ERROR = 1;
     private final int DOWN_ERROR = 2;
     private String version;
-    private ProgressDialog pd;
+    public static ProgressDialog pd;
     private int flag;
 
     private SharedPreferences mDefaultPreference;
@@ -112,12 +112,14 @@ public class SoftUpdate extends Activity implements DialogInterface.OnClickListe
                     editor.commit();
                 }else if (json.getString("code").equals("9120")){
                     if(flag == 1){
+                        pd.dismiss();
                         Toast.makeText(mContext, "已是最新版本，不需要升级",Toast.LENGTH_LONG).show();
                     }
                     SharedPreferences.Editor editor = Settings.mSharedPref.edit();
                     editor.putBoolean("hasUpdate", false);
                     editor.commit();
                 }else if (json.getString("code").equals("9100")){
+                    pd.dismiss();
                     LogUtil.i("请求错误");
                 }
             } catch (JSONException e) {
@@ -155,6 +157,7 @@ public class SoftUpdate extends Activity implements DialogInterface.OnClickListe
         builer.setNegativeButton("以后再说", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 /*****************/
+                pd.dismiss();
                 Settings.setKeyVersionUpdate(false);
             }
         });

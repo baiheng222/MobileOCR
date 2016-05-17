@@ -566,6 +566,10 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         {
             multiCapNum = 0;
             mSubSuperscript.hide();
+            Intent intent = new Intent(this, ChooseMorePicturesActivity.class);
+            intent.putExtra("recomode", recoMode);
+            intent.putExtra("parentActivity", "CameraActivity");
+            startActivity(intent);
         }
         else
         {
