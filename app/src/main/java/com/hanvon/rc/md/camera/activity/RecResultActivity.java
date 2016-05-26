@@ -10,6 +10,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -437,7 +438,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     }
 
 
-    private void showShare() {
+    private void showShare()
+    {
         ShareSDK.initSDK(this);
         OnekeyShare oks = new OnekeyShare();
         //关闭sso授权
@@ -446,7 +448,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         // 分享时Notification的图标和文字  2.5.9以后的版本不调用此方法
         //oks.setNotification(R.drawable.ic_launcher, getString(R.string.app_name));
         // title标题，印象笔记、邮箱、信息、微信、人人网和QQ空间使用
-        oks.setTitle(getString(R.string.share_from_hanvon));
+        //oks.setTitle(getString(R.string.share_from_hanvon));
+        oks.setTitle("");
         // titleUrl是标题的网络链接，仅在人人网和QQ空间使用
         oks.setTitleUrl(strLinkPath);
         // text是分享文本，所有平台都需要这个字段
@@ -456,7 +459,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 //			 String strContent = etScanContent.getText().toString();
 //			 title = strContent;
 //		 }
-        oks.setText("recognize!!!");
+        oks.setText(etResult.getText().toString());
         // imagePath是图片的本地路径，Linked-In以外的平台都支持此参数
         String curPath = getApplicationContext().getFilesDir().getPath();
 
@@ -483,22 +486,79 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 
     public void copyPhoto()
     {
-
+        //bitmapLaunch = getImageThumbnail("/sdcard/DCIM/Camera/IMG_20160428_154425.jpg", 120, 120);
         bitmapLaunch = BitmapFactory.decodeResource(getResources(), R.mipmap.ic_launcher);
         FileOutputStream fos = null;
-        try {
+        try
+        {
             fos = openFileOutput("image.png", Context.MODE_PRIVATE);
             bitmapLaunch.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (FileNotFoundException e) {
-        } finally {
-            if (fos != null) {
-                try {
+        }
+        catch (FileNotFoundException e)
+        {
+        }
+        finally
+        {
+            if (fos != null)
+            {
+                try
+                {
                     fos.flush();
                     fos.close();
-                } catch (IOException e) {
+                }
+                catch (IOException e)
+                {
                 }
             }
         }
+    }
+
+
+    /**
+     * 根据指定的图像路径和大小来获取缩略图
+     * 此方法有两点好处：
+     *     1. 使用较小的内存空间，第一次获取的bitmap实际上为null，只是为了读取宽度和高度，
+     *        第二次读取的bitmap是根据比例压缩过的图像，第三次读取的bitmap是所要的缩略图。
+     *     2. 缩略图对于原图像来讲没有拉伸，这里使用了2.2版本的新工具ThumbnailUtils，使
+     *        用这个工具生成的图像不会被拉伸。
+     * @param imagePath 图像的路径
+     * @param width 指定输出图像的宽度
+     * @param height 指定输出图像的高度
+     * @return 生成的缩略图
+     */
+    private Bitmap getImageThumbnail(String imagePath, int width, int height)
+    {
+        Bitmap bitmap = null;
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        // 获取这个图片的宽和高，注意此处的bitmap为null
+        bitmap = BitmapFactory.decodeFile(imagePath, options);
+        options.inJustDecodeBounds = false; // 设为 false
+        // 计算缩放比
+        int h = options.outHeight;
+        int w = options.outWidth;
+        int beWidth = w / width;
+        int beHeight = h / height;
+        int be = 1;
+        if (beWidth < beHeight)
+        {
+            be = beWidth;
+        }
+        else
+        {
+            be = beHeight;
+        }
+        if (be <= 0)
+        {
+            be = 1;
+        }
+        options.inSampleSize = be;
+        // 重新读入图片，读取缩放后的bitmap，注意这次要把options.inJustDecodeBounds 设为 false
+        bitmap = BitmapFactory.decodeFile(imagePath, options);
+        // 利用ThumbnailUtils来创建缩略图，这里要指定要缩放哪个Bitmap对象
+        bitmap = ThumbnailUtils.extractThumbnail(bitmap, width, height,
+                ThumbnailUtils.OPTIONS_RECYCLE_INPUT);
+        return bitmap;
     }
 
 

@@ -54,12 +54,12 @@
         android:theme="@style/AppTheme">
 
         <!--   <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"-->
-        <activity android:name="com.hanvon.rc.activity.MainActivity">
-
+        <activity android:name="com.hanvon.rc.activity.MainActivity"
+            android:launchMode="singleTask">
         <!-- <activity android:name="com.hanvon.rc.activity.MainActivity" 
         <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"
 -->
-            android:launchMode="singleTask">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
@@ -78,6 +78,7 @@
         <activity android:name=".activity.FeedBackActivity" ></activity>
         <activity android:name=".activity.HelpActivity" ></activity>
         <activity android:name=".activity.ChooseFileFormatActivity" ></activity>
+        <activity android:name=".activity.UploadFileActivity" ></activity>
 
         <activity android:name=".login.RegisterUserFromEmail" ></activity>
         <activity android:name=".login.RegisterUserFromPhone" ></activity>

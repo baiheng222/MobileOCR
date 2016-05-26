@@ -23,6 +23,7 @@ import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.rc.login.ShowUserMessage;
 import com.hanvon.rc.orders.OrderListActivity;
 import com.hanvon.rc.utils.CircleImageView;
+import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.LogUtil;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.bitmap.BitmapCommonUtils;
@@ -102,8 +103,12 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                     Intent loginIntent = new Intent(MenuFragment.this.getActivity(), LoginActivity.class);
                     this.startActivity(loginIntent);
                 }else {
-                    Intent orderIntent = new Intent(MenuFragment.this.getActivity(), OrderListActivity.class);
-                    this.startActivity(orderIntent);
+                    if(new ConnectionDetector(HanvonApplication.getcontext()).isConnectingTOInternet()) {
+                        Intent orderIntent = new Intent(MenuFragment.this.getActivity(), OrderListActivity.class);
+                        this.startActivity(orderIntent);
+                    }else{
+                        Toast.makeText(HanvonApplication.getcontext(),"请检查网络是否连通!",Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
 

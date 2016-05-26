@@ -21,7 +21,8 @@ public class ZipCompressorByAnt {
      * 压缩文件构造函数
      * @param pathName 最终压缩生成的压缩文件：目录+压缩文件名.zip
      */
-    public ZipCompressorByAnt(String finalFile) {
+    public ZipCompressorByAnt(String finalFile)
+    {
         zipFile = new File(finalFile);
     }
 
@@ -29,9 +30,11 @@ public class ZipCompressorByAnt {
      * 执行压缩操作
      * @param srcPathName 需要被压缩的文件/文件夹
      */
-    public void compressExe(String srcPathName) {
+    public void compressExe(String srcPathName)
+    {
         File srcdir = new File(srcPathName);
-        if (!srcdir.exists()){
+        if (!srcdir.exists())
+        {
             throw new RuntimeException(srcPathName + "不存在！");
         }
 
@@ -46,5 +49,10 @@ public class ZipCompressorByAnt {
         //fileSet.setExcludes(...); //排除哪些文件或文件夹
         zip.addFileset(fileSet);
         zip.execute();
+    }
+
+    public File getCompressedFile()
+    {
+        return zipFile;
     }
 }

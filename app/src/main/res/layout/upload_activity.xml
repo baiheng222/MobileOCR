@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:id="@+id/rl_title"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/wboard_folder_manage_color">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="10dp"
+            android:src="@mipmap/back"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerVertical="true"
+            android:layout_centerHorizontal="true"
+            android:text="uploading"
+            android:gravity="center_vertical"
+            android:textColor="@color/white"/>
+
+    </RelativeLayout>
+
+    <ImageView
+        android:layout_below="@id/rl_title"
+        android:id="@+id/iv_upload"
+        android:layout_marginTop="100dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:src="@mipmap/copy_files"/>
+
+    <TextView
+        android:id="@+id/tv_upload"
+        android:layout_below="@id/iv_upload"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:text="Uploading...."
+        android:textSize="30sp"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"/>
+    <ProgressBar
+        android:id="@+id/process_bar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_marginTop="40dp"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/tv_upload"
+        android:max="200"
+        android:maxHeight="48dp"
+        android:minHeight="48dp"
+        android:progress="0"
+        android:visibility="visible" />
+
+
+</RelativeLayout>

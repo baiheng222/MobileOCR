@@ -358,7 +358,7 @@ public class CropActivity extends Activity
 			}
 
 		//	String fid = null;
-			fid = UploadImage.UploadFiletoHvn(mRecgType, mPath, mFileName);
+			fid = UploadImage.UploadFiletoHvn(mRecgType, mPath, mFileName, String.valueOf(1), false, "png");
 
 			if (null == fid)
 			{
@@ -515,10 +515,11 @@ public class CropActivity extends Activity
 							orderDetail.setRecogAngle(json.getString("recogAngle"));
 							orderDetail.setOrderNumber(json.getString("oid"));
 							orderDetail.setZoom(json.getString("zoom"));
-							orderDetail.setOrderPhone("18500136685");
 							orderDetail.setOrderFid(fid);
-							orderDetail.setOrderName("李小强");
 							orderDetail.setOrderStatus("1");
+							orderDetail.setContactId(json.getString("contactId"));
+							orderDetail.setOrderPhone(json.getString("mobile"));
+							orderDetail.setOrderName(json.getString("fullname"));
 							Intent intent = new Intent();
 							intent.setClass(CropActivity.this, OrderEvalPrices.class);
 							Bundle bundle = new Bundle();

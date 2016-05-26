@@ -39,6 +39,15 @@ public class OrderDetail implements Serializable {
     private String OrderAlreadyTime;
     private String AccurateWords;
     private String zoom;
+    private String contactId;
+
+    public String getContactId() {
+        return contactId;
+    }
+
+    public void setContactId(String contactId) {
+        this.contactId = contactId;
+    }
 
     public String getZoom() {
         return zoom;

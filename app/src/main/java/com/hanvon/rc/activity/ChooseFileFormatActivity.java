@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.adapter.FileFormatAdapter;
+import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
 import com.hanvon.rc.md.camera.activity.RecResultActivity;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
@@ -28,6 +29,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
     private ImageView ivBack;
     private TextView tvTitle;
     private EditText etFileName;
+    private TextView tvFileSize;
 
     private ListView lvFormat;
 
@@ -36,6 +38,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
     private List<String> mDatas;
 
     private int mResultType = 0;
+    private String mFileSize;
     private String defFileName = null;
     private String suffix = "txt";
 
@@ -53,7 +56,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id)
             {
-                LogUtil.i("select file format is " + mDatas.get(position));
+
                 if (mResultType == InfoMsg.RESULT_TYPE_QUICK_RECO)
                 {
                     suffix = "txt";
@@ -62,6 +65,9 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
                 {
                     suffix = mDatas.get(position).toLowerCase();
                 }
+                LogUtil.i("select file format is " + mDatas.get(position));
+                setRet();
+                finish();
             }
         });
     }
@@ -73,6 +79,8 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         tvTitle = (TextView) findViewById(R.id.tv_title);
         etFileName =  (EditText) findViewById(R.id.et_input);
         lvFormat = (ListView) findViewById(R.id.lv_format);
+        tvFileSize = (TextView) findViewById(R.id.tv_file_size);
+        tvFileSize.setText(mFileSize);
 
         if (null != defFileName)
         {
@@ -86,7 +94,9 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         Intent intent = getIntent();
         mResultType = intent.getIntExtra("resultType", 0);
         defFileName = intent.getStringExtra("filename");
+        mFileSize = intent.getStringExtra("filesize");
         LogUtil.i("resultType is " + mResultType);
+        LogUtil.i("file size is " + mFileSize);
         initAdapter();
     }
 
@@ -106,7 +116,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         switch (view.getId())
         {
             case R.id.iv_back:
-                setRet();
+                //setRet();
                 finish();
             break;
         }
@@ -119,6 +129,14 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         {
             LogUtil.i("call setResult !!!");
             Intent intent = new Intent(ChooseFileFormatActivity.this, RecResultActivity.class);
+            intent.putExtra("filename", etFileName.getText().toString());
+            intent.putExtra("suffix", suffix);
+            setResult(RESULT_OK, intent);
+        }
+        else
+        {
+            LogUtil.i("call setResult !!!");
+            Intent intent = new Intent(ChooseFileFormatActivity.this, ChooseMorePicturesActivity.class);
             intent.putExtra("filename", etFileName.getText().toString());
             intent.putExtra("suffix", suffix);
             setResult(RESULT_OK, intent);

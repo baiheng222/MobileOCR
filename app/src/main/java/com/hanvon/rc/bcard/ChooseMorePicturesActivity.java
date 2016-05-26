@@ -22,6 +22,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.ChooseFileFormatActivity;
+import com.hanvon.rc.activity.UploadFileActivity;
 import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter;
 import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter.onGridItemClickListener;
 import com.hanvon.rc.bcard.bean.BcardChooseGridItem;
@@ -30,16 +32,20 @@ import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.ZipCompressorByAnt;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 import com.hanvon.rc.wboard.bean.PhotoItem;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-//import com.hanvon.md.camera.activity.ThreadBCardListPathProcess;
 
 public class ChooseMorePicturesActivity extends Activity implements OnClickListener
 {
@@ -48,6 +54,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 	private GridView gridView;
 	private TextView txt_cancle,txt_confirm,txt_preview,txt_back,txt_selected_count;
+	private TextView tv_recap;
 	private ImageView img_back;
 	private LinearLayout layout_left;
 	private RelativeLayout layout_bottom;
@@ -60,15 +67,22 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	private int chooseNum = 0;//选中图片的个数
 	private String selectPicPath;
 	private Dialog mHintDialog;
-	private final static int REQ_PREVIEW = 1;
+
 	private PhotoAlbum previewPhotoAlum;
 	private String comeFrom = "";
 	private int recoMode;
+	private int capMode;
 	private Context mContext;
 
 	private int lastImageSelectItem;
 
 	private final static int MAX_PIC_NUM = 9;
+
+	private final static int REQ_PREVIEW = 1;
+	private static final int REQUEST_FILE_FORMAT = 4;
+
+	private static final int CAPTURE_SINGLE = 1;
+	private static final int CAPTURE_MULTI = 2;
 
 	// 设置获取图片的字段信息
 	private static final String[] STORE_IMAGES = {
@@ -96,6 +110,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 		comeFrom = this.getIntent().getExtras().getString("parentActivity");
 		recoMode = this.getIntent().getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
+		capMode = this.getIntent().getIntExtra("capmode", CAPTURE_SINGLE);
+		LogUtil.i("capmode si " + capMode);
 		LogUtil.i("recomode is " + recoMode);
 		setContentView(R.layout.bc_choose_more_picture_main);
 		
@@ -142,7 +158,19 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		txt_confirm = (TextView)this.findViewById(R.id.bc_bottom_confirm);
 		txt_selected_count = (TextView)this.findViewById(R.id.bc_photo_select_count);
 		layout_bottom = (RelativeLayout)findViewById(R.id.choose_bottom);
-		
+		tv_recap = (TextView) findViewById(R.id.tv_recap);
+
+		if (capMode == CAPTURE_MULTI)
+		{
+			tv_recap.setVisibility(View.VISIBLE);
+			txt_preview.setText("继续拍摄");
+			txt_confirm.setText("确定");
+		}
+		else
+		{
+			tv_recap.setVisibility(View.GONE);
+		}
+
 		layout_bottom.setBackgroundResource(R.color.darkgray);
 		layout_bottom.setClickable(false);
 		txt_preview.setClickable(false);
@@ -157,6 +185,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		txt_cancle.setOnClickListener(this);
 		txt_preview.setOnClickListener(this);
 		txt_confirm.setOnClickListener(this);
+		tv_recap.setOnClickListener(this);
 	}
 
 	@Override
@@ -253,10 +282,11 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		}
 		else
 		{
-			chooseNum++;
+
 			if(chooseNum<= MAX_PIC_NUM)
 			{
 				allAlbums.getBitList().get(position).setSelect(true);
+				chooseNum++;
 			}
 			else
 			{
@@ -285,88 +315,51 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 		case R.id.bc_bottom_preview:
 		{
-			
-			previewPhotoAlum = new PhotoAlbum();
-			for(int i = 0;i<allAlbums.getBitList().size();i++){
-				if(allAlbums.getBitList().get(i).isSelect()){
-					previewPhotoAlum.getBitList().add(allAlbums.getBitList().get(i));
+			if (capMode == CAPTURE_SINGLE)
+			{
+				previewPhotoAlum = new PhotoAlbum();
+				for (int i = 0; i < allAlbums.getBitList().size(); i++)
+				{
+					if (allAlbums.getBitList().get(i).isSelect())
+					{
+						previewPhotoAlum.getBitList().add(allAlbums.getBitList().get(i));
+					}
 				}
-			}
 
-			Intent intent = new Intent();
-			intent.setClass(mContext,PreviewPicActivity.class);
-			intent.putExtra("data", previewPhotoAlum);
-			intent.putExtra("pos", 0);
-			intent.putExtra("from", "preview");
-			intent.putExtra("parentActivity",comeFrom);
-			startActivityForResult(intent, REQ_PREVIEW);
+				Intent intent = new Intent();
+				intent.setClass(mContext, PreviewPicActivity.class);
+				intent.putExtra("data", previewPhotoAlum);
+				intent.putExtra("pos", 0);
+				intent.putExtra("from", "preview");
+				intent.putExtra("parentActivity", comeFrom);
+				startActivityForResult(intent, REQ_PREVIEW);
+			}
+			else
+			{
+				this.finish();
+			}
 		}
 		break;
 
 		case R.id.bc_bottom_confirm:
 		{
+			LogUtil.i("confirm button clicked");
 			if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
 			{
 				quickRecoConfirm();
 			}
 			else
 			{
+				//getResultFileFormat();
 				exactRecoConfirm();
 			}
-
-			/*
-			Log.d(TAG, " !!!!!!! onGridItemClick !!!!!!!!!!");
-			int position = -1;
-			paths = new ArrayList<String>();
-			for(int i = 0;i<allAlbums.getBitList().size();i++)
-			{
-				if(allAlbums.getBitList().get(i).isSelect())
-				{
-					paths.add(allAlbums.getBitList().get(i).getPath());
-					position = i;
-					break;
-				}
-			}
-
-			if ((position < 0) || (position >=allAlbums.getBitList().size()) )
-			{
-				return;
-			}
-
-
-			Intent intent = new Intent();
-			intent.setClass(mContext,CropActivity.class);
-			intent.putExtra("data", allAlbums);
-			intent.putExtra("pos", position);
-			intent.putExtra("from", "big");
-			intent.putExtra("parentActivity", "ChooseMorePicturesActivity");
-			startActivity(intent);
-			*/
-
-			/*
-			paths = new ArrayList<String>();
-			for(int i = 0;i<allAlbums.getBitList().size();i++){
-				if(allAlbums.getBitList().get(i).isSelect()){
-					paths.add(allAlbums.getBitList().get(i).getPath());
-				}
-			}
-			new ThreadBCardListPathProcess(CameraActivity.getCameraActivity(), paths,comeFrom,ChooseMorePicturesActivity.this).start();
-			Intent intent  = new Intent();
-			intent.setClass(mContext, BcardFolderActivity.class);
-//			intent.putStringArrayListExtra("paths", paths);
-			mContext.startActivity(intent);
-			this.finish();
-			*/
 		}
-			//调用分类和识别线程
+		break;
+
+		case R.id.tv_recap:
+			this.finish();
 			break;
 
-		/*
-		case R.id.dialog_lay_know:
-		case R.id.dialog_btn_know:
-			mHintDialog.cancel();
-			break;
-		*/
 		default:
 			break;
 		}
@@ -415,11 +408,170 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		startActivity(intent);
 	}
 
+
+	private void getResultFileFormat(long filesize)
+	{
+		Intent intent = new Intent(this, ChooseFileFormatActivity.class);
+		intent.putExtra("resultType", InfoMsg.RECO_MODE_EXACT_RECO);
+		intent.putExtra("filename", "test");
+		String size;
+		long ksize = (filesize + 1023) / 1024;
+		if (ksize > 1024)
+		{
+			size = String.valueOf((ksize + 1023)/1024) + "M";
+		}
+		else
+		{
+			size = String.valueOf(ksize) + "K";
+		}
+		intent.putExtra("filesize", size);
+		startActivityForResult(intent, REQUEST_FILE_FORMAT);
+	}
+
+	public static void RecursionDeleteFile(File file)
+	{
+		LogUtil.i("in RecursionDeleteFile");
+        if(file.isFile())
+		{
+            file.delete();
+			LogUtil.i("delete file");
+            return;
+        }
+
+        if(file.isDirectory())
+		{
+			LogUtil.i("delete directory");
+            File[] childFile = file.listFiles();
+            if(childFile == null || childFile.length == 0)
+			{
+                file.delete();
+
+                return;
+            }
+            for(File f : childFile)
+			{
+                RecursionDeleteFile(f);
+            }
+            file.delete();
+			LogUtil.i("delete files");
+        }
+    }
+
+
 	private void exactRecoConfirm()
 	{
 		LogUtil.i("exactRecoConfirm func");
+		ArrayList<String> paths = new ArrayList<String>();
+		for(int i = 0;i<allAlbums.getBitList().size();i++)
+		{
+			if(allAlbums.getBitList().get(i).isSelect())
+			{
+				paths.add(allAlbums.getBitList().get(i).getPath());
+			}
+		}
+
+		String sdCardPath = FileUtil.getSDCadrPath();
+		File f1 = new File(sdCardPath + "/rctmp");
+		if (f1.exists())
+		{
+			//f1.delete();
+			RecursionDeleteFile(f1);
+		}
+
+		f1.mkdirs();
+
+		for (int i = 0; i < paths.size(); i++)
+		{
+			LogUtil.i("path is " + paths.get(i));
+			String filename = paths.get(i).substring(paths.get(i).lastIndexOf("/") + 1, paths.get(i).length());
+			LogUtil.i("file name is " + filename);
+			CopySdcardFile(paths.get(i), sdCardPath + "/rctmp/" + filename);
+		}
+
+		ZipCompressorByAnt zip = new ZipCompressorByAnt("/sdcard/rctmp.zip");
+		zip.compressExe(sdCardPath + "/rctmp/");
+		File zipfile = zip.getCompressedFile();
+		LogUtil.i("file size is " + zipfile.length());
+		getResultFileFormat(zipfile.length());
 	}
-	
+
+	private void startUpload(String resultFileFormat)
+	{
+		Intent intent = new Intent(ChooseMorePicturesActivity.this, UploadFileActivity.class);
+		intent.putExtra("fileamount", allAlbums.getBitList().size());
+		intent.putExtra("fileformat", "jpg");
+		intent.putExtra("fullpath", "/sdcard/rctmp.zip");
+		intent.putExtra("filename", "rctmp.zip");
+		intent.putExtra("resultfiletype", resultFileFormat);
+		startActivity(intent);
+		this.finish();
+	}
+
+
+	private int copy(String fromFile, String toFile)
+    {
+        //要复制的文件目录
+        File[] currentFiles;
+        File root = new File(fromFile);
+        //如同判断SD卡是否存在或者文件是否存在
+        //如果不存在则 return出去
+        if(!root.exists())
+        {
+            return -1;
+        }
+        //如果存在则获取当前目录下的全部文件 填充数组
+        currentFiles = root.listFiles();
+
+        //目标目录
+        File targetDir = new File(toFile);
+        //创建目录
+        if(!targetDir.exists())
+        {
+            targetDir.mkdirs();
+        }
+        //遍历要复制该目录下的全部文件
+        for(int i= 0;i<currentFiles.length;i++)
+        {
+            if(currentFiles[i].isDirectory())//如果当前项为子目录 进行递归
+            {
+                copy(currentFiles[i].getPath() + "/", toFile + currentFiles[i].getName() + "/");
+
+            }else//如果当前项为文件则进行文件拷贝
+            {
+                CopySdcardFile(currentFiles[i].getPath(), toFile + currentFiles[i].getName());
+            }
+        }
+        return 0;
+    }
+
+
+    //文件拷贝
+    //要复制的目录下的所有非子目录(文件夹)文件拷贝
+    private int CopySdcardFile(String fromFile, String toFile)
+    {
+		LogUtil.i("fromfile is " + fromFile);
+		LogUtil.i("toFile is " + toFile);
+        try
+        {
+            InputStream fosfrom = new FileInputStream(fromFile);
+            OutputStream fosto = new FileOutputStream(toFile);
+            byte bt[] = new byte[1024];
+            int c;
+            while ((c = fosfrom.read(bt)) > 0)
+            {
+                fosto.write(bt, 0, c);
+            }
+            fosfrom.close();
+            fosto.close();
+            return 0;
+
+        } catch (Exception ex)
+        {
+            return -1;
+        }
+    }
+
+
 	private OnItemClickListener gvItemClickListener = new OnItemClickListener() {
 		@Override
 		public void onItemClick(AdapterView<?> parent, View view, int position,
@@ -551,14 +703,18 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	}
 
 	
-	private void getBackAlbum(PhotoAlbum backAlbum){
+	private void getBackAlbum(PhotoAlbum backAlbum)
+	{
 		int backSize = backAlbum.getBitList().size();
 		int allSize = allAlbums.getBitList().size();
-		for(int i=0; i<backSize; i++){
+		for(int i=0; i<backSize; i++)
+		{
 			String path1 = backAlbum.getBitList().get(i).getPath();
-			for(int j = 0;j<allSize; j++){
+			for(int j = 0;j<allSize; j++)
+			{
 				String path2 = allAlbums.getBitList().get(j).getPath();
-				if(path1.equals(path2)){
+				if(path1.equals(path2))
+				{
 					allAlbums.getBitList().get(j).setSelect(backAlbum.getBitList().get(i).isSelect());
 				}
 			}
@@ -568,36 +724,51 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	}
 	
 	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
-		if(resultCode ==RESULT_OK){
-			switch (requestCode) {
-			case REQ_PREVIEW:
-				
-				if(data != null){
-					String back = data.getStringExtra("back_to");
-					PhotoAlbum backAlbum = (PhotoAlbum) data.getSerializableExtra("album");
-					if(back.equals("big")){
-						allAlbums = backAlbum;
-						chooseNum = 0;
-						adapter = new BcardChoosePicAdapter(mContext, allAlbums, null);
-						gridView.setAdapter(adapter);
-					}else if(back.equals("preview")){
-						chooseNum = 0;
-						getBackAlbum(backAlbum);
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		if(resultCode ==RESULT_OK)
+		{
+			switch (requestCode)
+			{
+				case REQ_PREVIEW:
+					if(data != null)
+					{
+						String back = data.getStringExtra("back_to");
+						PhotoAlbum backAlbum = (PhotoAlbum) data.getSerializableExtra("album");
+						if(back.equals("big"))
+						{
+							allAlbums = backAlbum;
+							chooseNum = 0;
+							adapter = new BcardChoosePicAdapter(mContext, allAlbums, null);
+							gridView.setAdapter(adapter);
+						}
+						else if(back.equals("preview"))
+						{
+							chooseNum = 0;
+							getBackAlbum(backAlbum);
 						}
 					}
-					for(int i = 0;i<allAlbums.getBitList().size();i++){
-						if(allAlbums.getBitList().get(i).isSelect()){
+					for(int i = 0;i<allAlbums.getBitList().size();i++)
+					{
+						if(allAlbums.getBitList().get(i).isSelect())
+						{
 							chooseNum++;
 						}
-					setSelectedCount();
-					setBottomStatus();
-				}
-				
+						setSelectedCount();
+						setBottomStatus();
+					}
 				break;
 
-			default:
+				case REQUEST_FILE_FORMAT:
+					String filename = data.getStringExtra("filename");
+					String suffix = data.getStringExtra("suffix");
+					LogUtil.i("get file name is " + filename);
+					LogUtil.i("suffix is " + suffix);
+					//exactRecoConfirm(suffix);
+					startUpload(suffix);
+				break;
+
+				default:
 				break;
 			}
 		}
@@ -708,4 +879,6 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			adapter.notifyDataSetChanged();
 		}	
 	}
+
+
 }

@@ -97,7 +97,7 @@ public class RequestJson {
             e.printStackTrace();
         }
         Log.i("-----",JSuserInfoJson.toString());
-        MyHttpUtils.HttpSend(InfoMsg.UrlFileDelete,JSuserInfoJson,InfoMsg.FILE_DELETE_TYPE);
+        MyHttpUtils.HttpSend(InfoMsg.UrlFileDelete, JSuserInfoJson, InfoMsg.FILE_DELETE_TYPE);
     }
     public static void FileCheckSum(String path){
         JSONObject JSuserInfoJson = new JSONObject();
@@ -109,7 +109,7 @@ public class RequestJson {
             e.printStackTrace();
         }
         Log.i("-----",JSuserInfoJson.toString());
-        MyHttpUtils.HttpSend(InfoMsg.UrlFileCheckSum,JSuserInfoJson,InfoMsg.FILE_CHECKSUM_TYPE);
+        MyHttpUtils.HttpSend(InfoMsg.UrlFileCheckSum, JSuserInfoJson, InfoMsg.FILE_CHECKSUM_TYPE);
     }
 
     public static void FileDown(long offset,long length,String fid,String path){
@@ -156,13 +156,14 @@ public class RequestJson {
         MyHttpUtils.HttpSend(InfoMsg.UrlSearch, JSuserInfoJson, InfoMsg.FILE_SEARCH_TYPE);
     }
 
-    public static void OrderAdd(OrderDetail ordertail,String paytyep) {
+    public static void OrderAdd(OrderDetail ordertail,String paytyep,String outType) {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
             JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("oid", ordertail.getOrderNumber());
             JSuserInfoJson.put("inFid", ordertail.getOrderFid());
+            JSuserInfoJson.put("contactId", ordertail.getContactId());
             JSuserInfoJson.put("recogType", "2");
             JSuserInfoJson.put("wordsRange", ordertail.getOrderFilesBytes());
             JSuserInfoJson.put("accurateWords", ordertail.getAccurateWords());
@@ -179,8 +180,14 @@ public class RequestJson {
                 e.printStackTrace();
             }
             JSuserInfoJson.put("waitTime", waitTime);
-            JSuserInfoJson.put("outputType", "0");
-            JSuserInfoJson.put("level", "3");
+            if("txt".equals(outType)) {
+                JSuserInfoJson.put("outputType", "0");
+            }else if("pdf".equals(outType)){
+                JSuserInfoJson.put("outputType", "1");
+            }else if("doc".equals(outType)){
+                JSuserInfoJson.put("outputType", "2");
+            }
+            JSuserInfoJson.put("level", "2");
             JSuserInfoJson.put("platformType", "4");
         } catch(JSONException e) {
             e.printStackTrace();
@@ -225,7 +232,7 @@ public class RequestJson {
             JSONObject conditionJson = new JSONObject();
             //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
             //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("start", String.valueOf(start*10));
             JSuserInfoJson.put("pageSize", "10");
             JSuserInfoJson.put("sort", conditionJson);
@@ -306,7 +313,7 @@ public class RequestJson {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
-            JSuserInfoJson.put("userid", "test2345");
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("oid", orderid);
             JSuserInfoJson.put("productId", "2");
             JSuserInfoJson.put("body", URLEncoder.encode("汉王识文-精准人工识别", "UTF-8"));

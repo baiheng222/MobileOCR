@@ -18,7 +18,6 @@ import android.widget.Toast;
 import com.alipay.sdk.app.PayTask;
 import com.hanvon.rc.R;
 import com.hanvon.rc.application.HanvonApplication;
-import com.hanvon.rc.orders.alipay.PayResult;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
@@ -64,6 +63,7 @@ public class OrderToPay extends Activity implements View.OnClickListener {
     private static final int SDK_PAY_FLAG = 1;
     private String orderInfo;
     private int InFrom = 0; //0 from evalprices  1 from orderdetail
+    private String resultFileType;
 
     private Handler mHandler = new Handler() {
         @SuppressWarnings("unused")
@@ -123,8 +123,10 @@ public class OrderToPay extends Activity implements View.OnClickListener {
             String from = intent.getStringExtra("from");
             if("EVAL_PRICES".equals(from)){
                 InFrom = 0;
+                resultFileType = intent.getStringExtra("resultfiletype");
             }else{
                 InFrom = 1;
+                resultFileType = "txt";
             }
 
         }
@@ -285,15 +287,16 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                 finish();
                 break;
             case R.id.payinfo_topay:
+                LogUtil.i("*************resultFileType:"+resultFileType);
                 if(new ConnectionDetector(OrderToPay.this).isConnectingTOInternet()) {
                     isOrderChange = true;
                     //支付宝支付 11  微信支付 12
                     if (isZfbPay) {
                         pd = ProgressDialog.show(this, "", "");
-                        RequestJson.OrderAdd(orderDetail, "11");
+                        RequestJson.OrderAdd(orderDetail, "11",resultFileType);
                     } else {
                         pd = ProgressDialog.show(this, "", "");
-                        RequestJson.OrderAdd(orderDetail, "12");
+                        RequestJson.OrderAdd(orderDetail, "12",resultFileType);
                     }
                 }else{
                     Toast.makeText(this,"请检查网络是否连通!",Toast.LENGTH_SHORT).show();

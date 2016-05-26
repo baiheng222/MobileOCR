@@ -542,6 +542,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 sysIntent.setClass(CameraActivity.this, ChooseMorePicturesActivity.class);
                 sysIntent.putExtra("parentActivity", "cameraActivity");
                 sysIntent.putExtra("recomode", recoMode);
+                sysIntent.putExtra("capmode", capMode);
                 startActivity(sysIntent);
                 //startActivityForResult(sysIntent, REQ_SYS_PICTURE);
                 break;
@@ -568,6 +569,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             mSubSuperscript.hide();
             Intent intent = new Intent(this, ChooseMorePicturesActivity.class);
             intent.putExtra("recomode", recoMode);
+            intent.putExtra("capmode", capMode);
             intent.putExtra("parentActivity", "CameraActivity");
             startActivity(intent);
         }

@@ -190,8 +190,24 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
                             orderDetail.setOrderWaitTime(json.getString("waitTime"));
                             orderDetail.setOrderStatus(json.getString("status"));
                             orderDetail.setOrderNumber(json.getString("oid"));
-                            orderDetail.setOrderPhone(json.getString("mobile"));
-                            orderDetail.setOrderName(json.getString("fullname"));
+                            String contactId = json.getString("contactId");
+                            if(null == contactId || "null".equals(contactId) || "".equals(contactId)){
+                                orderDetail.setContactId("");
+                            }else{
+                                orderDetail.setContactId(contactId);
+                            }
+                            String mobile = json.getString("mobile");
+                            if(null == mobile || "null".equals(mobile) || "".equals(mobile)){
+                                orderDetail.setOrderPhone("");
+                            }else{
+                                orderDetail.setOrderPhone(mobile);
+                            }
+                            String fullname = json.getString("fullname");
+                            if(null == fullname || "null".equals(fullname) || "".equals(fullname)){
+                                orderDetail.setOrderName("");
+                            }else{
+                                orderDetail.setOrderName(fullname);
+                            }
                             orderDetail.setOrderPrice(json.getString("price"));
                             pd.dismiss();
                             initView();

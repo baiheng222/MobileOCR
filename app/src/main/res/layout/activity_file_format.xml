@@ -87,6 +87,41 @@
 
     </ListView>
 
+    <TextView
+        android:id="@+id/tv_5"
+        android:layout_below="@id/lv_format"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e1e1e1"/>
+
+    <TextView
+        android:id="@+id/tv_file_size_tip"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_below="@id/tv_5"
+        android:text="@string/tip_file_size"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"/>
+    <TextView
+        android:id="@+id/tv_6"
+        android:layout_below="@id/tv_file_size_tip"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e1e1e1"/>
+    <TextView
+        android:id="@+id/tv_file_size"
+        android:layout_below="@id/tv_file_size_tip"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:paddingLeft="10dp"
+        android:gravity="center_vertical"/>
+    <TextView
+        android:id="@+id/tv_7"
+        android:layout_below="@id/tv_file_size"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#e1e1e1"/>
+
 
 
 

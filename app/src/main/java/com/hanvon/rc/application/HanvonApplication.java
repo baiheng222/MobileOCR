@@ -91,7 +91,7 @@ public class HanvonApplication extends FrontiaApplication {
     public void onCreate() {
         super.onCreate();
         ShareSDK.initSDK(this);
-        UserInfoMessage.setIsOnLine(true);
+        UserInfoMessage.setIsOnLine(false);
         OrderQueryService.startService(this);
 
         //mLocationClient = new LocationClient(getApplicationContext());
@@ -99,8 +99,6 @@ public class HanvonApplication extends FrontiaApplication {
         //mLocationClient.registerLocationListener(myListener);
         //InitLocation();
         //mLocationClient.start();
-
-
 
         Log.i("HanvonApplication", "!!!!!!!!!!!!!!!!!1 Application on Create !!!!!!!!!!!!");
 

@@ -58,8 +58,6 @@ public class LoginUtils {
         GetUserInfo();
     }
 
-
-
     private ResultCallBack callBack = new ResultCallBack() {
         @Override
         public void back(int type, JSONObject json) {

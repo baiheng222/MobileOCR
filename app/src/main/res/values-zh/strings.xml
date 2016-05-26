@@ -151,4 +151,5 @@
     <string name="contacts_name">联系人姓名</string>
     <string name="contacts_phone">联系人电话</string>
     <string name="contacts_title">修改联系方式</string>
+    <string name="tip_file_size">文件大小</string>
 </resources>

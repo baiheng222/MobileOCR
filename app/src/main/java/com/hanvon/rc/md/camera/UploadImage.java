@@ -66,7 +66,7 @@ public class UploadImage
         handler = h;
     }
 
-    public static String UploadFiletoHvn(String recgType,String path,String filename)
+    public static String UploadFiletoHvn(String recgType,String path,String filename, String fileAmount, boolean iszip, String fileFormat)
     {
         String result = null;
         try
@@ -124,7 +124,8 @@ public class UploadImage
 
                 LogUtil.i("readBytes:"+readBytes);
                 //parmas = GetMapFromType(buffer, filename, offset, length, type, readBytes);
-                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes);
+                //parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes);
+                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes, fileAmount, iszip, fileFormat);
                 result = dopost(parmas, buffer);
             }
         }
@@ -310,7 +311,7 @@ public class UploadImage
 
 
     public static Map<String, String> GetMapFromType(String data,String filename,
-                                                     int offset, int totalLength, String type,int readBytes)
+                 int offset, int totalLength, String type,int readBytes, String fileAmount, boolean iszip, String fileFormat)
 
     /*
     public static Map<String, String> GetMapFromType(byte[] data,String filename,
@@ -338,13 +339,13 @@ public class UploadImage
         parmas.put("fileType", "1");
         parmas.put("fid", "");
         parmas.put("fileName", URLEncoder.encode(filename));
-        parmas.put("fileFormat", "png");
-        parmas.put("fileAmount", "1");
+        parmas.put("fileFormat", fileFormat);
+        parmas.put("fileAmount", fileAmount);
         parmas.put("size", String.valueOf(totalLength));
         parmas.put("length", String.valueOf(readBytes));
         parmas.put("offset", String.valueOf(offset));
         parmas.put("checksum", SHA1Util.sha(data));
-        parmas.put("iszip", String.valueOf(false));
+        parmas.put("iszip", String.valueOf(iszip));
 
         Log.i(TAG, parmas.toString());
 

@@ -119,8 +119,15 @@ public class SoftUpdate extends Activity implements DialogInterface.OnClickListe
                     editor.putBoolean("hasUpdate", false);
                     editor.commit();
                 }else if (json.getString("code").equals("9100")){
-                    pd.dismiss();
+                    if(flag == 1) {
+                        pd.dismiss();
+                    }
                     LogUtil.i("请求错误");
+                }else{
+                    if(flag == 1) {
+                        pd.dismiss();
+                    }
+                   Toast.makeText(mContext,"请求出现错误!",Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -157,7 +164,9 @@ public class SoftUpdate extends Activity implements DialogInterface.OnClickListe
         builer.setNegativeButton("以后再说", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 /*****************/
-                pd.dismiss();
+                if(flag == 1) {
+                    pd.dismiss();
+                }
                 Settings.setKeyVersionUpdate(false);
             }
         });

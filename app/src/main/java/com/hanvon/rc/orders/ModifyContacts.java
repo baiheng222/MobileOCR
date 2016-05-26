@@ -125,6 +125,12 @@ public class ModifyContacts extends Activity implements View.OnClickListener {
                 }
                 switch (msg.what) {
                     case InfoMsg.ORDER_CONTACTS_MODIFY_TYPE:
+                        String contactId = "";
+                        try {
+                            contactId = json.getString("contactId");
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                         SharedPreferences mSharedPreferences=getSharedPreferences("BitMapUrl", Activity.MODE_MULTI_PROCESS);
                         SharedPreferences.Editor mEditor = mSharedPreferences.edit();
                         mEditor.putString("contactsname", name);
@@ -133,6 +139,7 @@ public class ModifyContacts extends Activity implements View.OnClickListener {
                         Intent intent = new Intent();
                         intent.putExtra("name",name);
                         intent.putExtra("phone", phone);
+                        intent.putExtra("contactId",contactId);
                         setResult(2, intent);
                         finish();
                         break;

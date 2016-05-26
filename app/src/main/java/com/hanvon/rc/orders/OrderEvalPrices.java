@@ -11,9 +11,14 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.LogUtil;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * @Desc:
@@ -40,6 +45,7 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
     private OrderDetail orderDetail;
 
     public static OrderEvalPrices instance = null;
+    private String resultFileType;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,6 +56,7 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
         Intent intent = getIntent();
         if (intent != null) {
             orderDetail = (OrderDetail)intent.getSerializableExtra("ordetail");
+            resultFileType = intent.getStringExtra("resultfiletype");
         }
         InitView();
     }
@@ -75,11 +82,36 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
         TvPricesInfo.setOnClickListener(this);
         TvContactsModify.setOnClickListener(this);
 
-        SharedPreferences mSharedPreferences=getSharedPreferences("BitMapUrl", Activity.MODE_MULTI_PROCESS);
-        String name = mSharedPreferences.getString("contactsname", "");
-        String phone = mSharedPreferences.getString("contactsphone","");
-        orderDetail.setOrderPhone(phone);
-        orderDetail.setOrderName(name);
+       if("null".equals(orderDetail.getOrderPhone()) || "".equals(orderDetail.getOrderPhone())) {
+           orderDetail.setOrderPhone("");
+           if("null".equals(orderDetail.getOrderName())){
+               orderDetail.setOrderName("");
+           }
+           SharedPreferences mSharedPreferences = getSharedPreferences("BitMapUrl", Activity.MODE_MULTI_PROCESS);
+           String name = mSharedPreferences.getString("contactsname", "");
+           String phone = mSharedPreferences.getString("contactsphone", "");
+           orderDetail.setOrderPhone(phone);
+           orderDetail.setOrderName(name);
+           if ((phone == null) || ("".equals(phone))) {
+               if (HanvonApplication.userFlag == 0) { //如果之前未保留过收货人信息，汉王用户手机注册的则手机号既是默认的手机号
+                   String hvnname = HanvonApplication.hvnName;
+                   if (hvnname != null) {
+                       Pattern p = Pattern.compile("[1][3587]+\\d{9}");
+                       Matcher m = p.matcher(hvnname);
+                       if (m.matches()) {
+                           //说明用户名是手机号
+                           orderDetail.setOrderPhone(hvnname);
+                       }
+                   }
+               }
+           }
+           if("".equals(orderDetail.getOrderName())){
+               orderDetail.setOrderName(HanvonApplication.hvnName);
+           }
+       }
+        if("null".equals(orderDetail.getOrderName()) || "".equals(orderDetail.getOrderName())) {
+            orderDetail.setOrderName(HanvonApplication.hvnName);
+        }
 
         TvContactsName.setText(orderDetail.getOrderName());
         TvContactsPhone.setText(orderDetail.getOrderPhone());
@@ -112,12 +144,18 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
                 builder.show();
                 break;
             case R.id.evalprice_topay:
+                if(null == orderDetail.getOrderPhone() || "".equals(orderDetail.getOrderPhone())){
+                    Toast.makeText(this,"联系号码不允许为空，请修改!",Toast.LENGTH_SHORT).show();
+                    break;
+                }
                 Intent intent = new Intent();
                 intent.setClass(this,OrderToPay.class);
                 Bundle bundle = new Bundle();
                 bundle.putSerializable("ordetail", orderDetail);
                 intent.putExtras(bundle);
-                intent.putExtra("from","EVAL_PRICES");
+                intent.putExtra("from", "EVAL_PRICES");
+                intent.putExtra("resultfiletype", resultFileType);
+                LogUtil.i("*************resultFileType:" + resultFileType);
                 startActivity(intent);
                 finish();
                 break;
@@ -139,8 +177,10 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
             case 2:
                 String name = data.getStringExtra("name");
                 String phone = data.getStringExtra("phone");
+                String contactid = data.getStringExtra("contactId");
                 orderDetail.setOrderName(name);
                 orderDetail.setOrderPhone(phone);
+                orderDetail.setContactId(contactid);
                 TvContactsName.setText(orderDetail.getOrderName());
                 TvContactsPhone.setText(orderDetail.getOrderPhone());
                 break;

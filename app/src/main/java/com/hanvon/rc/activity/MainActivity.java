@@ -17,7 +17,6 @@ import com.hanvon.rc.db.DBManager;
 import com.hanvon.rc.fragment.MainFragment;
 import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.rc.md.camera.activity.CameraActivity;
-import com.hanvon.rc.md.camera.activity.ExactActivity;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
@@ -149,5 +148,11 @@ public class MainActivity extends Activity
     {
         android.os.Process.killProcess(android.os.Process.myPid());
         System.exit(0);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        LogUtil.i("-------onDestory----MainActivity-------");
     }
 }

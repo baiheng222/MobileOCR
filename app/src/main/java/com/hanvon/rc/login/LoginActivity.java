@@ -12,7 +12,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.view.KeyEvent;
 import android.view.View;
@@ -45,6 +44,7 @@ import java.util.Set;
 
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
+import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.wechat.friends.Wechat;
 
@@ -301,9 +301,20 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     }
 
     private void authorize(Platform plat) {
-
-
         if(plat.isValid()) {
+            if(userflag == 1){
+                Platform QQplat = ShareSDK.getPlatform(this, QQ.NAME);
+                LogUtil.i("---quit:---" + QQplat);
+                if (QQplat.isValid ()) {
+                    QQplat.removeAccount();
+                }
+            }else if (userflag == 2){
+                Platform WXplat = ShareSDK.getPlatform(this, Wechat.NAME);
+                LogUtil.i("---quit:---" + WXplat.toString());
+                if (WXplat.isValid ()) {
+                    WXplat.removeAccount();
+                }
+            }/*
             LogUtil.i("------isValid --11111111-------" + plat.isValid());
             String userId = plat.getDb().getUserId();
             if (!TextUtils.isEmpty(userId)) {
@@ -318,13 +329,13 @@ public class LoginActivity  extends Activity implements Handler.Callback,
 
                 login(plat.getName(), userId, null);
                 return;
-            }
+            }*/
         }
         LogUtil.i("------isValid --22222222222-------");
         plat.setPlatformActionListener(this);
         plat.SSOSetting(true);
         plat.showUser(null);
-        plat.getDb().putExpiresIn(15*24*3600);
+        plat.getDb().putExpiresIn(15 * 24 * 3600);
     }
 
     public void onComplete(Platform platform, int action,
@@ -342,6 +353,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
                 Iterator<String> itor = mapSet.iterator();//获取key的Iterator便利
                 while (itor.hasNext()) {//存在下一个值
                     Object key = itor.next();//当前key值
+                    LogUtil.i("----sulupen----key:" + key + "----value:" + res.get(key));
                     if (key.equals("unionid")) {
                         Object obj = res.get(key);
                         LogUtil.i("----sulupen----key:" + key + "----value:" + obj);
@@ -365,7 +377,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
         LoginUtils login = new LoginUtils(this,userflag);
         login.setFigureurl(platform.getDb().getUserIcon());
         login.setNickName(platform.getDb().getUserName());
-        login.setOpenid(platform.getDb().getUserId());
+        login.setOpenid(openid);
 
         login.LoginToHvn();
 
