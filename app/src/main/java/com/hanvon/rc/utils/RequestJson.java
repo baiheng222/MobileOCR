@@ -187,7 +187,7 @@ public class RequestJson {
             }else if("doc".equals(outType)){
                 JSuserInfoJson.put("outputType", "2");
             }
-            JSuserInfoJson.put("level", "2");
+            JSuserInfoJson.put("level", ordertail.getOrderLevel());
             JSuserInfoJson.put("platformType", "4");
         } catch(JSONException e) {
             e.printStackTrace();

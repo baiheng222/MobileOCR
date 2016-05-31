@@ -24,14 +24,14 @@
         android:layout_below="@+id/name_edit"
         android:layout_marginTop="10dp"
         android:gravity="center_vertical"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:orientation="horizontal">
         <com.hanvon.rc.utils.ClearEditText
             android:id="@+id/evalprice_editname"
             android:layout_width="match_parent"
             android:layout_height="40dip"
             android:layout_marginLeft="10dip"
-            android:background="#FFFFFF"
+            android:background="@color/white"
             android:hint="@string/contacts_name"
             android:singleLine="true"
             android:drawableRight="@mipmap/edit_clear"
@@ -39,7 +39,7 @@
             android:textColor="#D7D7D7"
             android:textColorHint="#D7D7D7"
             android:textSize="15sp"
-            android:imeOptions="actionDone" >
+            android:imeOptions="actionNext" >
         </com.hanvon.rc.utils.ClearEditText>
     </LinearLayout>
 
@@ -61,14 +61,14 @@
         android:layout_below="@+id/phone_edit"
         android:layout_marginTop="10dip"
         android:gravity="center_vertical"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:orientation="horizontal">
         <com.hanvon.rc.utils.ClearEditText
             android:id="@+id/evalprice_editphone"
             android:layout_width="match_parent"
             android:layout_height="40dip"
             android:layout_marginLeft="10dip"
-            android:background="#FFFFFF"
+            android:background="@color/white"
             android:hint="@string/contacts_phone"
             android:singleLine="true"
             android:drawableRight="@mipmap/edit_clear"

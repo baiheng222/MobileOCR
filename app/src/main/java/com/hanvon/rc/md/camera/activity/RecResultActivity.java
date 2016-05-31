@@ -57,7 +57,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private ImageView tvCopy;
     private ImageView tvExact;
     private ImageView tvDel;
-    private TextView tvTitel;
+    private TextView tvTitle;
 
     private EditText etResult;
 
@@ -82,6 +82,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private Bitmap bitmapLaunch;
     private Boolean bShareClick = false;
     private String picturePaht = null;
+
 
     private Boolean bReadOnlyMode = false;
     private FileInfo resultInfo;
@@ -134,7 +135,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private void initView()
     {
         ivBack = (ImageView) findViewById(R.id.iv_back);
-        tvTitel = (TextView) findViewById(R.id.tv_title);
+        tvTitle = (TextView) findViewById(R.id.tv_title);
         tvSave = (TextView) findViewById(R.id.tv_save);
 
         if (bReadOnlyMode)
@@ -155,6 +156,15 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         if (recResult != null)
         {
             etResult.setText(recResult);
+        }
+
+        if (bReadOnlyMode)
+        {
+            tvTitle.setText(getSavedFileName());
+        }
+        else
+        {
+            tvTitle.setText(genResultFileName());
         }
     }
 
@@ -191,6 +201,15 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 LogUtil.i("get result from txt: " + recResult);
             }
         }
+    }
+
+
+    private String getSavedFileName()
+    {
+        String filename = null;
+        String name = resultInfo.getResultPath();
+        filename = name.substring(name.lastIndexOf("/") + 1, name.lastIndexOf("."));
+        return filename;
     }
 
     private String readFileToBuf(String filePath)

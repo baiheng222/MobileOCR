@@ -241,21 +241,21 @@ public class CropActivity extends Activity
 				Log.d(TAG, "!!!!! saved file path is "  + f.getAbsolutePath());
 				FileUtil.saveBitmap(cropBitmap);
 
-				/*
+
                 if(connInNet()) //如果连网
 				{
 	                mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
-	                //new Thread(textThread).start();
-					Log.d(TAG, "!!!!!!recothred begin");
-					RecoThread recoThread = new RecoThread(f.getName(), f.getAbsolutePath());
+					oriName = path.substring(path.lastIndexOf("/") + 1, path.length());
+					RecoThread recoThread = new RecoThread(oriName, f.getAbsolutePath(), "1");
 					new Thread(recoThread).start();
                 }
-				*/
+
 				/**********test by chenxinzhuang************/
-			//	FileName = f.getName();
+				/*
 				oriName = path.substring(path.lastIndexOf("/") + 1, path.length());
 				RecoThread recoThread = null;
-				if(HanvonApplication.isAccurateRecg){
+				if(HanvonApplication.isAccurateRecg)
+				{
 					mProgress = ProgressDialog.show(CropActivity.this, "", "正在进行价格评估......");
 					recoThread = new RecoThread(oriName, f.getAbsolutePath(),"2");
 				}else{
@@ -263,6 +263,7 @@ public class CropActivity extends Activity
 					recoThread = new RecoThread(oriName, f.getAbsolutePath(),"1");
 				}
 				new Thread(recoThread).start();
+				*/
 				/**************END************/
 
 				break;
@@ -357,7 +358,7 @@ public class CropActivity extends Activity
 				return;
 			}
 
-		//	String fid = null;
+			//String fid = null;
 			fid = UploadImage.UploadFiletoHvn(mRecgType, mPath, mFileName, String.valueOf(1), false, "png");
 
 			if (null == fid)
@@ -369,26 +370,24 @@ public class CropActivity extends Activity
 				return;
 			}
 			/**********test by chenxinzhuang************/
-			if(HanvonApplication.isAccurateRecg) {
+			/*
+			if(HanvonApplication.isAccurateRecg)
+			{
 				new UploadImage(textHandler).GetEvaluate(fid);
-			}else {
+			}
+			else
+			{*/
 				Log.i(TAG, "!!!!!!DEVID is " + HanvonApplication.AppDeviceId);
-				if("".equals(HanvonApplication.hvnName)){
+				if("".equals(HanvonApplication.hvnName))
+				{
 					new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.AppDeviceId, fid, "1", "4");
-				}else{
+				}
+				else
+				{
 					new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.hvnName, fid, "1", "4");
 				}
-			}
+			//}
 			/***************END*************/
-			/*
-			Log.d(TAG, "!!!!!!!! response is " + response);
-			Message msg = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putString("response", response);
-			msg.setData(bundle);
-			CropActivity.this.textHandler.sendMessage(msg);
-			*/
-
 		}
 	}
 

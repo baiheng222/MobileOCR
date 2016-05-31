@@ -40,6 +40,15 @@ public class OrderDetail implements Serializable {
     private String AccurateWords;
     private String zoom;
     private String contactId;
+    private String OrderLevel;
+
+    public String getOrderLevel() {
+        return OrderLevel;
+    }
+
+    public void setOrderLevel(String orderLevel) {
+        OrderLevel = orderLevel;
+    }
 
     public String getContactId() {
         return contactId;

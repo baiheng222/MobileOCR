@@ -160,21 +160,24 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		layout_bottom = (RelativeLayout)findViewById(R.id.choose_bottom);
 		tv_recap = (TextView) findViewById(R.id.tv_recap);
 
+		layout_bottom.setBackgroundResource(R.color.darkgray);
+		layout_bottom.setClickable(false);
+		txt_preview.setClickable(false);
+		txt_confirm.setClickable(false);
+
 		if (capMode == CAPTURE_MULTI)
 		{
 			tv_recap.setVisibility(View.VISIBLE);
 			txt_preview.setText("继续拍摄");
 			txt_confirm.setText("确定");
+			txt_preview.setClickable(true);
 		}
 		else
 		{
 			tv_recap.setVisibility(View.GONE);
 		}
 
-		layout_bottom.setBackgroundResource(R.color.darkgray);
-		layout_bottom.setClickable(false);
-		txt_preview.setClickable(false);
-		txt_confirm.setClickable(false);
+
 	}
 
 	private void addUIListener()
@@ -643,7 +646,14 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 			layout_bottom.setBackgroundResource(R.color.darkgray);
 			layout_bottom.setClickable(false);
-			txt_preview.setClickable(false);
+			if (capMode == CAPTURE_MULTI)
+			{
+				txt_preview.setClickable(true);
+			}
+			else
+			{
+				txt_preview.setClickable(false);
+			}
 			txt_confirm.setClickable(false);
 		}
 		else

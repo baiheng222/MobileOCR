@@ -30,6 +30,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
     private TextView tvTitle;
     private EditText etFileName;
     private TextView tvFileSize;
+    private RelativeLayout rlFileSize;
 
     private ListView lvFormat;
 
@@ -81,10 +82,16 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         lvFormat = (ListView) findViewById(R.id.lv_format);
         tvFileSize = (TextView) findViewById(R.id.tv_file_size);
         tvFileSize.setText(mFileSize);
+        rlFileSize = (RelativeLayout) findViewById(R.id.rl_filesize);
 
         if (null != defFileName)
         {
             etFileName.setText(defFileName);
+        }
+
+        if (mResultType == InfoMsg.RESULT_TYPE_QUICK_RECO)
+        {
+            rlFileSize.setVisibility(View.GONE);
         }
 
     }
@@ -104,7 +111,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
     {
         mDatas = new ArrayList<String>();
         mDatas.add("TXT");
-        mDatas.add("PDF");
+        //mDatas.add("PDF");
         mDatas.add("DOC");
 
         adapter = new FileFormatAdapter(this, mDatas);

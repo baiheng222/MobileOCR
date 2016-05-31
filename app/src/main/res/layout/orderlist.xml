@@ -1,7 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="fill_parent"
-    android:background="#F2F2F2"
+    android:background="#F7F7F7"
     android:orientation="vertical" >
 
     <include layout="@layout/orderslist_head" />
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:layout_marginTop="10dip"
-        android:background="#FFFFFF"
+        android:background="@color/white"
         android:orientation="horizontal">
         <RelativeLayout
             android:layout_width="match_parent"
@@ -38,7 +38,7 @@
             android:layout_marginBottom="10dp"
             android:layout_width="2dp"
             android:layout_height="match_parent"
-            android:background="#F2F2F2"/>
+            android:background="#F7F7F7"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -64,7 +64,7 @@
             android:layout_marginBottom="10dp"
             android:layout_width="2dp"
             android:layout_height="match_parent"
-            android:background="#F2F2F2"/>
+            android:background="#F7F7F7"/>
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,7 +102,7 @@
             android:layout_marginTop="12dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:divider="#e2e2e2"
+            android:divider="#F7F7F7"
             android:dividerHeight="5dp"
             android:visibility="gone" >
         </ListView>

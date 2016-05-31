@@ -152,4 +152,17 @@
     <string name="contacts_phone">联系人电话</string>
     <string name="contacts_title">修改联系方式</string>
     <string name="tip_file_size">文件大小</string>
+    <string name="setting_clear_buffer">清除缓存</string>
+    <string name="setting_item_about">关于我们</string>
+    <string name="setting_item_clear_buffer">清除缓存</string>
+    <string name="setting_item_feedback">意见反馈</string>
+    <string name="setting_item_help_manual">帮助手册</string>
+    <string name="setting_item_upgrade">自动升级</string>
+    <string name="title_about">关于我们</string>
+    <string name="title_feedback">意见反馈</string>
+    <string name="feedback_tip_inputs_question">请简要描述您的意见</string>
+    <string name="feedback_tip_question">问题和意见</string>
+    <string name="feedback_tip_email">您的邮箱</string>
+    <string name="feedback_commit">提交</string>
+    <string name="feedback_tip_inputs_email">选填，用于解决问题后对您的回复</string>
 </resources>

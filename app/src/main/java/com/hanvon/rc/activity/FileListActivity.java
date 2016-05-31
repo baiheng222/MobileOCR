@@ -132,7 +132,14 @@ public class FileListActivity extends Activity implements View.OnClickListener
         switch (view.getId())
         {
             case R.id.iv_back:
-                this.finish();
+                if (mShowMode == VIEW_MODE)
+                {
+                    this.finish();
+                }
+                else
+                {
+                    switchMode();
+                }
             break;
 
             case R.id.iv_share:

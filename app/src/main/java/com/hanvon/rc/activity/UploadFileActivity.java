@@ -192,6 +192,7 @@ public class UploadFileActivity extends Activity
                             orderDetail.setRecogAngle(json.getString("recogAngle"));
                             orderDetail.setOrderNumber(json.getString("oid"));
                             orderDetail.setZoom(json.getString("zoom"));
+                            orderDetail.setOrderLevel(json.getString("level"));
                             orderDetail.setOrderFid(fid);
                             orderDetail.setOrderStatus("1");
                              String contactId = json.getString("contactId");

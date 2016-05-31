@@ -94,35 +94,41 @@
         android:layout_height="1dp"
         android:background="#e1e1e1"/>
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/rl_filesize"
+        android:layout_below="@id/tv_5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
         android:id="@+id/tv_file_size_tip"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_below="@id/tv_5"
         android:text="@string/tip_file_size"
         android:gravity="center_vertical"
         android:paddingLeft="10dp"/>
-    <TextView
+
+        <TextView
         android:id="@+id/tv_6"
         android:layout_below="@id/tv_file_size_tip"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#e1e1e1"/>
-    <TextView
+        <TextView
         android:id="@+id/tv_file_size"
         android:layout_below="@id/tv_file_size_tip"
         android:layout_width="match_parent"
         android:layout_height="45dp"
         android:paddingLeft="10dp"
         android:gravity="center_vertical"/>
-    <TextView
+        <TextView
         android:id="@+id/tv_7"
         android:layout_below="@id/tv_file_size"
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#e1e1e1"/>
 
-
-
+    </RelativeLayout>
 
 </RelativeLayout>
