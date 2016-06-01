@@ -32,8 +32,10 @@ import android.widget.Toast;
 import com.hanvon.rc.R;
 import com.hanvon.rc.utils.BitmapUtil;
 import com.hanvon.rc.utils.DisplayUtil;
+import com.hanvon.rc.utils.InfoMsg;
+import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
-//import com.umeng.analytics.MobclickAgent;
+
 
 
 public class PreviewPicActivity extends Activity implements OnClickListener,OnTouchListener
@@ -67,40 +69,42 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 	private final String BIG = "big";
 	private int chooseNum = 0;
 
+	private int recoMode;
+	private int lastImageSelectItem;
+
 	private Context mContext;
 	private final String mPageName = "PreviewPicActivity";
 
 	private final static int MAX_PIC_NUM = 9;
+
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	protected void onCreate(Bundle savedInstanceState)
+	{
 		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE); //remove title bar
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		
 		getSendData();
 
 		setContentView(R.layout.bc_choose_preview);
 		
 		mContext = this;
-		//MobclickAgent.setDebugMode(true);
-//      SDK在统计Fragment时，需要关闭Activity自带的页面统计，
-//		然后在每个页面中重新集成页面统计的代码(包括调用了 onResume 和 onPause 的Activity)。
-		//MobclickAgent.openActivityDurationTrack(false);
-//		MobclickAgent.setAutoLocation(true);
-//		MobclickAgent.setSessionContinueMillis(1000);
-		
-		//MobclickAgent.updateOnlineConfig(this);
 	
 		initUI();
 		addUIListener();
 		
-		if(comeForm.equals(PREVIEW)){//预览按钮进来
+		if(comeForm.equals(PREVIEW)) //预览按钮进来
+		{
 			
-		}else if(comeForm.equals(BIG)){//点击图片进来
+		}
+		else if(comeForm.equals(BIG)) //点击图片进来
+		{
 			
 		}
 		
-		for(int i = 0;i<album.getBitList().size();i++){//获取选中的图片个数
-			if(album.getBitList().get(i).isSelect()){
+		for(int i = 0;i<album.getBitList().size();i++) //获取选中的图片个数
+		{
+			if(album.getBitList().get(i).isSelect())
+			{
 				chooseNum++;
 			}
 		}
@@ -115,9 +119,10 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		Bitmap b = BitmapFactory.decodeFile(album.getBitList().get(picturePos).getPath(),opts);
 		preview_img.setImageBitmap(b);
 
-		ViewTreeObserver vtos=preview_img.getViewTreeObserver();
+		ViewTreeObserver vtos = preview_img.getViewTreeObserver();
         //为其添加监听器
-        vtos.addOnGlobalLayoutListener(new OnGlobalLayoutListener(){
+        vtos.addOnGlobalLayoutListener(new OnGlobalLayoutListener()
+		{
             @Override
             public void onGlobalLayout() 
             {
@@ -129,69 +134,78 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
               System.out.println(img_width+"  "+img_height );
              }
         });
+
 		/**
          * 设置图片居中
          */
 		p = DisplayUtil.getScreenMetrics(this);
         int width=p.x/2-b.getWidth()/2;
-//        int height=(p.y-192)/2-b.getHeight()/2;
+		//int height=(p.y-192)/2-b.getHeight()/2;
         int height=(p.y-96)/2-b.getHeight()/2;
         matrix.postTranslate(width,height);
         preview_img.setImageMatrix(matrix);
 	}
 
 
-	private void setSelectedCount(){
-		
-		if(chooseNum != 0){
+	private void setSelectedCount()
+	{
+		if(chooseNum != 0)
+		{
 			txt_selected_count.setVisibility(View.VISIBLE);
-			if(chooseNum>MAX_PIC_NUM){
+			if(chooseNum>MAX_PIC_NUM)
+			{
 				txt_selected_count.setText(String.valueOf(MAX_PIC_NUM));
-			}else{
+			}
+			else
+			{
 				txt_selected_count.setText(String.valueOf(chooseNum));
 			}
-		}else{
+		}
+		else
+		{
 			txt_selected_count.setVisibility(View.GONE);
 		}
 	}
-	private void getSendData() {
+
+	private void getSendData()
+	{
 		// TODO Auto-generated method stub
 		album = (PhotoAlbum) this.getIntent().getSerializableExtra("data");
 		picturePos = this.getIntent().getExtras().getInt("pos");
 		comeForm = this.getIntent().getExtras().getString("from");
 		parentActivity = this.getIntent().getExtras().getString("parentActivity");
-		
+		recoMode = this.getIntent().getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
+
+		if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
+		{
+			lastImageSelectItem = -1;
+			for (int i = 0; i < album.getBitList().size(); i++)
+			{
+				if (album.getBitList().get(i).isSelect())
+				{
+					lastImageSelectItem = i;
+					break;
+				}
+			}
+		}
+
 	}
 
 
 	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
+	protected void onResume()
+	{
 		super.onResume();
-		//MobclickAgent.onPageStart( mPageName );
-		//MobclickAgent.onResume(mContext);
-		//启动百度统计
-		/**
-		 * 页面起始（每个Activity中都需要添加，如果有继承的父Activity中已经添加了该调用，那么子Activity中务必不能添加）
-		 * 不能与StatService.onPageStart一级onPageEnd函数交叉使用
-		 */
-		//StatService.onResume(mContext);
 	}
 	
 	@Override
-	protected void onPause() {
+	protected void onPause()
+	{
 		super.onPause();
-		
-		//MobclickAgent.onPageEnd( mPageName );
-		//MobclickAgent.onPause(mContext);
-		//启动百度统计
-		/**
-		 * 页面结束（每个Activity中都需要添加，如果有继承的父Activity中已经添加了该调用，那么子Activity中务必不能添加）
-		 * 不能与StatService.onPageStart一级onPageEnd函数交叉使用
-		 */
-		//StatService.onPause(mContext);
 	}
-	private void initUI() {
+
+	private void initUI()
+	{
 		// TODO Auto-generated method stub
 		lay_top = (RelativeLayout)this.findViewById(R.id.bc_preview_top);
 		selected = (ImageView)this.findViewById(R.id.img_selected);
@@ -202,7 +216,9 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		preview_img = (ImageView)this.findViewById(R.id.bc_preview_img);
 		
 	}
-	private void addUIListener() {
+
+	private void addUIListener()
+	{
 		// TODO Auto-generated method stub
 		selected.setOnClickListener(this);
 		txt_back.setOnClickListener(this);
@@ -211,18 +227,20 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		preview_img.setOnClickListener(this);
 	}
 
-
-
 	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
-		switch (v.getId()) {
+	public void onClick(View v)
+	{
+		switch (v.getId())
+		{
 		case R.id.bc_preview_img_back:
 			Intent intent = new Intent();
 			intent.putExtra("album", album);
-			if(comeForm.equals(PREVIEW)){//预览按钮进来
+			if(comeForm.equals(PREVIEW)) //预览按钮进来
+			{
 				intent.putExtra("back_to", PREVIEW);
-			}else if(comeForm.equals(BIG)){//点击图片进来
+			}
+			else if(comeForm.equals(BIG)) //点击图片进来
+			{
 				intent.putExtra("back_to", BIG);
 			}
 			setResult(RESULT_OK,intent);
@@ -230,6 +248,14 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			break;
 		case R.id.bc_preview_confirm:
 		{
+			if (chooseNum > 0)
+			{
+				Intent retintent = new Intent();
+				retintent.putExtra("album", album);
+				retintent.putExtra("back_to", "finish");
+				setResult(RESULT_OK, retintent);
+			}
+			PreviewPicActivity.this.finish();
 			/*
 			//完成按钮
 			ArrayList<String> pathList = new ArrayList<String>();
@@ -250,6 +276,7 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			
 			break;
 		case R.id.img_selected:
+			/*
 			if(album.getBitList().get(picturePos).isSelect())
 			{
 				album.getBitList().get(picturePos).setSelect(false);
@@ -259,14 +286,19 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			else
 			{
 				chooseNum++;
-				if(chooseNum<= MAX_PIC_NUM){
+				if(chooseNum<= MAX_PIC_NUM)
+				{
 					selected.setImageResource(R.mipmap.pic_selected);
 					album.getBitList().get(picturePos).setSelect(true);
-				}else{
+				}
+				else
+				{
 					popHintDialog();//如果超过9张照片
 				}
 			}
 			setSelectedCount();
+			*/
+			processImageSelect();
 			break;
 		/*
 		case R.id.dialog_lay_know:
@@ -278,6 +310,65 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			break;
 		}
 		
+	}
+
+	private void processImageSelect()
+	{
+		if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
+		{
+			LogUtil.i("quickImageSelect");
+			if (-1 != lastImageSelectItem)
+			{
+				if (picturePos != lastImageSelectItem)
+				{
+					album.getBitList().get(lastImageSelectItem).setSelect(false);
+					album.getBitList().get(picturePos).setSelect(true);
+					lastImageSelectItem = picturePos;
+					chooseNum = 1;
+					selected.setImageResource(R.mipmap.pic_selected);
+				}
+				else
+				{
+					album.getBitList().get(lastImageSelectItem).setSelect(false);
+					chooseNum = 0;
+					lastImageSelectItem = -1;
+					selected.setImageResource(R.mipmap.pic_unselected);
+				}
+			}
+			else
+			{
+				album.getBitList().get(picturePos).setSelect(true);
+				chooseNum = 1;
+				lastImageSelectItem = picturePos;
+				selected.setImageResource(R.mipmap.pic_selected);
+			}
+
+		}
+		else
+		{
+			if(album.getBitList().get(picturePos).isSelect())
+			{
+				album.getBitList().get(picturePos).setSelect(false);
+				selected.setImageResource(R.mipmap.pic_unselected);
+				chooseNum --;
+			}
+			else
+			{
+				chooseNum++;
+				if(chooseNum<= MAX_PIC_NUM)
+				{
+					selected.setImageResource(R.mipmap.pic_selected);
+					album.getBitList().get(picturePos).setSelect(true);
+				}
+				else
+				{
+					popHintDialog();//如果超过9张照片
+				}
+			}
+
+		}
+
+		setSelectedCount();
 	}
 
 	private Dialog mHintDialog;
@@ -309,10 +400,11 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 	}
 
 	@Override
-	public boolean onTouch(View v, MotionEvent event) {
-		// TODO Auto-generated method stub
+	public boolean onTouch(View v, MotionEvent event)
+	{
 		ImageView view = (ImageView) v;
-		switch (event.getAction() & MotionEvent.ACTION_MASK) {
+		switch (event.getAction() & MotionEvent.ACTION_MASK)
+		{
 		case MotionEvent.ACTION_DOWN:
 			saveMatrix.set(matrix);
 			//设置起点位置
@@ -324,7 +416,8 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		case MotionEvent.ACTION_POINTER_DOWN:
 			oldDist = spacing(event);
 			Log.d("Touch","oldDist =" +oldDist);
-			if(oldDist> 10f){
+			if(oldDist> 10f)
+			{
 				saveMatrix.set(matrix);
 				midPoint(mid,event);
 				mode = ZOOM;
@@ -332,13 +425,18 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			}
 			break;
 		case MotionEvent.ACTION_UP:
-			if(mode == DRAG){
+			if(mode == DRAG)
+			{
 				float moveX = event.getX();
 				float moveY = event.getY();
-				if(moveX - start.x > 0 ){//向右滑动
-					if(picturePos == 0){//第一张
+				if(moveX - start.x > 0 )//向右滑动
+				{
+					if(picturePos == 0)//第一张
+					{
 						Toast.makeText(mContext, "当前已经是第一张", Toast.LENGTH_SHORT).show();
-					}else{
+					}
+					else
+					{
 						String path = album.getBitList().get(--picturePos).getPath();
 						BitmapFactory.Options opts = new BitmapFactory.Options();
 						opts.inSampleSize = BitmapUtil.getImageScale(path);
@@ -354,15 +452,23 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 				        selected.setImageResource(album.getBitList().get(picturePos).isSelect()? R.mipmap.pic_selected:R.mipmap.pic_unselected);
 					}
 					
-				}else if (moveX - start.x  < 0 ) {
-					if(picturePos == album.getBitList().size()-1){
+				}
+				else if (moveX - start.x  < 0 )
+				{
+					if(picturePos == album.getBitList().size()-1)
+					{
 						isLastPicture = true;
-					}else{
+					}
+					else
+					{
 						isLastPicture = false;
 					}
-					if(isLastPicture){
+					if(isLastPicture)
+					{
 						Toast.makeText(mContext, "当前已经是最后一张", Toast.LENGTH_SHORT).show();
-					}else{
+					}
+					else
+					{
 						String path = album.getBitList().get(++picturePos).getPath();
 						BitmapFactory.Options opts = new BitmapFactory.Options();
 						opts.inSampleSize = BitmapUtil.getImageScale(path);
@@ -414,69 +520,89 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		view.setImageMatrix(matrix);
 		return true;//indicate event was handled
 	}
-	private float spacing(MotionEvent event){
+
+	private float spacing(MotionEvent event)
+	{
 		float x = event.getX(0) - event.getX(1);
 		float y = event.getY(0) - event.getY(1);
 		return (float)Math.sqrt(x * x + y *y );
 	}
-	private void midPoint(PointF point, MotionEvent event){
+
+	private void midPoint(PointF point, MotionEvent event)
+	{
 		float x = event.getX(0) + event.getX(1);
 		float y = event.getY(0) + event.getY(1);
 		point.set(x/2, y/2);
 	}
-	private Handler clickHandler = new Handler(){
 
+	private Handler clickHandler = new Handler()
+	{
 		@Override
-		public void handleMessage(Message msg) {
-			// TODO Auto-generated method stub
+		public void handleMessage(Message msg)
+		{
 			super.handleMessage(msg);
-			if(msg.what == 0 ){
+			if(msg.what == 0)
+			{
 				keyUpDown = true;
 				keyUpDownListener();
-				
-			}else if(msg.what == 1){
+			}
+			else if(msg.what == 1)
+			{
 				keyUpDown = false;
-				if(timer < 1){
-//					ShowBigPicActivity.this.finish();
-					
-				}else
-					if(timer == 1){//解决事件冲突问题，若是点击事件
-						if(clickCount%2 == 0){
+				if(timer < 1)
+				{
+					//ShowBigPicActivity.this.finish();
+				}
+				else
+				{
+					if (timer == 1)//解决事件冲突问题，若是点击事件
+					{
+						if (clickCount % 2 == 0)
+						{
 							lay_top.setVisibility(View.GONE);
 							lay_done.setVisibility(View.GONE);
-						}else{
+						}
+						else
+						{
 							lay_top.setVisibility(View.VISIBLE);
 							lay_done.setVisibility(View.VISIBLE);
 						}
-						clickCount ++;
+						clickCount++;
 						timer = 0;
-				}else{
-					timer = 0;
+					}
+					else
+					{
+						timer = 0;
+					}
 				}
 			}
 		}
 		
 	};
-	private  int  keyUpDownListener() {
-		// TODO Auto-generated method stub
-		new Thread(){
 
+	private  int  keyUpDownListener()
+	{
+		new Thread()
+		{
 			@Override
-			public void run() {
-				// TODO Auto-generated method stub
+			public void run()
+			{
 				super.run();
-				while(keyUpDown){
-					try {
+				while(keyUpDown)
+				{
+					try
+					{
 						sleep(100);
 						timer ++ ;
-						Log.d("info","timing:timer =" + timer);
-					} catch (InterruptedException e) {
+						LogUtil.i("timing:timer =" + timer);
+					}
+					catch (InterruptedException e)
+					{
 						// TODO: handle exception
 						e.printStackTrace();
 					}
 				}
 			}
-			
 		}.start();
 		return timer;
 	}

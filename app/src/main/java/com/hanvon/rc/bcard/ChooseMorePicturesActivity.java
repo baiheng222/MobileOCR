@@ -216,7 +216,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					case R.id.photo_img_view:
 					Intent intent = new Intent();
 					intent.setClass(mContext,PreviewPicActivity.class);
-					
+					intent.putExtra("recomod", recoMode);
 					intent.putExtra("data", allAlbums);
 					intent.putExtra("pos", position);
 					intent.putExtra("from", "big");
@@ -331,6 +331,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 				Intent intent = new Intent();
 				intent.setClass(mContext, PreviewPicActivity.class);
+				intent.putExtra("recomod", recoMode);
 				intent.putExtra("data", previewPhotoAlum);
 				intent.putExtra("pos", 0);
 				intent.putExtra("from", "preview");
@@ -747,6 +748,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 						PhotoAlbum backAlbum = (PhotoAlbum) data.getSerializableExtra("album");
 						if(back.equals("big"))
 						{
+							LogUtil.i("on activity result return big");
 							allAlbums = backAlbum;
 							chooseNum = 0;
 							adapter = new BcardChoosePicAdapter(mContext, allAlbums, null);
@@ -754,8 +756,35 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 						}
 						else if(back.equals("preview"))
 						{
+							LogUtil.i("on activity result return preview");
 							chooseNum = 0;
 							getBackAlbum(backAlbum);
+						}
+						else if (back.equals("finish"))
+						{
+							LogUtil.i("on activity result return finish");
+							allAlbums = backAlbum;
+							chooseNum = 0;
+							adapter = new BcardChoosePicAdapter(mContext, allAlbums, null);
+							gridView.setAdapter(adapter);
+							if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
+							{
+								lastImageSelectItem = -1;
+								for (int i = 0; i < allAlbums.getBitList().size(); i++)
+								{
+									if (allAlbums.getBitList().get(i).isSelect())
+									{
+										lastImageSelectItem = i;
+										break;
+									}
+								}
+								quickRecoConfirm();
+							}
+							else
+							{
+								//getResultFileFormat();
+								exactRecoConfirm();
+							}
 						}
 					}
 					for(int i = 0;i<allAlbums.getBitList().size();i++)
