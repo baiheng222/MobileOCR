@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F1F1F1"
+    android:background="#F7F7F7"
     android:orientation="vertical" >
 
     <include layout="@layout/usermessage_title" />
@@ -10,16 +10,17 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="60dip"
+        android:layout_marginTop="55dip"
         android:layout_marginLeft="10dip"
         android:text="@string/account_message"
-        android:textSize="15sp"
+        android:textSize="18sp"
         android:textColor="#BCBCBC" />
 
     <RelativeLayout
+        android:id="@+id/rl_account"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dip"
+        android:layout_marginTop="85dip"
         android:background="@color/white"
         android:orientation="horizontal" >
         <TextView
@@ -31,7 +32,7 @@
             android:layout_marginLeft="10dip"
             android:text="@string/myaccount"
             android:textSize="15sp"
-            android:textColor="@color/black"/>
+            android:textColor="#333333"/>
         <TextView
             android:id="@+id/show_uesrname"
             android:layout_width="wrap_content"
@@ -42,39 +43,41 @@
             android:layout_marginRight="20dip"
             android:text="@string/show_account"
             android:textSize="15sp"
-            android:textColor="#999999"/>
+            android:textColor="#333333"/>
     </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/name_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="135dip"
+        android:layout_below="@+id/rl_account"
+        android:layout_marginTop="2dip"
         android:background="@color/white"
         android:orientation="horizontal" >
         <TextView
+            android:id="@+id/bindmail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginTop="20dip"
             android:layout_marginLeft="10dip"
-            android:text="@string/nickname"
+            android:text="@string/bindemial"
             android:textSize="15sp"
-            android:textColor="@color/black"/>
+            android:textColor="#333333"/>
         <TextView
-            android:id="@+id/show_nickname"
+            android:id="@+id/bind_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="50dip"
-            android:text="@string/modify_nickname"
+            android:layout_marginRight="25dip"
+            android:text="@string/modify_bind"
             android:textSize="15sp"
-            android:textColor="#999999"/>
+            android:textColor="#333333"/>
         <ImageView
-            android:id="@+id/modify_nickname"
+            android:id="@+id/modify_bind_account"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
@@ -84,23 +87,12 @@
             android:background="@mipmap/right_arrow"/>
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/safety"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dip"
-        android:layout_below="@+id/name_id"
-        android:layout_marginLeft="10dip"
-        android:text="@string/password_safety"
-        android:textSize="15sp"
-        android:textColor="#BCBCBC" />
-
     <RelativeLayout
         android:id="@+id/modify_pwd_id"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dip"
-        android:layout_below="@+id/safety"
+        android:layout_marginTop="2dip"
+        android:layout_below="@+id/name_id"
         android:background="@color/white"
         android:orientation="horizontal" >
         <TextView
@@ -112,7 +104,7 @@
             android:layout_marginLeft="10dip"
             android:text="@string/modify_passwd"
             android:textSize="15sp"
-            android:textColor="@color/black"/>
+            android:textColor="#333333"/>
         <ImageView
             android:id="@+id/modify_password"
             android:layout_width="wrap_content"
@@ -125,22 +117,22 @@
     </RelativeLayout>
 
     <TextView
-        android:id="@+id/third_login"
+        android:id="@+id/orderpeceiptname"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dip"
+        android:layout_marginTop="10dip"
         android:layout_below="@+id/modify_pwd_id"
         android:layout_marginLeft="10dip"
-        android:text="@string/third_login"
-        android:textSize="15sp"
+        android:text="@string/order_peceiptname"
+        android:textSize="18sp"
         android:textColor="#BCBCBC" />
 
     <RelativeLayout
-        android:id="@+id/third"
+        android:id="@+id/conatctway"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dip"
-        android:layout_below="@+id/third_login"
+        android:layout_marginTop="10dip"
+        android:layout_below="@+id/orderpeceiptname"
         android:background="@color/white"
         android:orientation="horizontal" >
         <TextView
@@ -150,11 +142,11 @@
             android:layout_centerVertical="true"
             android:layout_marginTop="20dip"
             android:layout_marginLeft="10dip"
-            android:text="@string/third_bind"
+            android:text="@string/contactway"
             android:textSize="15sp"
-            android:textColor="@color/black"/>
+            android:textColor="#333333"/>
         <ImageView
-            android:id="@+id/third_bind"
+            android:id="@+id/modify_contactway"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dip"
@@ -169,7 +161,7 @@
         android:layout_width="match_parent"
         android:layout_height="40dip"
         android:gravity="center"
-        android:layout_below="@+id/third"
+        android:layout_below="@+id/conatctway"
         android:layout_marginTop="20dip"
         android:background="@color/white"
         android:text="@string/loginout"

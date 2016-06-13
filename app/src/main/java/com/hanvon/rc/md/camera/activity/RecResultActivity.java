@@ -138,6 +138,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         tvTitle = (TextView) findViewById(R.id.tv_title);
         tvSave = (TextView) findViewById(R.id.tv_save);
 
+
         if (bReadOnlyMode)
         {
             tvSave.setVisibility(View.GONE);
@@ -146,6 +147,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         {
             tvSave.setVisibility(View.VISIBLE);
         }
+
+        tvSave.setVisibility(View.GONE);
 
         tvShare = (ImageView) findViewById(R.id.iv_share);
         tvCopy = (ImageView) findViewById(R.id.iv_copy);

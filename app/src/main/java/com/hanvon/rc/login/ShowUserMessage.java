@@ -8,14 +8,17 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.orders.ModifyContacts;
 import com.hanvon.rc.utils.LogUtil;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.ShareSDK;
@@ -30,14 +33,10 @@ import cn.sharesdk.wechat.friends.Wechat;
 public class ShowUserMessage extends Activity implements View.OnClickListener {
 
     private TextView TVuserName;
-    private TextView TVnickName;
-    private ImageView IVmodifyNick;
-    private TextView TVaccountSafety;
-    private RelativeLayout RLmodifyPwd;
+    private TextView TVbindAccount;
+    private ImageView IVmodifyBindAccount;
     private ImageView IVmodifyPwd;
-    private TextView TVthirdLogin;
-    private RelativeLayout RLthird;
-    private ImageView IVthirdBind;
+    private ImageView IVmodifyContact;
     private TextView TVLoginOut;
 
     private ImageView TVback;
@@ -48,11 +47,14 @@ public class ShowUserMessage extends Activity implements View.OnClickListener {
         setContentView(R.layout.usermessage);
 
         if (HanvonApplication.userFlag != 0){
-            findViewById(R.id.safety).setVisibility(View.GONE);
+            findViewById(R.id.name_id).setVisibility(View.GONE);
             findViewById(R.id.modify_pwd_id).setVisibility(View.GONE);
         }else{
-            findViewById(R.id.third_login).setVisibility(View.GONE);
-            findViewById(R.id.third).setVisibility(View.GONE);
+            Pattern p = Pattern.compile("[1][3587]+\\d{9}");
+            Matcher m = p.matcher(HanvonApplication.hvnName);
+            if(m.matches() ){
+                ((TextView)findViewById(R.id.bindmail)).setText("手机号");
+            }
         }
 
         if (HanvonApplication.hvnName == ""){
@@ -61,20 +63,17 @@ public class ShowUserMessage extends Activity implements View.OnClickListener {
 
 
         TVuserName = (TextView) findViewById(R.id.show_uesrname);
-        TVnickName = (TextView) findViewById(R.id.show_nickname);
-        IVmodifyNick = (ImageView) findViewById(R.id.modify_nickname);
-        TVaccountSafety = (TextView) findViewById(R.id.safety);
-        RLmodifyPwd = (RelativeLayout) findViewById(R.id.modify_pwd_id);
+        TVbindAccount = (TextView) findViewById(R.id.bind_account);
+        IVmodifyBindAccount = (ImageView) findViewById(R.id.modify_bind_account);
         IVmodifyPwd = (ImageView) findViewById(R.id.modify_password);
-        TVthirdLogin = (TextView) findViewById(R.id.third_login);
-        RLthird = (RelativeLayout) findViewById(R.id.third);
-        IVthirdBind = (ImageView) findViewById(R.id.third_bind);
+        IVmodifyContact = (ImageView) findViewById(R.id.modify_contactway);
         TVLoginOut = (TextView) findViewById(R.id.quit_login);
         TVback = (ImageView)findViewById(R.id.usermessage_back);
 
-        IVmodifyNick.setOnClickListener(this);
+        TVbindAccount.setOnClickListener(this);
+        IVmodifyBindAccount.setOnClickListener(this);
         IVmodifyPwd.setOnClickListener(this);
-        IVthirdBind.setOnClickListener(this);
+        IVmodifyContact.setOnClickListener(this);
         TVLoginOut.setOnClickListener(this);
         TVback.setOnClickListener(this);
 
@@ -85,18 +84,23 @@ public class ShowUserMessage extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         // TODO Auto-generated method stub
         switch(v.getId()){
-            case R.id.modify_nickname:
-                startActivity(new Intent(ShowUserMessage.this, ModifyUserName.class));
-                ShowUserMessage.this.finish();
+            case R.id.bind_account:
+            case R.id.modify_bind_account:
+                Toast.makeText(this,"该版本暂不支持该功能!",Toast.LENGTH_SHORT).show();
                 break;
             case R.id.modify_password:
                 startActivity(new Intent(ShowUserMessage.this, ModifyPassword.class));
                 ShowUserMessage.this.finish();
                 break;
-            case R.id.third_bind:
-                //startActivity(new Intent(ShowUserMessage.this, ThirdBind.class));
-                //ShowUserMessage.this.finish();
-                Toast.makeText(this, "此版本暂不支持该功能！", Toast.LENGTH_LONG).show();
+            case R.id.modify_contactway:
+                SharedPreferences mSharedPreferences = getSharedPreferences("BitMapUrl", Activity.MODE_MULTI_PROCESS);
+                String name = mSharedPreferences.getString("contactsname", "");
+                String phone = mSharedPreferences.getString("contactsphone", "");
+                Intent intent = new Intent();
+                intent.setClass(this,ModifyContacts.class);
+                intent.putExtra("name", name);
+                intent.putExtra("phone",phone);
+                startActivity(intent);
                 break;
             case R.id.quit_login:
                 UserLoginOut();
@@ -106,14 +110,10 @@ public class ShowUserMessage extends Activity implements View.OnClickListener {
                 ShowUserMessage.this.finish();
                 break;
         }
-
     }
 
     public void ShowUserInfo(){
         TVuserName.setText(HanvonApplication.hvnName);
-        if (!HanvonApplication.strName.equals("")){
-            TVnickName.setText(HanvonApplication.strName);
-        }
     }
 
     public void UserLoginOut(){

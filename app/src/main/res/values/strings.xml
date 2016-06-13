@@ -90,12 +90,15 @@
     <string name="myaccount">我的账户</string>
     <string name="show_account">用户账号</string>
     <string name="nickname">名字</string>
+    <string name="bindemial">邮箱</string>
     <string name="modify_nickname">未填写</string>
+    <string name="modify_bind">绑定</string>
     <string name="password_safety">密码安全</string>
     <string name="modify_passwd">修改密码</string>
     <string name="third_login">第三方</string>
-    <string name="third_bind">第三方绑定</string>
+    <string name="contactway">联系方式</string>
     <string name="loginout">退出登录</string>
+    <string name="order_peceiptname">收货人</string>
     <string name="modify_name">请输入您的名字</string>
     <string name="third_sina">&#160;&#160;新浪微博</string>
     <string name="third_qq">&#160;&#160;QQ</string>
@@ -150,6 +153,8 @@
     <string name="auto_link_text">网页版已进行公测，体验网址：http://rc.hanvon.com</string>
     <string name="str_check_network">Please check network</string>
     <string name="str_dlg_tip">Tip</string>
+    <string name="str_uploading">Uploading...</string>
+    <string name="str_title_upload">Upload</string>
 
     <string name="setting_clear_buffer">Clear buffers</string>
     <string name="setting_item_inputmethod">Inputmethod Setting</string>

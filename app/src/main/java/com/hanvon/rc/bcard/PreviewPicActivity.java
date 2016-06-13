@@ -2,6 +2,7 @@ package com.hanvon.rc.bcard;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,9 +10,11 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
 import android.graphics.PointF;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -36,12 +39,13 @@ import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 
+import java.io.File;
 
 
 public class PreviewPicActivity extends Activity implements OnClickListener,OnTouchListener
 {
 	private RelativeLayout lay_done,lay_top;
-	private TextView txt_done,txt_back,txt_selected_count;
+	private TextView txt_done,txt_back,txt_selected_count, txt_del;
 	private ImageView preview_img_back,preview_img,selected;
 	private Point p = new Point();
 	private int width,height;
@@ -108,16 +112,20 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 				chooseNum++;
 			}
 		}
-				
+
+		LogUtil.i("choosnum is " + chooseNum);
 		
 		selected.setImageResource(album.getBitList().get(picturePos).isSelect()? R.mipmap.pic_selected:R.mipmap.pic_unselected);//设置顶部的选中按钮是否选中
 		
 		setSelectedCount();
-		
+
+
 		BitmapFactory.Options opts = new BitmapFactory.Options();
 		opts.inSampleSize = BitmapUtil.getImageScale(album.getBitList().get(picturePos).getPath());
 		Bitmap b = BitmapFactory.decodeFile(album.getBitList().get(picturePos).getPath(),opts);
 		preview_img.setImageBitmap(b);
+
+		setPreviewImage();
 
 		ViewTreeObserver vtos = preview_img.getViewTreeObserver();
         //为其添加监听器
@@ -147,12 +155,22 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 	}
 
 
+	private void setPreviewImage()
+	{
+		BitmapFactory.Options opts = new BitmapFactory.Options();
+		opts.inSampleSize = BitmapUtil.getImageScale(album.getBitList().get(picturePos).getPath());
+		Bitmap b = BitmapFactory.decodeFile(album.getBitList().get(picturePos).getPath(),opts);
+		preview_img.setImageBitmap(b);
+	}
+
 	private void setSelectedCount()
 	{
+		LogUtil.i("setSelectCount !!!");
 		if(chooseNum != 0)
 		{
+			LogUtil.i("chooseNum is " + chooseNum);
 			txt_selected_count.setVisibility(View.VISIBLE);
-			if(chooseNum>MAX_PIC_NUM)
+			if(chooseNum > MAX_PIC_NUM)
 			{
 				txt_selected_count.setText(String.valueOf(MAX_PIC_NUM));
 			}
@@ -174,7 +192,8 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		picturePos = this.getIntent().getExtras().getInt("pos");
 		comeForm = this.getIntent().getExtras().getString("from");
 		parentActivity = this.getIntent().getExtras().getString("parentActivity");
-		recoMode = this.getIntent().getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
+		recoMode = this.getIntent().getIntExtra("recomod", InfoMsg.RECO_MODE_QUICK_RECO);
+		LogUtil.i("recomode is " + recoMode);
 
 		if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
 		{
@@ -214,6 +233,7 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		txt_back = (TextView) this.findViewById(R.id.bc_preview_img_back);
 		txt_selected_count = (TextView) this.findViewById(R.id.bc_photo_select_count);
 		preview_img = (ImageView)this.findViewById(R.id.bc_preview_img);
+		txt_del = (TextView) this.findViewById(R.id.tv_del);
 		
 	}
 
@@ -225,6 +245,7 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		txt_done.setOnClickListener(this);
 		preview_img.setOnTouchListener(this);
 		preview_img.setOnClickListener(this);
+		txt_del.setOnClickListener(this);
 	}
 
 	@Override
@@ -248,13 +269,24 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			break;
 		case R.id.bc_preview_confirm:
 		{
+			Intent retintent = new Intent();
+			retintent.putExtra("album", album);
 			if (chooseNum > 0)
 			{
-				Intent retintent = new Intent();
-				retintent.putExtra("album", album);
 				retintent.putExtra("back_to", "finish");
-				setResult(RESULT_OK, retintent);
 			}
+			else
+			{
+				if(comeForm.equals(PREVIEW)) //预览按钮进来
+				{
+					retintent.putExtra("back_to", PREVIEW);
+				}
+				else if(comeForm.equals(BIG)) //点击图片进来
+				{
+					retintent.putExtra("back_to", BIG);
+				}
+			}
+			setResult(RESULT_OK, retintent);
 			PreviewPicActivity.this.finish();
 			/*
 			//完成按钮
@@ -306,10 +338,38 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			mHintDialog.cancel();
 			break;
 			*/
+			case R.id.tv_del:
+				deletePicture();
+				break;
 		default:
 			break;
 		}
 		
+	}
+
+	private void deletePicture()
+	{
+		String filepathToDel = album.getBitList().get(picturePos).getPath();
+		Uri imageuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+		ContentResolver mContentResolver = PreviewPicActivity.this.getContentResolver();
+		String where = MediaStore.Images.Media.DATA + "='" + filepathToDel + "'";
+		LogUtil.i("wherw is " + where);
+		mContentResolver.delete(imageuri, where, null);
+
+		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+		File file = new File(filepathToDel);
+		Uri uri = Uri.fromFile(file);
+		intent.setData(uri);
+		PreviewPicActivity.this.sendBroadcast(intent);
+
+		album.getBitList().remove(picturePos);
+		int size = album.getBitList().size();
+		if (picturePos > (size - 1))
+		{
+			picturePos = size -1;
+		}
+
+		setPreviewImage();
 	}
 
 	private void processImageSelect()

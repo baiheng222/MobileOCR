@@ -41,12 +41,15 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import cn.sharesdk.framework.Platform;
 import cn.sharesdk.framework.PlatformActionListener;
 import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.wechat.friends.Wechat;
+//import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
 
 
 /**
@@ -84,6 +87,8 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     private String figureurl;
     private String nickname;
 
+    private static Timer AuthTimer;
+    private static boolean isLoginComplete = false;
   //  public static IWXAPI api;
 
     @Override
@@ -120,6 +125,27 @@ public class LoginActivity  extends Activity implements Handler.Callback,
      //   api.registerApp("wx021fab5878ea9288");
         //  StatisticsUtils.IncreaseLoginPage();
     }
+
+    /**************************************BEGIN*************************************************/
+   /*
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+     //   Guide_init();
+    //    presentShowcaseView(1000); // one second delay
+    }
+
+    private void presentShowcaseView(int withDelay) {
+        new MaterialShowcaseView.Builder(this)
+                .setTarget(LLQQUser)
+                .setTitleText("Hello")
+                .setDismissText("GOT IT")
+                .setContentText("This is some amazing feature you should know about")
+                .setDelay(withDelay) // optional but starting animations immediately in onCreate can make them choppy
+                .singleUse("Login") // provide a unique ID used to ensure it is only shown once
+                .show();
+    }*/
+    /*************************************END*************************************************/
 
     public void onClick(View v) {
         switch (v.getId()) {
@@ -301,6 +327,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     }
 
     private void authorize(Platform plat) {
+        isLoginComplete = false;
         if(plat.isValid()) {
             if(userflag == 1){
                 Platform QQplat = ShareSDK.getPlatform(this, QQ.NAME);
@@ -314,22 +341,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
                 if (WXplat.isValid ()) {
                     WXplat.removeAccount();
                 }
-            }/*
-            LogUtil.i("------isValid --11111111-------" + plat.isValid());
-            String userId = plat.getDb().getUserId();
-            if (!TextUtils.isEmpty(userId)) {
-                UIHandler.sendEmptyMessage(MSG_USERID_FOUND, this);
-                nickname = plat.getDb().getUserName();
-                if(userflag == 1) {
-                    openid = plat.getDb().getUserId();
-                }
-                figureurl = plat.getDb().getUserIcon();
-
-                LogUtil.i("---nickname:" + nickname+"  openid:"+openid);
-
-                login(plat.getName(), userId, null);
-                return;
-            }*/
+            }
         }
         LogUtil.i("------isValid --22222222222-------");
         plat.setPlatformActionListener(this);
@@ -340,6 +352,8 @@ public class LoginActivity  extends Activity implements Handler.Callback,
 
     public void onComplete(Platform platform, int action,
                            HashMap<String, Object> res) {
+        LogUtil.i("------onComplete------------------------");
+        isLoginComplete = true;
         if (action == Platform.ACTION_USER_INFOR) {
             UIHandler.sendEmptyMessage(MSG_AUTH_COMPLETE, this);
             nickname = platform.getDb().getUserName();
@@ -353,7 +367,6 @@ public class LoginActivity  extends Activity implements Handler.Callback,
                 Iterator<String> itor = mapSet.iterator();//获取key的Iterator便利
                 while (itor.hasNext()) {//存在下一个值
                     Object key = itor.next();//当前key值
-                    LogUtil.i("----sulupen----key:" + key + "----value:" + res.get(key));
                     if (key.equals("unionid")) {
                         Object obj = res.get(key);
                         LogUtil.i("----sulupen----key:" + key + "----value:" + obj);
@@ -384,6 +397,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     }
 
     public void onError(Platform platform, int action, Throwable t) {
+        LogUtil.i("---------onError---------");
         if (action == Platform.ACTION_USER_INFOR) {
             if (t.toString().contains("ClientNotExistException")){
                 UIHandler.sendEmptyMessage(MSG_CLIENT_ERROR, this);
@@ -395,12 +409,14 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     }
 
     public void onCancel(Platform platform, int action) {
+        LogUtil.i("---------onCancel---------");
         if (action == Platform.ACTION_USER_INFOR) {
             UIHandler.sendEmptyMessage(MSG_AUTH_CANCEL, this);
         }
     }
 
     private void login(String plat, String userId, HashMap<String, Object> userInfo) {
+        LogUtil.i("---------login---------");
         Message msg = new Message();
         msg.what = MSG_LOGIN;
         msg.obj = plat;
@@ -408,6 +424,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     }
 
     public boolean handleMessage(Message msg) {
+        LogUtil.i("---------handleMessage---------");
         switch(msg.what) {
             case MSG_USERID_FOUND: {
                 Toast.makeText(this, R.string.userid_found, Toast.LENGTH_SHORT).show();
@@ -471,5 +488,55 @@ public class LoginActivity  extends Activity implements Handler.Callback,
             this.finish();
         }
         return false;
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LogUtil.i("---------------onResume()--------------------");
+        startTime();
+    }
+
+
+    private void startTime(){
+        AuthTimer = new Timer();
+        TimerTask timerTask = new TimerTask() {
+            int i = 3;
+            @Override
+            public void run() {
+                Message msg = new Message();
+                msg.what = 1;
+                msg.arg1 = i--;
+                msgHandler.sendMessage(msg);
+            }
+        };
+        AuthTimer.schedule(timerTask, 2000, 1000);// 2秒后开始倒计时，倒计时间隔为1秒
+    }
+
+    private Handler msgHandler = new Handler(){
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case 1:
+                        if (msg.arg1 <= 0) {
+                            AuthTimer.cancel();
+                            LogUtil.i("---------------dismiss pd()--------------------");
+                            if(!isLoginComplete) {
+                                if (pd != null){
+                                    pd.dismiss();
+                                    isLoginComplete = false;
+                                }
+                            }
+                        }
+                        break;
+                }
+            }
+        };
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        AuthTimer.cancel();
+        LogUtil.i("---------------onPause()--------------------");
     }
 }

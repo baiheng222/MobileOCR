@@ -23,7 +23,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.ChooseFileFormatActivity;
+import com.hanvon.rc.activity.UploadFileActivity;
 import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
 import com.hanvon.rc.md.camera.UploadImage;
 import com.hanvon.rc.md.camera.activity.RecFailActivity;
 import com.hanvon.rc.md.camera.activity.RecResultActivity;
@@ -36,15 +39,20 @@ import com.hanvon.rc.utils.DisplayUtil;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.ZipCompressorByAnt;
 import com.hanvon.rc.wboard.bean.PhotoAlbum;
 import com.hanwang.preprocessjava.preprocessdll;
 
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 
 //import com.hanvon.HWCloudManager;
 //import com.hanvon.common.HWLangDict;
@@ -75,6 +83,9 @@ public class CropActivity extends Activity
 
 	private String oriName;
 	private String fid;
+
+	private int recoMode;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
 	{
@@ -85,7 +96,10 @@ public class CropActivity extends Activity
 		screen_height = p.y;
 		screen_width = p.x;
 		density = this.getResources().getDisplayMetrics().density;
-		System.out.println("dens==========="+density);
+		LogUtil.i("density==========="+density);
+
+		recoMode = this.getIntent().getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
+		LogUtil.i("recomode is " + recoMode);
 
 		String parent = this.getIntent().getStringExtra("parentActivity");
 		Log.i(TAG, "parent is " + parent);
@@ -241,31 +255,20 @@ public class CropActivity extends Activity
 				Log.d(TAG, "!!!!! saved file path is "  + f.getAbsolutePath());
 				FileUtil.saveBitmap(cropBitmap);
 
-
-                if(connInNet()) //如果连网
+				if (recoMode == InfoMsg.RECO_MODE_QUICK_RECO)
 				{
-	                mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
-					oriName = path.substring(path.lastIndexOf("/") + 1, path.length());
-					RecoThread recoThread = new RecoThread(oriName, f.getAbsolutePath(), "1");
-					new Thread(recoThread).start();
-                }
-
-				/**********test by chenxinzhuang************/
-				/*
-				oriName = path.substring(path.lastIndexOf("/") + 1, path.length());
-				RecoThread recoThread = null;
-				if(HanvonApplication.isAccurateRecg)
-				{
-					mProgress = ProgressDialog.show(CropActivity.this, "", "正在进行价格评估......");
-					recoThread = new RecoThread(oriName, f.getAbsolutePath(),"2");
-				}else{
-					mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
-					recoThread = new RecoThread(oriName, f.getAbsolutePath(),"1");
+					if (connInNet()) //如果连网
+					{
+						mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
+						oriName = path.substring(path.lastIndexOf("/") + 1, path.length());
+						RecoThread recoThread = new RecoThread(oriName, f.getAbsolutePath(), "1");
+						new Thread(recoThread).start();
+					}
 				}
-				new Thread(recoThread).start();
-				*/
-				/**************END************/
-
+				else
+				{
+					exactRecoSingle(f.getAbsolutePath());
+				}
 				break;
 
 				case R.id.iv_back:
@@ -309,7 +312,8 @@ public class CropActivity extends Activity
 //	 	float scaleY = (float) (((screen_height-90*density-10*density)* 1.0)/(backBitmap.getHeight() * 1.0) ); 
 //	 	scale = scaleX < scaleY ? scaleX:scaleY;
 		scale = scaleX;
-	 	System.out.println(scale+"----------->");
+	 	LogUtil.i("scale is " + scale+"----------->");
+		LogUtil.i("screenwidth is " + screen_width + " screenheight " + screen_height);
         canvas.setHeightAndWidth(screen_width, screen_height,scale,density);
         canvas.setBitmap(backBitmap);
 	 } 
@@ -391,34 +395,6 @@ public class CropActivity extends Activity
 		}
 	}
 
-	Runnable textThread = new Runnable()
-	{
-		
-		@Override
-		public void run()
-		{
-			/* //fjm add commet
-			String content = null;
-			if (null != cropBitmap)
-			{
-				content = hwCloudManagerText.textLanguage(HWLangDict.CHNS, cropBitmap);
-				if (!cropBitmap.isRecycled())
-				{
-					cropBitmap.recycle();
-				}
-			}
-			Message message = new Message();
-			Bundle bundle = new Bundle();
-			bundle.putString("content", content);
-			message.setData(bundle);
-			if(flag){
-				return;
-			}
-			CropActivity.this.textHandler.sendMessage(message);
-			*/
-		}
-	};
-	
 	public Handler textHandler = new Handler()
 	{
 		@Override
@@ -572,11 +548,6 @@ public class CropActivity extends Activity
 		CropActivity.this.startActivity(retIntent);
 		CropActivity.this.finish();
 
-		/*
-		String result = jobj.getString("result");
-		Toast.makeText(getApplicationContext(), "请重试！", Toast.LENGTH_SHORT).show();
-		System.out.println(result);
-		*/
 	}
 
 	protected void startResultActivity(String result)
@@ -684,6 +655,16 @@ public class CropActivity extends Activity
 		super.onActivityResult(requestCode, resultCode, data);
 		if (resultCode == RESULT_OK)
 		{
+			switch (requestCode)
+			{
+				case REQUEST_FILE_FORMAT:
+					String filename = data.getStringExtra("filename");
+					String suffix = data.getStringExtra("suffix");
+					LogUtil.i("get file name is " + filename);
+					LogUtil.i("suffix is " + suffix);
+					startUpload(suffix);
+					break;
+			}
 		}
 	}
 
@@ -697,6 +678,132 @@ public class CropActivity extends Activity
         }
 		return true;
 	}
- 
+
+
+	private void exactRecoSingle(String path)
+	{
+		LogUtil.i("exactRecoSingle func");
+		ArrayList<String> paths = new ArrayList<String>();
+		paths.add(path);
+		/*
+		for(int i = 0;i<allAlbums.getBitList().size();i++)
+		{
+			if(allAlbums.getBitList().get(i).isSelect())
+			{
+				paths.add(allAlbums.getBitList().get(i).getPath());
+			}
+		}
+		*/
+
+		String sdCardPath = FileUtil.getSDCadrPath();
+		File f1 = new File(sdCardPath + "/rctmp");
+		if (f1.exists())
+		{
+			//f1.delete();
+			RecursionDeleteFile(f1);
+		}
+
+		f1.mkdirs();
+
+		for (int i = 0; i < paths.size(); i++)
+		{
+			LogUtil.i("path is " + paths.get(i));
+			String filename = paths.get(i).substring(paths.get(i).lastIndexOf("/") + 1, paths.get(i).length());
+			LogUtil.i("file name is " + filename);
+			CopySdcardFile(paths.get(i), sdCardPath + "/rctmp/" + filename);
+		}
+
+		ZipCompressorByAnt zip = new ZipCompressorByAnt("/sdcard/rctmp.zip");
+		zip.compressExe(sdCardPath + "/rctmp/");
+		File zipfile = zip.getCompressedFile();
+		LogUtil.i("file size is " + zipfile.length());
+		getResultFileFormat(zipfile.length());
+	}
+
+	private static final int REQUEST_FILE_FORMAT = 4;
+
+	private void getResultFileFormat(long filesize)
+	{
+		Intent intent = new Intent(CropActivity.this, ChooseFileFormatActivity.class);
+		intent.putExtra("resultType", InfoMsg.RECO_MODE_EXACT_RECO);
+		intent.putExtra("filename", "test");
+		String size;
+		long ksize = (filesize + 1023) / 1024;
+		if (ksize > 1024)
+		{
+			size = String.valueOf((ksize + 1023)/1024) + "M";
+		}
+		else
+		{
+			size = String.valueOf(ksize) + "K";
+		}
+		intent.putExtra("filesize", size);
+		startActivityForResult(intent, REQUEST_FILE_FORMAT);
+	}
+
+	public static void RecursionDeleteFile(File file)
+	{
+		LogUtil.i("in RecursionDeleteFile");
+		if(file.isFile())
+		{
+			file.delete();
+			LogUtil.i("delete file");
+			return;
+		}
+
+		if(file.isDirectory())
+		{
+			LogUtil.i("delete directory");
+			File[] childFile = file.listFiles();
+			if(childFile == null || childFile.length == 0)
+			{
+				file.delete();
+
+				return;
+			}
+			for(File f : childFile)
+			{
+				RecursionDeleteFile(f);
+			}
+			file.delete();
+			LogUtil.i("delete files");
+		}
+	}
+
+	private int CopySdcardFile(String fromFile, String toFile)
+	{
+		LogUtil.i("fromfile is " + fromFile);
+		LogUtil.i("toFile is " + toFile);
+		try
+		{
+			InputStream fosfrom = new FileInputStream(fromFile);
+			OutputStream fosto = new FileOutputStream(toFile);
+			byte bt[] = new byte[1024];
+			int c;
+			while ((c = fosfrom.read(bt)) > 0)
+			{
+				fosto.write(bt, 0, c);
+			}
+			fosfrom.close();
+			fosto.close();
+			return 0;
+
+		} catch (Exception ex)
+		{
+			return -1;
+		}
+	}
+
+	private void startUpload(String resultFileFormat)
+	{
+		Intent intent = new Intent(CropActivity.this, UploadFileActivity.class);
+		intent.putExtra("fileamount", 1);
+		intent.putExtra("fileformat", "png");
+		intent.putExtra("fullpath", "/sdcard/rctmp.zip");
+		intent.putExtra("filename", "rctmp.zip");
+		intent.putExtra("resultfiletype", resultFileFormat);
+		startActivity(intent);
+		this.finish();
+	}
 
 }

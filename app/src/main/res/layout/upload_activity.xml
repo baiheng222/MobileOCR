@@ -23,7 +23,7 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:layout_centerHorizontal="true"
-            android:text="uploading"
+            android:text="@string/str_title_upload"
             android:gravity="center_vertical"
             android:textColor="@color/white"/>
 
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
-        android:text="Uploading...."
+        android:text="@string/str_uploading"
         android:textSize="30sp"
         android:layout_centerHorizontal="true"
         android:gravity="center_horizontal"/>

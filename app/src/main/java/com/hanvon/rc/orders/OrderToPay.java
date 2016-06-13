@@ -128,7 +128,6 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                 InFrom = 1;
                 resultFileType = "txt";
             }
-
         }
 
         InitView();

@@ -28,6 +28,7 @@ import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter;
 import com.hanvon.rc.bcard.adapter.BcardChoosePicAdapter.onGridItemClickListener;
 import com.hanvon.rc.bcard.bean.BcardChooseGridItem;
 import com.hanvon.rc.db.FileInfo;
+import com.hanvon.rc.md.camera.activity.CameraActivity;
 import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.FileUtil;
 import com.hanvon.rc.utils.InfoMsg;
@@ -72,7 +73,10 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	private String comeFrom = "";
 	private int recoMode;
 	private int capMode;
+	private String entry = null;
 	private Context mContext;
+
+	private ArrayList<String> picturesPath;
 
 	private int lastImageSelectItem;
 
@@ -108,6 +112,18 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			return;
 		}
 
+		entry = this.getIntent().getStringExtra("entry");
+
+		if (entry !=null)
+		{
+			Bundle bundle = this.getIntent().getBundleExtra("bundle");
+			picturesPath = bundle.getStringArrayList("pictures");
+			for (int i = 0; i < picturesPath.size(); i++)
+			{
+				LogUtil.i("picture " + i + " path is " + picturesPath.get(i));
+			}
+		}
+
 		comeFrom = this.getIntent().getExtras().getString("parentActivity");
 		recoMode = this.getIntent().getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
 		capMode = this.getIntent().getIntExtra("capmode", CAPTURE_SINGLE);
@@ -116,9 +132,17 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		setContentView(R.layout.bc_choose_more_picture_main);
 		
 		mContext = this;
-	
-		allAlbumssList = getPhotoAlbum(this); //加载所有有图片的文件夹,用于初始化文件夹列表的显示
-		if(allAlbumssList != null)
+
+		if (picturesPath != null && picturesPath.size() > 0)
+		{
+			allAlbumssList = getLastPhotoAlbum(this);
+		}
+		else
+		{
+			allAlbumssList = getPhotoAlbum(this); //加载所有有图片的文件夹,用于初始化文件夹列表的显示
+		}
+
+			if(allAlbumssList != null)
 		{
 			allAlbums = getWholePhotoData(allAlbumssList);
 //			previewPhotoAlum = allAlbums;
@@ -165,7 +189,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		txt_preview.setClickable(false);
 		txt_confirm.setClickable(false);
 
-		if (capMode == CAPTURE_MULTI)
+		if (capMode == CAPTURE_MULTI && (entry != null))
 		{
 			tv_recap.setVisibility(View.VISIBLE);
 			txt_preview.setText("继续拍摄");
@@ -216,6 +240,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					case R.id.photo_img_view:
 					Intent intent = new Intent();
 					intent.setClass(mContext,PreviewPicActivity.class);
+					LogUtil.i("!!!!! start preview , recomode is " + recoMode);
 					intent.putExtra("recomod", recoMode);
 					intent.putExtra("data", allAlbums);
 					intent.putExtra("pos", position);
@@ -318,7 +343,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 		case R.id.bc_bottom_preview:
 		{
-			if (capMode == CAPTURE_SINGLE)
+			if (entry == null)
+			//if (capMode == CAPTURE_SINGLE)
 			{
 				previewPhotoAlum = new PhotoAlbum();
 				for (int i = 0; i < allAlbums.getBitList().size(); i++)
@@ -331,6 +357,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 				Intent intent = new Intent();
 				intent.setClass(mContext, PreviewPicActivity.class);
+				LogUtil.i("start prieview, recomode is " + recoMode);
 				intent.putExtra("recomod", recoMode);
 				intent.putExtra("data", previewPhotoAlum);
 				intent.putExtra("pos", 0);
@@ -361,6 +388,9 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		break;
 
 		case R.id.tv_recap:
+			Intent myintent = new Intent(ChooseMorePicturesActivity.this, CameraActivity.class);
+			myintent.putExtra("message", "recapture");
+			startActivity(myintent);
 			this.finish();
 			break;
 
@@ -796,6 +826,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 						setSelectedCount();
 						setBottomStatus();
 					}
+					adapter.notifyDataSetChanged();
 				break;
 
 				case REQUEST_FILE_FORMAT:
@@ -835,7 +866,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			String dir_id = cursor.getString(4);
 			String dir = cursor.getString(5);
 			String pic_date = cursor.getString(6);
-			Log.i(TAG, "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
+			LogUtil.i( "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
 
             if (!FileUtil.exit(path))
             {
@@ -878,7 +909,77 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		}
 		return tempaibumList;
 	}
-	
+
+
+	public List<PhotoAlbum> getLastPhotoAlbum(Context context)
+	{
+		List<PhotoAlbum> tempaibumList = new ArrayList<PhotoAlbum>();
+		Cursor cursor = MediaStore.Images.Media.query(context.getContentResolver(), MediaStore.Images.Media.EXTERNAL_CONTENT_URI, STORE_IMAGES, MediaStore.Images.Media.MIME_TYPE + "=?",
+				new String[] { "image/jpeg"}, MediaStore.Images.Media.DATE_TAKEN + " DESC");	//按日期降序排列
+
+		Map<String, PhotoAlbum> countMap = new HashMap<String, PhotoAlbum>();
+		PhotoAlbum pa = null; //每个相册
+		int size = 0;
+		while (cursor.moveToNext())
+		{
+
+			if (size >= picturesPath.size())
+			{
+				break;
+			}
+
+			String path = cursor.getString(cursor.getColumnIndex(MediaStore.Video.Media.DATA));
+			String id = cursor.getString(3);
+			String dir_id = cursor.getString(4);
+			String dir = cursor.getString(5);
+			String pic_date = cursor.getString(6);
+			LogUtil.i( "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
+
+			if (!FileUtil.exit(path))
+			{
+				Log.i(TAG, "no file " + path + "exists");
+				continue;
+			}
+
+
+
+			//if(!path.contains("universcan/MyGallery/"))
+			//if(path.contains(CameraActivity.FILE_SAVE_PATH + CameraActivity.FILE_SAVE_DIR_NAME))
+			{
+				if (!countMap.containsKey(dir_id))
+				{
+					//Log.i(TAG, "!!!!!! no dir_id");
+					pa = new PhotoAlbum();
+					pa.setDir_id(dir_id);
+					pa.setName(dir);
+					pa.setBitmap(Integer.parseInt(id));
+					pa.setCount("1");
+					pa.getBitList().add(new PhotoItem(Integer.valueOf(id),path,pic_date));
+					countMap.put(dir_id, pa);
+					pa.setPath(path);
+				}
+				else
+				{
+					//Log.i(TAG, "!!!!!!! exist dir_id");
+					pa = countMap.get(dir_id);
+					pa.setDir_id(dir_id);
+					pa.setCount(String.valueOf(Integer.parseInt(pa.getCount()) + 1));
+					pa.getBitList().add(new PhotoItem(Integer.valueOf(id),path,pic_date));
+					pa.setPath(path);
+				}
+			}
+
+			size++;
+		}
+		cursor.close();
+		Iterable<String> it = countMap.keySet();
+		for (String key : it)
+		{
+			tempaibumList.add(countMap.get(key));
+		}
+		return tempaibumList;
+	}
+
 	private PhotoAlbum getWholePhotoData(List<PhotoAlbum> album)
 	{
 		PhotoAlbum pa = new PhotoAlbum();
@@ -912,8 +1013,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	
 	private void setCheckVisible()
 	{
-		for(int i = 0; i< allAlbums.getBitList().size();i++){
-			
+		for(int i = 0; i< allAlbums.getBitList().size();i++)
+		{
 			allAlbums.getBitList().get(i).setVisible(true);//设置复选按钮可见
 			adapter.notifyDataSetChanged();
 		}	

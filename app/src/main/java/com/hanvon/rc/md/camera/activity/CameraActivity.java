@@ -1,6 +1,7 @@
 package com.hanvon.rc.md.camera.activity;
 
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -30,6 +31,7 @@ import android.widget.Toast;
 import com.hanvon.rc.R;
 import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
+import com.hanvon.rc.bcard.PreviewPicActivity;
 import com.hanvon.rc.md.camera.CameraManager;
 import com.hanvon.rc.md.camera.PreviewDataManager;
 import com.hanvon.rc.md.camera.draw.DrawManager;
@@ -43,6 +45,8 @@ import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.widget.BadgeView;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by baiheng222 on 16-3-21.
@@ -90,6 +94,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private int capMode;
     private int multiCapNum;
 
+    private ArrayList<String> picturesPathForSave;
+
 
     public static final String FILE_SAVE_DIR_NAME = "savedpic";
     public static final String FILE_SAVE_PATH = "/MobileOCR/";
@@ -102,7 +108,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        setContentView(R.layout.camera);
+        setContentView(R.layout.camera2);
 
         creatDir();
 
@@ -117,6 +123,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         isSurfaceCreated = false;
         isTakingPicture = false;
         isCameraFlashOpen = false;
+
+        picturesPathForSave = new ArrayList<String>();
 
         cameraActivity = this;
         modeCtrl = new ModeCtrl();
@@ -370,6 +378,16 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     {
         super.onResume();
         initCamera();
+
+        Intent intent = this.getIntent();
+        String msg = intent.getStringExtra("message");
+        if (null != msg && msg.equals("recapture"))
+        {
+            LogUtil.i("receive recapture msg!!!");
+            resetMultiCapState();
+        }
+
+
     }
 
 
@@ -432,8 +450,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                     mCameraManager.setFocusModeAutoCycle(1750);
                     //add 2016-05-31
                     Camera.Parameters parameters = mCameraManager.getCameraParameters();
-                    parameters.setPreviewSize(1280, 720);
-                    parameters.setPictureSize(2048, 1536);
+                    //parameters.setPreviewSize(1280, 720);
+                    parameters.setPictureSize(1920, 1080);
                     mCameraManager.setCameraParameters(parameters);
                     //add end
                     //setFlashAuto(); //fjm add
@@ -571,9 +589,13 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     {
         if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) && (capMode == CAPTURE_MULTI))
         {
-            multiCapNum = 0;
-            mSubSuperscript.hide();
+            //multiCapNum = 0;
+            //mSubSuperscript.hide();
             Intent intent = new Intent(this, ChooseMorePicturesActivity.class);
+            intent.putExtra("entry", "finish_btn");
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("pictures", picturesPathForSave);
+            intent.putExtra("bundle", bundle);
             intent.putExtra("recomode", recoMode);
             intent.putExtra("capmode", capMode);
             intent.putExtra("parentActivity", "CameraActivity");
@@ -761,8 +783,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
         if (caHandlerManager != null)
         {
-            Message message = Message.obtain(caHandlerManager,
-                    CAHandlerManager.JPG_SAVE_COMPLETE);
+            Message message = Message.obtain(caHandlerManager, CAHandlerManager.JPG_SAVE_COMPLETE);
 
             Bundle b = new Bundle();
             b.putString("filepath", path);
@@ -773,23 +794,38 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     public void jpgSaveComplete(String path)
     {
-        if ((recoMode == InfoMsg.RECO_MODE_QUICK_RECO) || (capMode == CAPTURE_SINGLE))
+        if ((recoMode == InfoMsg.RECO_MODE_QUICK_RECO))
         {
             Log.i(TAG, "in func jpgSaveComplete, path is " + path);
             Intent intent = new Intent();
             intent.setClass(mContext, CropActivity.class);
             intent.putExtra("parentActivity", "CameraActivity");
             intent.putExtra("path", path);
-
+            intent.putExtra("recomode", recoMode);
             isTakingPicture = false;
             Log.i(TAG, "Start CropActivity !!!1");
             startActivity(intent);
         }
-        else
+        else if (recoMode == InfoMsg.RECO_MODE_EXACT_RECO && (capMode == CAPTURE_SINGLE))
+        {
+            Log.i(TAG, "in func jpgSaveComplete, path is " + path);
+            Intent intent = new Intent();
+            intent.setClass(mContext, CropActivity.class);
+            intent.putExtra("parentActivity", "CameraActivity");
+            intent.putExtra("path", path);
+            intent.putExtra("recomode", recoMode);
+            isTakingPicture = false;
+            Log.i(TAG, "Start CropActivity !!!1");
+            startActivity(intent);
+        }
+        else if (recoMode == InfoMsg.RECO_MODE_EXACT_RECO && (capMode == CAPTURE_MULTI))
         {
             multiCapNum++;
             mSubSuperscript.setText(String.valueOf(multiCapNum));
             mSubSuperscript.show();
+
+            LogUtil.i("current path is "+ path);
+            picturesPathForSave.add(path);
 
             //reSetCamera();
             try
@@ -803,6 +839,46 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
             isTakingPicture = false;
         }
+    }
+
+
+    private void deletePictures()
+    {
+        int size = picturesPathForSave.size();
+
+        for (int i = 0; i < size; i++)
+        {
+            String filepathToDel = picturesPathForSave.get(i);
+            Uri imageuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            ContentResolver mContentResolver = CameraActivity.this.getContentResolver();
+            String where = MediaStore.Images.Media.DATA + "='" + filepathToDel + "'";
+            LogUtil.i("wherw is " + where);
+            mContentResolver.delete(imageuri, where, null);
+
+            Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+            File file = new File(filepathToDel);
+            Uri uri = Uri.fromFile(file);
+            intent.setData(uri);
+            CameraActivity.this.sendBroadcast(intent);
+        }
+
+
+
+    }
+
+    private void resetMultiCapState()
+    {
+        LogUtil.i("call resetMultiCapState");
+        deletePictures();
+
+        multiCapNum = 0;
+        mSubSuperscript.hide();
+        picturesPathForSave.clear();
+
+        relativeLayoutUserMode.setVisibility(View.VISIBLE);
+        recoMode = InfoMsg.RECO_MODE_EXACT_RECO;
+        switchCapMode();
+        //capMode = CAPTURE_MULTI;
     }
 
     private void getDisplayMetrics()

@@ -55,13 +55,13 @@
 
         <TextView
             android:id="@+id/tv_auto"
-            android:background="#888888"
+            android:background="#f7f7f7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/iv_auto"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:textColor="#333333"
+            android:textColor="@color/black"
             android:layout_centerHorizontal="true"
             android:text="@string/main_autorec"/>
 
@@ -79,13 +79,13 @@
 
         <TextView
             android:id="@+id/tv_exact"
-            android:background="#888888"
+            android:background="#f7f7f7"
             android:layout_below="@id/iv_exact"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:textColor="#333333"
+            android:textColor="@color/black"
             android:layout_centerHorizontal="true"
             android:text="@string/main_exactrec"/>
 

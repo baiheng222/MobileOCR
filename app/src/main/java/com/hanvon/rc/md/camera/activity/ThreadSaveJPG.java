@@ -84,7 +84,10 @@ public class ThreadSaveJPG extends Thread
 		//fjm add
 		ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
 
+		//Bitmap mMyBitmap = Bitmap.createScaledBitmap(bitmap, 720, 1280,true);
+
 		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos2);
+		//mMyBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos2);
 
 		if (!bitmap.isRecycled())
 		{

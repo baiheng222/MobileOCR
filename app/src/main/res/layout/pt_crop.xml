@@ -8,7 +8,8 @@
     	<RelativeLayout
 			android:layout_width="match_parent"
 			android:layout_height="48dp"
-			android:background="#2b2632">
+			android:background="#2b2632"
+			android:visibility="visible">
 
 			<ImageView
 				android:id="@+id/iv_back"
@@ -46,7 +47,8 @@
             android:layout_height="48dp"
 			android:layout_marginBottom="0dp"
 			android:layout_alignParentBottom="true"
-			android:background="#2b2632">
+			android:background="#2b2632"
+			android:visibility="visible">
             <Button 
 		         android:id="@+id/pt_crop_recapture"
 			     android:layout_width="wrap_content"

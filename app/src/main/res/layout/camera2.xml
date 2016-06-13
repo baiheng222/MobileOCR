@@ -4,24 +4,6 @@
                 android:layout_height="match_parent">
 
     <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        >
-
-        <SurfaceView
-            android:id="@+id/sv_preview"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerInParent="true"/>
-
-        <com.hanvon.rc.md.camera.draw.DrawManager
-            android:id="@+id/draw_manager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
         android:id="@+id/rl_top"
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -47,6 +29,8 @@
             android:textColor="@color/white"
             />
     </RelativeLayout>
+
+
 
     <RelativeLayout
         android:id="@+id/rl_bottom"
@@ -117,6 +101,28 @@
             android:text="@string/bc_str_cancle"
             android:textColor="#4f9b5a"
             />
+
+    </RelativeLayout>
+
+
+    <RelativeLayout
+        android:id="@+id/sv_surface"
+        android:layout_below="@id/rl_top"
+        android:layout_above="@id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+
+        <SurfaceView
+            android:id="@+id/sv_preview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerInParent="true"/>
+
+        <com.hanvon.rc.md.camera.draw.DrawManager
+            android:id="@+id/draw_manager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
     </RelativeLayout>
 

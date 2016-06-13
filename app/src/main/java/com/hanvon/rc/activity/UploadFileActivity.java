@@ -14,6 +14,7 @@ import com.hanvon.rc.R;
 import com.hanvon.rc.md.camera.UploadImage;
 import com.hanvon.rc.orders.OrderDetail;
 import com.hanvon.rc.orders.OrderEvalPrices;
+import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
@@ -149,11 +150,11 @@ public class UploadFileActivity extends Activity
             switch (msg.what)
             {
                 case InfoMsg.NETWORK_ERR:
-                    //Toast.makeText(CropActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UploadFileActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
                     break;
 
                 case InfoMsg.FILE_UPLOAD_FAIL:
-                    //Toast.makeText(CropActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT);
+                    Toast.makeText(UploadFileActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT);
                     break;
                 case InfoMsg.FILE_RECO_FAIL:
                     Object msgobj = msg.obj;

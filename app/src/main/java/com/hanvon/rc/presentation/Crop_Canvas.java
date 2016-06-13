@@ -11,6 +11,9 @@ import android.view.MotionEvent;
 import android.widget.ImageView;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.utils.LogUtil;
+
+import org.apache.commons.logging.Log;
 
 public class Crop_Canvas extends ImageView
 {
@@ -66,7 +69,8 @@ public class Crop_Canvas extends ImageView
 		init();
 	}
 	
-	public void init() {
+	public void init()
+	{
 		cutFlag = true;
 		mPaint = new Paint();
 		mPaint.setColor(getResources().getColor(R.color.dodgerblue));
@@ -84,28 +88,57 @@ public class Crop_Canvas extends ImageView
 		centerBottom = new float[2];
 		centerLeft = new float[2];
 		centerRight = new float[2];
+		printPointPos("print at init");
 	}
 
-	public void setBitmap(Bitmap bitmap) {
+	private void printPointPos(String tag)
+	{
+		LogUtil.i(tag);
+		LogUtil.i(leftTop[0] + ","+ leftTop[1]+ ": " + centerTop[0] + ","+centerTop[1] + ": " + rightTop[0] + "," + rightTop[1]);
+		LogUtil.i(centerLeft[0]+ "," +centerLeft[1] + ",     " + centerRight[0]+","+centerRight[1]);
+		LogUtil.i(leftBottom[0]+ "," +leftBottom[1] + ", " + centerBottom[0]+","+centerBottom[1] + ", " + rightBottom[0]+","+rightBottom[1]);
+		LogUtil.i("translateWidth: " + translateWidth + " ,translateHeight: " + translateHeight);
+		LogUtil.i("frameWidht:" + frameWidth + " , frameHeight:" + frameHeight);
+		LogUtil.i("rectWidth:" + rectWidth + " , rectHeight:" + rectHeight);
+		LogUtil.i("boundRect is " + boundRect.left + "," + boundRect.top + " :" + boundRect.right+"," + boundRect.bottom);
+	}
+
+	public void setBitmap(Bitmap bitmap)
+	{
 		this.bitmap = bitmap;
-		if(scale>1){
+		if(scale>1)
+		{
 			rectHeight = bitmap.getHeight();
 			rectWidth = bitmap.getWidth();
 			scale = 1;
-		}else{
+		}
+		else
+		{
 			rectHeight = (int) (bitmap.getHeight() * scale);
 			rectWidth = (int) (bitmap.getWidth() * scale);
 		}
 		setImageBitmap(bitmap);
 //		Matrix matrix = new Matrix();
-		translateHeight = (float) (frameHeight-rectHeight-90*density-padding*2*density)/2;
+
+		LogUtil.i("bitmap w：" + bitmap.getWidth() + " bitmap h:" + bitmap.getHeight());
+		LogUtil.i("rectWidth:" + rectWidth + " , rectHeight:" + rectHeight);
+
+
+		translateHeight = (float) (frameHeight-rectHeight-96*density-padding*2*density)/2 - 20;//减去20是为了画框更准
+		//translateHeight = 0;
 		translateWidth = (float)(frameWidth-rectWidth-padding*2*density)/2;
+
+		LogUtil.i("translateWidth: " + translateWidth + " ,translateHeight: " + translateHeight);
+
+		LogUtil.i("setBitmap end !!!!");
+
 //		matrix.setScale(scale, scale);
 //		matrix.postTranslate(translateWidth, translateHeight);
 //		setImageMatrix(matrix);
 	}
      
-	public void setCanvasWidthAndHeight(int width,int height){
+	public void setCanvasWidthAndHeight(int width,int height)
+	{
 		canvasWidth = width;
 		canvasHeight = height;
 	}
@@ -115,7 +148,8 @@ public class Crop_Canvas extends ImageView
 //		frameWidth = w;
 //		this.scale = scale;
 //	}
-	public void setHeightAndWidth(int w, int h,float scale,float density){
+	public void setHeightAndWidth(int w, int h,float scale,float density)
+	{
 //		points = point;
 		frameWidth = w;
 		frameHeight = h;
@@ -123,8 +157,9 @@ public class Crop_Canvas extends ImageView
 		this.density = density;
 	}
 	
-	public void imageScale() {
-		System.out.println("imagescale"+canvasWidth+"--"+canvasHeight);
+	public void imageScale()
+	{
+		LogUtil.i("imagescale"+canvasWidth+"--"+canvasHeight);
 		width = rectWidth;
 		height = rectHeight;
 		boundRect.left = density*padding + translateWidth;
@@ -152,12 +187,17 @@ public class Crop_Canvas extends ImageView
 		
 		centerRight[0] = (float)( (rightTop[0] + rightBottom[0])/2);
 		centerRight[1] = (float)( (rightTop[1] + rightBottom[1])/2);
+
+		printPointPos("printpoints in func imageScale");
 	}
       
-	public void setRotateFlag(boolean rotateFlag){
+	public void setRotateFlag(boolean rotateFlag)
+	{
 		this.rotateFlag = rotateFlag;
 	}
-	public Bitmap getSubsetBitmap(int frameWidth, int frameHeight){
+
+	public Bitmap getSubsetBitmap(int frameWidth, int frameHeight)
+	{
         firstFlag = true;  
         /*float ratio = (float) ((bitmap.getWidth()*100.0)/(frameWidth*100.0)) ;
         int x =  (int) ((leftTop[0]*ratio*100)/100);
@@ -178,28 +218,37 @@ public class Crop_Canvas extends ImageView
     	if(y<0){
     		y = 0;
     	}
-    	if(x+ w>bitmap.getWidth()){
+    	if(x+ w>bitmap.getWidth())
+		{
     		x =bitmap.getWidth()- w;
     	}
-    	if(y+h>bitmap.getHeight()){
+    	if(y+h>bitmap.getHeight())
+		{
     		y = bitmap.getHeight() - h;
     	}
-        System.out.println(x+"width" + w );
+        LogUtil.i(x+"width" + w );
         return Bitmap.createBitmap(bitmap, x, y,w,h);
 	}  
-    public boolean onTouchEvent(MotionEvent event){
-        if(event.getAction() == MotionEvent.ACTION_DOWN && cutFlag){
+    public boolean onTouchEvent(MotionEvent event)
+	{
+        if(event.getAction() == MotionEvent.ACTION_DOWN && cutFlag)
+		{
         	startX = event.getX();
         	startY = event.getY();
-            if(this.findPresseddst(event.getX(), event.getY())){  
+            if(this.findPresseddst(event.getX(), event.getY()))
+			{
             	touchFlag = true;  
             	return true;  
-            }else if(this.findPresseddst2(event.getX(), event.getY())){
+            }
+			else if(this.findPresseddst2(event.getX(), event.getY()))
+			{
             	touchFlag = true;  
             	return true;
             }
-        }  
-		if (event.getAction() == MotionEvent.ACTION_MOVE && touchFlag) {
+        }
+
+		if (event.getAction() == MotionEvent.ACTION_MOVE && touchFlag)
+		{
 			moveX = event.getX();
 			moveY = event.getY();
 			// 判断是否点击了哪个个小圆框
@@ -208,7 +257,8 @@ public class Crop_Canvas extends ImageView
 			}
 			// TODO 如果选择区域大小跟图像大小一样时，就不能移动
 		}
-        if(event.getAction() == MotionEvent.ACTION_UP){
+        if(event.getAction() == MotionEvent.ACTION_UP)
+		{
             recFlag = -1;  
             this.invalidate();  
             touchFlag = false;  
@@ -217,8 +267,10 @@ public class Crop_Canvas extends ImageView
         return super.onTouchEvent(event);  
     }  
       
-    private boolean pressOnArea(float x,float y){  
-        switch(recFlag){  
+    private boolean pressOnArea(float x,float y)
+	{
+        switch(recFlag)
+		{
         case Crop_Canvas.PRESS_LB:  
             this.pressLB(x, y);  
             break;  
@@ -251,7 +303,8 @@ public class Crop_Canvas extends ImageView
         return true;  
     }  
       
-    public boolean findPresseddst(float x,float y){  
+    public boolean findPresseddst(float x,float y)
+	{
         boolean returnFlag = false;  
         if(isInCircle(x, y, leftTop)){  
             recFlag = Crop_Canvas.PRESS_LT;  
@@ -281,7 +334,8 @@ public class Crop_Canvas extends ImageView
         
         return returnFlag;  
     }  
-    public boolean findPresseddst2(float x,float y){  
+    public boolean findPresseddst2(float x,float y)
+	{
         boolean returnFlag = false;  
         int lt = distance(x, y, leftTop);
     	int rt = distance(x, y, rightTop);
@@ -327,20 +381,25 @@ public class Crop_Canvas extends ImageView
         return returnFlag;  
         
     }  
-    public int distance(float x,float y,float[] area){
+    public int distance(float x,float y,float[] area)
+	{
     	float dx = x - area[0];
     	float dy = y - area[1];
     	return (int) Math.sqrt(dx * dx + dy *dy) ;
     }
-    public boolean isInCircle(float x, float y, float[] circle){  
+
+    public boolean isInCircle(float x, float y, float[] circle)
+	{
     	System.out.println(circle[0] + "===" + circle[1]);
-        if(x >= circle[0]-20 && x <= circle[0]+20 && y >= circle[1]-20 && y <= circle[1]+20){  
+        if(x >= circle[0]-20 && x <= circle[0]+20 && y >= circle[1]-20 && y <= circle[1]+20)
+		{
             return true;  
         }  
         return false;  
     }  
     
-	private void pressLT(float x, float y) {
+	private void pressLT(float x, float y)
+	{
 		float dst[] = {leftTop[0]+x-startX,leftTop[1]+y-startY};
 		if (dst[0] <boundRect.left) {
 			leftTop[0] =boundRect.left;
@@ -363,7 +422,8 @@ public class Crop_Canvas extends ImageView
 		}
 	}
       
-	private void pressRT(float x, float y) {
+	private void pressRT(float x, float y)
+	{
 		float dst[] = {rightTop[0]+x-startX,rightTop[1]+y-startY};
 		if (dst[0]> boundRect.right) {
 			rightTop[0] = boundRect.right;
@@ -385,7 +445,8 @@ public class Crop_Canvas extends ImageView
 		}
 	}
 
-	private void pressRB(float x, float y) {	
+	private void pressRB(float x, float y)
+	{
 		float dst[] = {rightBottom[0]+x-startX,rightBottom[1]+y-startY};
 		if (dst[0] > boundRect.right) {
 			rightBottom[0] = boundRect.right;
@@ -428,7 +489,8 @@ public class Crop_Canvas extends ImageView
 			centerLeft[1] = (float )(leftTop[1] +leftBottom[1])/2;
 			centerBottom[1] = (float )(leftBottom[1] +rightBottom[1])/2;
 		}
-	}  
+	}
+
 	private void pressCT(float x,float y){
 		float dst[] = {centerTop[0]+x-startX,centerTop[1]+y-startY};
 		System.out.println(x);
@@ -526,18 +588,21 @@ public class Crop_Canvas extends ImageView
      * 3.static int makeMeasureSpec(int size,int mode):根据提供的大小值和模式创建一个测量值(格式) 
      */  
 	@Override
-	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec)
+	{
 		// TODO Auto-generated method stub
 		super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 		int measureWidth = measureWidth(widthMeasureSpec);  
         int measureHeight = measureHeight(heightMeasureSpec); 
         canvasWidth = measureWidth;
         canvasHeight = measureHeight;
-        System.out.println(canvasHeight+"-canvas------------------------"+canvasWidth);
+        LogUtil.i(canvasHeight+"-canvas------------------------"+canvasWidth);
         // 设置自定义的控件MyViewGroup的大小  
         setMeasuredDimension(measureWidth, measureHeight); 
 	}
-	private int measureWidth(int pWidthMeasureSpec) {  
+
+	private int measureWidth(int pWidthMeasureSpec)
+	{
         int result = 0;  
         int widthMode = MeasureSpec.getMode(pWidthMeasureSpec);// 得到模式
         int widthSize = MeasureSpec.getSize(pWidthMeasureSpec);// 得到尺寸
@@ -570,7 +635,8 @@ public class Crop_Canvas extends ImageView
         return result;  
     }  
   
-    private int measureHeight(int pHeightMeasureSpec) {  
+    private int measureHeight(int pHeightMeasureSpec)
+	{
         int result = 0;  
   
         int heightMode = MeasureSpec.getMode(pHeightMeasureSpec);
@@ -585,7 +651,8 @@ public class Crop_Canvas extends ImageView
         return result;  
     }  
     
-	public void onDraw(Canvas canvas) {
+	public void onDraw(Canvas canvas)
+	{
 		super.onDraw(canvas);
 		if (firstFlag) {
 			firstFlag = false;
@@ -595,9 +662,9 @@ public class Crop_Canvas extends ImageView
 				imageScale();
 				rotateFlag = false;
 			}
-		} 
-		
-		
+		}
+
+		printPointPos("print at onDraw");
 		Path path = new Path();
 		path.moveTo(leftTop[0], leftTop[1]);//起始点左上角
 		path.lineTo(centerTop[0], centerTop[1]); //顶部中点

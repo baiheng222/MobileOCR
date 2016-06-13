@@ -54,7 +54,7 @@
         android:theme="@style/AppTheme">
 
         <!--   <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"-->
-        <activity android:name="com.hanvon.rc.activity.MainActivity"
+        <activity android:name="com.hanvon.rc.activity.MainActivity" android:screenOrientation="portrait"
             android:launchMode="singleTask">
         <!-- <activity android:name="com.hanvon.rc.activity.MainActivity" 
         <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"
@@ -72,44 +72,44 @@
             android:screenOrientation="portrait" >
         </activity>
 
-        <activity android:name=".activity.FileListActivity" ></activity>
-        <activity android:name=".activity.SettingActivity" ></activity>
-        <activity android:name=".activity.AboutActivity" ></activity>
-        <activity android:name=".activity.FeedBackActivity" ></activity>
-        <activity android:name=".activity.HelpActivity" ></activity>
-        <activity android:name=".activity.ChooseFileFormatActivity" ></activity>
-        <activity android:name=".activity.UploadFileActivity" ></activity>
+        <activity android:name=".activity.FileListActivity" android:screenOrientation="portrait" ></activity>
+        <activity android:name=".activity.SettingActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.AboutActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.FeedBackActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.HelpActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.ChooseFileFormatActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".activity.UploadFileActivity" android:screenOrientation="portrait"></activity>
 
-        <activity android:name=".login.RegisterUserFromEmail" ></activity>
-        <activity android:name=".login.RegisterUserFromPhone" ></activity>
-        <activity android:name=".login.RegisterUserGetCodePhone" ></activity>
-        <activity android:name=".login.RememberPassword" ></activity>
-        <activity android:name=".login.ResetPasswd" ></activity>
-        <activity android:name=".login.RmbPwdCheckCode" ></activity>
-        <activity android:name=".login.ShowUserMessage" ></activity>
-        <activity android:name=".login.ModifyPassword" ></activity>
-        <activity android:name=".login.ModifyUserName" ></activity>
+        <activity android:name=".login.RegisterUserFromEmail" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.RegisterUserFromPhone" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.RegisterUserGetCodePhone" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.RememberPassword" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.ResetPasswd" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.RmbPwdCheckCode" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.ShowUserMessage" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.ModifyPassword" android:screenOrientation="portrait"></activity>
+        <activity android:name=".login.ModifyUserName" android:screenOrientation="portrait"></activity>
         <!-- <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"></activity> -->
-        <activity android:name="com.hanvon.rc.md.camera.activity.ExactActivity"></activity>
-        <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"></activity>
+        <activity android:name="com.hanvon.rc.md.camera.activity.ExactActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity" android:screenOrientation="portrait"></activity>
 
-        <activity android:name="com.hanvon.rc.md.camera.activity.RecResultActivity"></activity>
-        <activity android:name="com.hanvon.rc.md.camera.activity.RecFailActivity"></activity>
-        <activity android:name="com.hanvon.rc.bcard.ChooseMorePicturesActivity"></activity>
-        <activity android:name="com.hanvon.rc.bcard.PreviewPicActivity"></activity>
-        <activity android:name="com.hanvon.rc.orders.OrderListActivity"
+        <activity android:name="com.hanvon.rc.md.camera.activity.RecResultActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.hanvon.rc.md.camera.activity.RecFailActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.hanvon.rc.bcard.ChooseMorePicturesActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.hanvon.rc.bcard.PreviewPicActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.hanvon.rc.orders.OrderListActivity" android:screenOrientation="portrait"
             android:launchMode="singleTask"></activity>
-        <activity android:name="com.hanvon.rc.orders.OrderDetailActivity"
+        <activity android:name="com.hanvon.rc.orders.OrderDetailActivity" android:screenOrientation="portrait"
             android:launchMode="singleTask"></activity>
         <activity android:name="com.hanvon.rc.orders.OrderToPay"
             android:launchMode="singleTask"
             android:screenOrientation="portrait" ></activity>
-        <activity android:name="com.hanvon.rc.orders.OrderEvalPrices"
+        <activity android:name="com.hanvon.rc.orders.OrderEvalPrices"  android:screenOrientation="portrait"
             android:launchMode="singleTask"></activity>
-        <activity android:name="com.hanvon.rc.presentation.CropActivity"></activity>
-        <activity android:name=".orders.ModifyContacts"></activity>
+        <activity android:name="com.hanvon.rc.presentation.CropActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name=".orders.ModifyContacts" android:screenOrientation="portrait"></activity>
 
-        <service android:name=".orders.OrderQueryService"></service>
+        <service android:name=".orders.OrderQueryService" android:screenOrientation="portrait"></service>
 
         <activity
             android:name="com.alipay.sdk.app.H5PayActivity"
