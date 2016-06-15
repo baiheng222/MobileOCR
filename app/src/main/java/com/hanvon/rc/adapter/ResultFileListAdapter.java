@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.activity.FileListActivity;
+import com.hanvon.rc.activity.ResultFileInfo;
 import com.hanvon.rc.db.FileInfo;
 import com.hanvon.rc.utils.LogUtil;
 
@@ -26,14 +27,14 @@ public class ResultFileListAdapter extends BaseAdapter
 {
     private LayoutInflater mInflater;
     private Context mContext;
-    private List<FileInfo> mDatas;
+    private List<ResultFileInfo> mDatas;
 
     private static int EDIT_MODE = 2;
     private static int VIEW_MODE = 1;
 
     private int mShowMode;
 
-    public ResultFileListAdapter(Context context, List<FileInfo> info, int showmode)
+    public ResultFileListAdapter(Context context, List<ResultFileInfo> info, int showmode)
     {
         mContext = context;
         mDatas = info;
@@ -88,7 +89,7 @@ public class ResultFileListAdapter extends BaseAdapter
                 public void onClick(View view)
                 {
                     FileListActivity act = (FileListActivity)mContext;
-                    act.startRecsultActivity(position);
+                    //act.startRecsultActivity(position);
                 }
             });
             viewHolder.mImageFormat = (ImageView) convertView.findViewById(R.id.iv_format_img);
@@ -103,6 +104,8 @@ public class ResultFileListAdapter extends BaseAdapter
                 public void onClick(View view)
                 {
                     LogUtil.i("!!! download img click, position is " + position);
+                    String downloadFlag = mDatas.get(position).getDownloadFlag();
+                    LogUtil.i("item " + position + " download flag is  " + downloadFlag);
                 }
 
             }
@@ -124,22 +127,35 @@ public class ResultFileListAdapter extends BaseAdapter
             viewHolder.mImageSelection.setVisibility(View.VISIBLE);
         }
 
-        viewHolder.mImageFormat.setImageResource(getFileTypeIcon(mDatas.get(position).getResultType()));
+        viewHolder.mImageFormat.setImageResource(getFileTypeIcon(mDatas.get(position).getFileType()));
 
+        /*
         String filepath = mDatas.get(position).getResultPath();
         String filename = filepath.substring(filepath.lastIndexOf("/")+1, filepath.length());
-        LogUtil.i("filename is " + filename);
-        viewHolder.mTvFileName.setText(filename);
+        */
+        LogUtil.i("filename is " + mDatas.get(position).getFileNanme());
+        viewHolder.mTvFileName.setText(mDatas.get(position).getFileNanme());
 
-        viewHolder.mTvFileType.setText(mDatas.get(position).getResultType().toUpperCase());
+        viewHolder.mTvFileType.setText(mDatas.get(position).getFileType().toUpperCase());
 
         //int notesNum = getNoteNumInNoteBook(position);
-        int size = (mDatas.get(position).getResultSize() + 1023) /1024;
+        int size = (Integer.parseInt(mDatas.get(position).getFileSize()) + 1023) /1024;
         LogUtil.i("file size is " + String.valueOf(size) + "k");
         viewHolder.mTvFileSize.setText(String.valueOf(size) + "k");
 
         //viewHolder.mTvFileCreateTime.setText(mDatas.get(position).getResultFileCreateTime());
-        viewHolder.mTvFileCreateTime.setText("9:36");
+        viewHolder.mTvFileCreateTime.setText(mDatas.get(position).getCreateTime());
+
+        String downloadFlag = mDatas.get(position).getDownloadFlag();
+        if (downloadFlag.equals("1"))
+        {
+            viewHolder.mIvDownLoad.setVisibility(View.GONE);
+        }
+        else
+        {
+            viewHolder.mIvDownLoad.setVisibility(View.VISIBLE);
+        }
+
         return convertView;
     }
 

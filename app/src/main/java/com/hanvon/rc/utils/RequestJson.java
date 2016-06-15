@@ -1,5 +1,6 @@
 package com.hanvon.rc.utils;
 
+import android.content.SyncInfo;
 import android.util.Log;
 
 import com.hanvon.rc.application.HanvonApplication;
@@ -38,20 +39,23 @@ public class RequestJson {
         MyHttpUtils.HttpSend(InfoMsg.UrlRapidRecog, JSuserInfoJson, InfoMsg.FILE_RECOGINE_TYPE);
     }
 
-    public static void GetFilesList() {
+    public static void GetFilesList()
+    {
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
             JSONObject conditionJson = new JSONObject();
-            //     conditionJson.put("beginTime", SyncInfo.HvnOldSynchroTime);
-            //    conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
+            conditionJson.put("create_time", "desc");
+            //conditionJson.put("endTime", SyncInfo.HvnSystemCurTime);
             JSuserInfoJson.put("userid", HanvonApplication.hvnName);
             JSuserInfoJson.put("start", "0");
             JSuserInfoJson.put("pageSize", "100");
             JSuserInfoJson.put("sort", conditionJson);
             JSuserInfoJson.put("fileType", "2");
-            JSuserInfoJson.put("recogType", "");
-        } catch(JSONException e) {
+            JSuserInfoJson.put("recogType", "2");
+        }
+        catch(JSONException e)
+        {
             e.printStackTrace();
         }
         Log.i("-----",JSuserInfoJson.toString());

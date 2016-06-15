@@ -12,11 +12,22 @@
         android:button="@drawable/custom_checkbox"
         android:visibility="visible"/>
 
+    <ImageView
+        android:id="@+id/iv_download"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="23dp"
+        android:layout_marginLeft="23dp"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:src="@mipmap/download"/>
+
     <RelativeLayout
         android:id="@+id/rl_fileitem"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_toRightOf="@id/iv_select"
+        android:layout_toLeftOf="@id/iv_download"
         android:layout_marginLeft="27dp">
 
 
@@ -39,6 +50,8 @@
                 android:id="@+id/tv_file_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:ellipsize="end"
                 android:textSize="18sp"
                 android:text="追风筝的人"/>
 
@@ -77,14 +90,7 @@
 
     </RelativeLayout>
 
-    <ImageView
-        android:id="@+id/iv_download"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="23dp"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_centerVertical="true"
-        android:src="@mipmap/download"/>
+
 
 
 </RelativeLayout>

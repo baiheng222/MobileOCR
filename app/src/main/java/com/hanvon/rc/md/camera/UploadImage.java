@@ -4,6 +4,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.hanvon.rc.activity.FileListActivity;
+import com.hanvon.rc.activity.UploadFileActivity;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.Base64Utils;
 import com.hanvon.rc.utils.InfoMsg;
@@ -59,7 +61,7 @@ public class UploadImage
     private static long downOffset  = 0;
     private final static String FORMAT_OTHER_YEAR = "yyyyMMdd";
 
-    private static Handler handler;
+    private static Handler handler = null;
 
     public UploadImage(Handler h)
     {
@@ -118,15 +120,31 @@ public class UploadImage
                 if (readBytes < 0)
                 {
                     LogUtil.i("!!!!! readBytes < 0");
+                    if (null != handler)
+                    {
+                        Message msg = Message.obtain();
+                        msg.what = InfoMsg.FILE_UPLOAD_FAIL;
+                        handler.sendMessage(msg);
+                    }
                     break;
                 }
 
 
                 LogUtil.i("readBytes:"+readBytes);
+                LogUtil.i("offset is " + offset);
+                LogUtil.i("file length is " + length);
                 //parmas = GetMapFromType(buffer, filename, offset, length, type, readBytes);
                 //parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes);
                 parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes, fileAmount, iszip, fileFormat);
                 result = dopost(parmas, buffer);
+
+                if (null != handler)
+                {
+                    Message msg = Message.obtain();
+                    msg.what = UploadFileActivity.MSG_TYPE_UPLOAD;
+                    msg.obj = String.valueOf(offset);
+                    handler.sendMessage(msg);
+                }
             }
         }
         catch (IOException e)
@@ -180,6 +198,7 @@ public class UploadImage
 
     public static void GetEvaluate(String fid)
     {
+        LogUtil.i("GetEvaluate begin!!!!!");
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
@@ -190,7 +209,7 @@ public class UploadImage
         {
             e.printStackTrace();
         }
-        Log.i(TAG,JSuserInfoJson.toString());
+        LogUtil.i(JSuserInfoJson.toString());
         HttpSend(InfoMsg.UrlOrderEvl, JSuserInfoJson, InfoMsg.ORDER_EVL_TYPE);
     }
 
@@ -219,7 +238,7 @@ public class UploadImage
             }
             @Override
             public void onSuccess(ResponseInfo<String> responseInfo) {
-                Log.i(TAG, "===onSuccess====="+responseInfo.result.toString());
+                LogUtil.i("===onSuccess====="+responseInfo.result.toString());
 
                 Message msg = new Message();
                 msg.what = type;
@@ -230,7 +249,7 @@ public class UploadImage
             @Override
             public void onFailure(com.lidroid.xutils.exception.HttpException e, String s)
             {
-                Log.i(TAG, "===onFailure====="+s);
+                LogUtil.i( "===onFailure====="+s);
                 Message msg = new Message();
                 msg.what = InfoMsg.FILE_RECO_FAIL;
                 msg.obj = s;

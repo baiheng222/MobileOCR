@@ -21,6 +21,10 @@ import com.hanvon.rc.utils.LogUtil;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+
 public class UploadFileActivity extends Activity
 {
     private ImageView ivBack;
@@ -38,8 +42,11 @@ public class UploadFileActivity extends Activity
     private String fullPath;
     private String recType;
     private String resultFileType;
+    private long fileSize;
 
     private String fid;
+
+    public final static int MSG_TYPE_UPLOAD = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -71,6 +78,19 @@ public class UploadFileActivity extends Activity
         resultFileType = intent.getStringExtra("resultfiletype");
         isZip = true;
         recType = String.valueOf("2");
+
+        File file = new File(fullPath);
+        //fileSize = file.length();
+        try
+        {
+            FileInputStream fis = new FileInputStream(file);
+            fileSize = fis.available();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
 
     }
 
@@ -122,9 +142,12 @@ public class UploadFileActivity extends Activity
                 return;
             }
 
+
+            new UploadImage(textHandler);
+
             fid = null;
             fid = UploadImage.UploadFiletoHvn(mRecgType, mPath, mFileName, mFileAmount, mIsZip, mFileFormat);
-
+            LogUtil.i("get fid is " + fid);
             if (null == fid)
             {
                 LogUtil.i("upload file failed !!!");
@@ -134,9 +157,41 @@ public class UploadFileActivity extends Activity
                 return;
             }
 
-            new UploadImage(textHandler).GetEvaluate(fid);
+            //new UploadImage(textHandler).GetEvaluate(fid);
+            UploadImage.GetEvaluate(fid);
         }
     }
+
+
+    private void updateProcessBar(long curbytes)
+    {
+        LogUtil.i("get current readbytes " + curbytes);
+        LogUtil.i("filesize is " + fileSize);
+        int percent = (int)(200 * curbytes / fileSize);
+        LogUtil.i("current is " + percent);
+        processBar.setProgress(percent);
+    }
+
+    public Handler processBarHandler = new Handler()
+    {
+        @Override
+        public void handleMessage(Message msg)
+        {
+            super.handleMessage(msg);
+            LogUtil.i("!!!!!!! processBarHandler handle msg");
+            switch (msg.what)
+            {
+
+                case UploadFileActivity.MSG_TYPE_UPLOAD:
+                {
+                    LogUtil.i("MSG_TYPE_UPLOAD");
+                    long arg = Long.parseLong(msg.obj.toString());
+                    updateProcessBar(arg);
+                }
+                break;
+            }
+        }
+    };
 
     public Handler textHandler = new Handler()
     {
@@ -149,6 +204,15 @@ public class UploadFileActivity extends Activity
             //isRecognizing = false;
             switch (msg.what)
             {
+
+                case UploadFileActivity.MSG_TYPE_UPLOAD:
+                {
+                    LogUtil.i("MSG_TYPE_UPLOAD");
+                    long arg = Long.parseLong(msg.obj.toString());
+                    updateProcessBar(arg);
+                }
+                break;
+
                 case InfoMsg.NETWORK_ERR:
                     Toast.makeText(UploadFileActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
                     break;
@@ -174,6 +238,7 @@ public class UploadFileActivity extends Activity
                     break;
 
                 case InfoMsg.ORDER_EVL_TYPE:
+                    LogUtil.i("MSG InfoMsg.ORDER_EVL_TYPE");
                     Object evlobj = msg.obj;
                     String evlcontent = evlobj.toString();
                     try
