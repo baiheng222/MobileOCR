@@ -106,6 +106,7 @@ public class ResultFileListAdapter extends BaseAdapter
                     LogUtil.i("!!! download img click, position is " + position);
                     String downloadFlag = mDatas.get(position).getDownloadFlag();
                     LogUtil.i("item " + position + " download flag is  " + downloadFlag);
+
                 }
 
             }

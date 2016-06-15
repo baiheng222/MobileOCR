@@ -355,12 +355,24 @@ public class RequestJson {
         MyHttpUtils.HttpSend(InfoMsg.UrlOrderAliPayQuery,JSuserInfoJson,InfoMsg.ORDER_ALIPAY_QUERY_ORDER_TYPE);
     }
 
-    public static void GetAliPaySign(String oidinfo){
+    public static void GetAliPaySign(String orderid,String totalfee){
         JSONObject JSuserInfoJson = new JSONObject();
         try
         {
             JSuserInfoJson.put("userid", HanvonApplication.hvnName);
-            JSuserInfoJson.put("orderInfo", URLEncoder.encode(oidinfo, "UTF-8"));
+          //  JSuserInfoJson.put("orderInfo", URLEncoder.encode(oidinfo, "UTF-8"));
+            JSuserInfoJson.put("partner", "2088021262536315");
+            JSuserInfoJson.put("seller_id", "1944971055@qq.com");
+            JSuserInfoJson.put("out_trade_no", orderid);
+            JSuserInfoJson.put("subject", URLEncoder.encode("汉王识文-精准人工识别", "UTF-8"));
+            JSuserInfoJson.put("body", URLEncoder.encode("汉王识文-精准人工识别", "UTF-8"));
+            JSuserInfoJson.put("total_fee", totalfee);
+            JSuserInfoJson.put("notify_url", "http://rc.hwyun.com:9090/rws-cloud/alipay/notify");
+            JSuserInfoJson.put("service", "mobile.securitypay.pay");
+            JSuserInfoJson.put("payment_type", "1");
+            JSuserInfoJson.put("_input_charset", "utf-8");
+            JSuserInfoJson.put("it_b_pay", "30m");
+            JSuserInfoJson.put("show_url", "rc.hanvon.com");
         } catch(Exception e) {
             e.printStackTrace();
         }

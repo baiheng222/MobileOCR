@@ -56,12 +56,8 @@ public class OrderToPay extends Activity implements View.OnClickListener {
 
     public boolean isOrderChange = false;
 
-    // 商户PID
-    public static final String PARTNER = "2088021262536315";
-    // 商户收款账号
-    public static final String SELLER = "1944971055@qq.com";
     private static final int SDK_PAY_FLAG = 1;
-    private String orderInfo;
+
     private int InFrom = 0; //0 from evalprices  1 from orderdetail
     private String resultFileType;
 
@@ -159,8 +155,8 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                                 HanvonApplication.CurrentOid = json.getString("oid");
                                 LogUtil.i("----CurrentOid:"+HanvonApplication.CurrentOid);
                                 if (isZfbPay){
-                                    GetAliPaySign();
-                                    RequestJson.GetAliPaySign(orderInfo);
+                               //     GetAliPaySign();
+                                    RequestJson.GetAliPaySign(orderDetail.getOrderNumber(),orderDetail.getOrderPrice());
                               //     AliPay aliPay = new AliPay(OrderToPay.this,OrderToPay.this);
                                //     aliPay.pay(orderDetail.getOrderPrice(), orderDetail.getOrderNumber());
                                 }else{
@@ -190,9 +186,11 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                         break;
                     case InfoMsg.ORDER_ALIPAY_SIGN_ORDER_TYPE:
                         String sign = null;
+                        String orderInfo = null;
                         try {
                             sign = json.getString("sign");
                             sign = URLEncoder.encode(sign, "UTF-8");
+                            orderInfo = json.getString("orderInfo");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -329,49 +327,4 @@ public class OrderToPay extends Activity implements View.OnClickListener {
         }
         return true;
     }
-
-    private String GetAliPaySign(){
-        // 签约合作者身份ID
-        orderInfo = "partner=" + "\"" + PARTNER + "\"";
-
-        // 签约卖家支付宝账号
-        orderInfo += "&seller_id=" + "\"" + SELLER + "\"";
-
-        // 商户网站唯一订单号
-        orderInfo += "&out_trade_no=" +"\"" + orderDetail.getOrderNumber()+ "\"";
-
-        // 商品名称
-        orderInfo += "&subject=" + "\"" + "汉王识文-精准人工识别" + "\"";
-
-        // 商品详情
-        orderInfo += "&body=" + "\"" + "汉王识文-精准人工识别" + "\"";
-
-        // 商品金额
-        orderInfo += "&total_fee=" + "\"" + "0.01" + "\"";
-
-        // 服务器异步通知页面路径
-        orderInfo += "&notify_url=" + "\"" + "http://rc.hwyun.com:9090/rws-cloud/alipay/notify" + "\"";
-
-        // 服务接口名称， 固定值
-        orderInfo += "&service=\"mobile.securitypay.pay\"";
-
-        // 支付类型， 固定值
-        orderInfo += "&payment_type=\"1\"";
-
-        // 参数编码， 固定值
-        orderInfo += "&_input_charset=\"utf-8\"";
-
-        // 设置未付款交易的超时时间
-        // 默认30分钟，一旦超时，该笔交易就会自动被关闭。
-        // 取值范围：1m～15d。
-        // m-分钟，h-小时，d-天，1c-当天（无论交易何时创建，都在0点关闭）。
-        // 该参数数值不接受小数点，如1.5h，可转换为90m。
-        orderInfo += "&it_b_pay=\"30m\"";
-
-        // 支付宝处理完请求后，当前页面跳转到商户指定页面的路径，可空
-      //  orderInfo += "&return_url=\"\"";
-
-        return orderInfo;
-    }
-
 }
