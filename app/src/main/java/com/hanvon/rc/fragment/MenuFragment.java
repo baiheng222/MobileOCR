@@ -115,6 +115,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             case R.id.rl_file:
                 Intent fileIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
                 this.startActivity(fileIntent);
+                MainActivity act2 = (MainActivity)getActivity();
+                act2.closeMenu();
                 break;
 
 

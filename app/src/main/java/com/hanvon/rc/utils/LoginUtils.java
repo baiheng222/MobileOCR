@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.application.HanvonApplication;
+import com.hanvon.rc.login.LoginActivity;
 import com.hanvon.userinfo.RequestTask;
 import com.hanvon.userinfo.ResultCallBack;
 import com.hanvon.userinfo.UserInfoMessage;
@@ -55,7 +55,7 @@ public class LoginUtils {
     }
 
     public void LoginToHvn() {
-        GetUserInfo();
+        RegisterToHvn();
     }
 
     private ResultCallBack callBack = new ResultCallBack() {
@@ -85,6 +85,7 @@ public class LoginUtils {
                             mEditor.putInt("status", 1);
                             mEditor.commit();
 
+                            MainActivity.isFromLogin = true;
                             mContext.startActivity(new Intent(mContext, MainActivity.class));
                             LoginActivity.instance.finish();
                         } else if (json.getString("code").equals("426")) {
@@ -104,7 +105,7 @@ public class LoginUtils {
                 case UserInfoMessage.USER_QQ_REGISTER_TYPE:
                 case UserInfoMessage.USER_WX_REGISTER_TYPE:
                     try {
-                        if (json.getString("code").equals("0") || json.getString("code").equals("422")) {
+                        if (json.getString("code").equals("0")) {
                             String qqName = json.getString("username");
                             HanvonApplication.isActivity = true;
                             SharedPreferences mSharedPreferences = mContext.getSharedPreferences("BitMapUrl", Activity.MODE_MULTI_PROCESS);
@@ -121,6 +122,13 @@ public class LoginUtils {
 
                             UploadDeviceStat();
                             break;
+                        }else if(json.getString("code").equals("422")){
+                            String userName = json.getString("username");
+                            GetUserInfo(userName);
+                        }else{
+                            Toast.makeText(mContext, "服务器忙，请稍后重试", Toast.LENGTH_SHORT).show();
+                            mContext.startActivity(new Intent(mContext, MainActivity.class));
+                            LoginActivity.instance.finish();
                         }
                     } catch (JSONException e) {
                         LoginActivity.pd.dismiss();
@@ -135,14 +143,10 @@ public class LoginUtils {
         }
     };
 
-    public void GetUserInfo() {
+    public void GetUserInfo(String username) {
         JSONObject paramJson = new JSONObject();
         try {
-            if (userflag == 1) {
-                paramJson.put("user", "qq_" + SHA1Util.encodeBySHA(openid));
-            } else if (userflag == 2) {
-                paramJson.put("user", "wx_" + SHA1Util.encodeBySHA(openid));
-            }
+            paramJson.put("user", username);
         } catch (JSONException e) {
             e.printStackTrace();
         }

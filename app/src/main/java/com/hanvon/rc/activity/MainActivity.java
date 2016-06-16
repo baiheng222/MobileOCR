@@ -35,6 +35,7 @@ public class MainActivity extends Activity
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mDrawerToggle;
 
+    public static boolean isFromLogin;
 
 
 
@@ -69,6 +70,14 @@ public class MainActivity extends Activity
         //String valueStr = this.getIntent().getStringExtra("key");
         Bundle bundle = this.getIntent().getBundleExtra("msg");
         String value = null;
+
+        if(isFromLogin)
+        {
+            LogUtil.i("-----------from Login----------------");
+            getFragmentManager().findFragmentById(R.id.menu_fragment).onStart();
+            isFromLogin = false;
+            return;
+        }
         if (null != bundle)
         {
             LogUtil.i("get bundle");
@@ -76,13 +85,11 @@ public class MainActivity extends Activity
             LogUtil.i("value is " + value);
         }
         //LogUtil.i("valueStr is " + valueStr);
-        if (null != value)
-        {
+       if (null != value){
 
                 LogUtil.i(" !!!!!!exit program");
                 finish();
         }
-
     }
 
     private void initView()
@@ -155,4 +162,5 @@ public class MainActivity extends Activity
         super.onDestroy();
         LogUtil.i("-------onDestory----MainActivity-------");
     }
+
 }

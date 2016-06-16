@@ -187,7 +187,8 @@ public class HttpUtilsFiles {
     }
 
 
-    public  static void HttpDownFiles(JSONObject params,String urlStr,String path,String fid){
+    public  static void HttpDownFiles(JSONObject params,String urlStr,String path,String fid)
+    {
         HttpClient httpClient = new DefaultHttpClient();
         HttpResponse response;
         try { // 模拟调用rest API下载文件接口
@@ -238,7 +239,8 @@ public class HttpUtilsFiles {
             randomFile.close();
             is.close();
             //下次取的起始位置
-            if (downOffset < Long.valueOf(size)){
+            if (downOffset < Long.valueOf(size))
+            {
                 long length = 0;
                 if(Long.valueOf(size) - downOffset >= 32768){
                     length = 32768;

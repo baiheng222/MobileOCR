@@ -55,8 +55,13 @@ public class MyHttpUtils {
                 handler.sendMessage(msg);
             }
             @Override
-            public void onFailure(com.lidroid.xutils.exception.HttpException e, String s) {
+            public void onFailure(com.lidroid.xutils.exception.HttpException e, String s)
+            {
                 LogUtil.i("===onFailure====="+s);
+                Message msg = Message.obtain();
+                msg.what = InfoMsg.NET_ERR_SOCKET_TIMEOUT;
+                msg.obj = s;
+                handler.sendMessage(msg);
             }
         });
     }

@@ -7,11 +7,11 @@ package com.hanvon.rc.utils;
  */
 public class InfoMsg {
 
-    //public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
-    public static final String HanvonUrl = "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1";
+    public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
+    //public static final String HanvonUrl = "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1";
 
-    //public static final String ShareUrl = "http://dpi.hanvon.com/rt/ap/v1";
-    public static final String ShareUrl = "http://cloud.hwyun.com/dws-cloud/rt/ap/v1";
+    public static final String ShareUrl = "http://dpi.hanvon.com/rt/ap/v1";
+    //public static final String ShareUrl = "http://cloud.hwyun.com/dws-cloud/rt/ap/v1";
 
 
     public static final String UrlRapidRecog = HanvonUrl + "/file/web/rapid/recog";
@@ -82,4 +82,6 @@ public class InfoMsg {
     public static final int RESULT_TYPE_EXACT_RECO = 0x25;
     public static final int RECO_MODE_QUICK_RECO = 0x26;
     public static final int RECO_MODE_EXACT_RECO = 0x27;
+
+    public static final int NET_ERR_SOCKET_TIMEOUT = 0x47;
 }

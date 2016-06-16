@@ -121,6 +121,7 @@ public class RequestJson {
         try
         {
             JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("recogType", 2);
             JSuserInfoJson.put("fileType", "2");
             JSuserInfoJson.put("fid", fid);
             JSuserInfoJson.put("filePath", "");

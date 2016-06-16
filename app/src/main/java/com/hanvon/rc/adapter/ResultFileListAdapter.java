@@ -106,6 +106,8 @@ public class ResultFileListAdapter extends BaseAdapter
                     LogUtil.i("!!! download img click, position is " + position);
                     String downloadFlag = mDatas.get(position).getDownloadFlag();
                     LogUtil.i("item " + position + " download flag is  " + downloadFlag);
+                    FileListActivity act = (FileListActivity)mContext;
+                    act.downLoadFile(position);
 
                 }
 
@@ -148,6 +150,7 @@ public class ResultFileListAdapter extends BaseAdapter
         viewHolder.mTvFileCreateTime.setText(mDatas.get(position).getCreateTime());
 
         String downloadFlag = mDatas.get(position).getDownloadFlag();
+        /*
         if (downloadFlag.equals("1"))
         {
             viewHolder.mIvDownLoad.setVisibility(View.GONE);
@@ -156,7 +159,7 @@ public class ResultFileListAdapter extends BaseAdapter
         {
             viewHolder.mIvDownLoad.setVisibility(View.VISIBLE);
         }
-
+        */
         return convertView;
     }
 

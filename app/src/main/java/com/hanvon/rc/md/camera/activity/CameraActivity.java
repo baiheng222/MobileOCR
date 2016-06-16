@@ -449,10 +449,10 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                     mCameraManager.setTouchView(50, 100);
                     mCameraManager.setFocusModeAutoCycle(1750);
                     //add 2016-05-31
-                    Camera.Parameters parameters = mCameraManager.getCameraParameters();
+                    //Camera.Parameters parameters = mCameraManager.getCameraParameters();
                     //parameters.setPreviewSize(1280, 720);
-                    parameters.setPictureSize(1920, 1080);
-                    mCameraManager.setCameraParameters(parameters);
+                    //parameters.setPictureSize(1920, 1080);
+                    //mCameraManager.setCameraParameters(parameters);
                     //add end
                     //setFlashAuto(); //fjm add
                     /*

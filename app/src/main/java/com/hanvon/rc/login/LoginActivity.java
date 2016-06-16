@@ -502,7 +502,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     private void startTime(){
         AuthTimer = new Timer();
         TimerTask timerTask = new TimerTask() {
-            int i = 3;
+            int i = 5;
             @Override
             public void run() {
                 Message msg = new Message();

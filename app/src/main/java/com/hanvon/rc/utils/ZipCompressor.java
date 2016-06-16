@@ -4,11 +4,16 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Enumeration;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 
 import org.apache.tools.zip.ZipEntry;
 import org.apache.tools.zip.ZipOutputStream;
+import org.apache.tools.zip.ZipFile;
+
 
 /**
  * @ClassName: ZipCompressor
@@ -111,4 +116,171 @@ public class ZipCompressor {
             throw new RuntimeException(e);
         }
     }
+
+    /*
+     * @param:zipFilePath String,releasePath String
+     * @return void
+     * @description:Decompress A File
+     */
+    /*
+    @SuppressWarnings("unchecked")
+    public static void decompressFile(String zipFilePath,String releasePath) throws IOException
+    {
+        ZipFile zipFile = new ZipFile(zipFilePath);
+        Enumeration<ZipEntry> enumeration = zipFile.getEntries();
+        InputStream inputStream = null;
+        FileOutputStream fileOutputStream = null;
+        ZipEntry zipEntry = null;
+        String zipEntryNameStr ="";
+        String[] zipEntryNameArray = null;
+        while (enumeration.hasMoreElements()) {
+            zipEntry = enumeration.nextElement();
+            zipEntryNameStr = zipEntry.getName();
+            zipEntryNameArray = zipEntryNameStr.split("/");
+            String path = releasePath;
+            File root = new File(releasePath);
+            if(!root.exists())
+            {
+                root.mkdir();
+            }
+            for (int i = 0; i < zipEntryNameArray.length; i++) {
+                if(i<zipEntryNameArray.length-1)
+                {
+                    path = path + File.separator+zipEntryNameArray[i];
+                    new File(StringTools.conversionSpecialCharacters(path)).mkdir();
+                }
+                else
+                {
+                    if(StringTools.conversionSpecialCharacters(zipEntryNameStr).endsWith(File.separator))
+                    {
+                        new File(releasePath + zipEntryNameStr).mkdir();
+                    }
+                    else
+                    {
+                        inputStream = zipFile.getInputStream(zipEntry);
+                        fileOutputStream = new FileOutputStream(new File(
+                                StringTools.conversionSpecialCharacters(releasePath + zipEntryNameStr)));
+                        byte[] buf = new byte[1024];
+                        int len;
+                        while ((len = inputStream.read(buf)) > 0)
+                        {
+                            fileOutputStream.write(buf, 0, len);
+                        }
+                        inputStream.close();
+                        fileOutputStream.close();
+                    }
+                }
+            }
+        }
+        zipFile.close();
+    }
+    */
+
+
+    /**
+     * 调用org.apache.tools.zip实现解压缩，支持目录嵌套和中文名
+     * 也可以使用java.util.zip不过如果是中文的话，解压缩的时候文件名字会是乱码。原因是解压缩软件的编码格式跟java.util.zip.ZipInputStream的编码字符集(固定是UTF-8)不同
+     *
+     * @param zipFileName
+     *            要解压缩的文件
+     * @param outputDirectory
+     *            要解压到的目录
+     * @throws Exception
+     */
+    public static boolean unZip(String zipFileName, String outputDirectory)
+    {
+        boolean flag = false;
+        try
+        {
+            ZipFile zipFile = new org.apache.tools.zip.ZipFile(zipFileName);
+            java.util.Enumeration e = zipFile.getEntries();
+            ZipEntry zipEntry = null;
+            createDirectory(outputDirectory, "");
+            while (e.hasMoreElements())
+            {
+                zipEntry = (ZipEntry) e.nextElement();
+                LogUtil.i("unziping " + zipEntry.getName());
+                if (zipEntry.isDirectory())
+                {
+                    String name = zipEntry.getName();
+                    name = name.substring(0, name.length() - 1);
+                    File f = new File(outputDirectory + File.separator + name);
+                    f.mkdir();
+                    LogUtil.i("创建目录：" + outputDirectory + File.separator + name);
+                }
+                else
+                {
+                    String fileName = zipEntry.getName();
+                    fileName = fileName.replace('\\', '/');
+                    // System.out.println("测试文件1：" +fileName);
+                    if (fileName.indexOf("/") != -1)
+                    {
+                        createDirectory(outputDirectory, fileName.substring(0, fileName.lastIndexOf("/")));
+                        fileName = fileName.substring(fileName.lastIndexOf("/") + 1, fileName.length());
+                    }
+
+                    File f = new File(outputDirectory + File.separator + zipEntry.getName());
+
+                    f.createNewFile();
+                    InputStream in = zipFile.getInputStream(zipEntry);
+                    FileOutputStream out = new FileOutputStream(f);
+
+                    byte[] by = new byte[1024];
+                    int c;
+                    while ((c = in.read(by)) != -1)
+                    {
+                        out.write(by, 0, c);
+                    }
+                    out.close();
+                    in.close();
+                }
+                flag = true;
+            }
+        }
+        catch (Exception ex)
+        {
+            ex.printStackTrace();
+        }
+        return flag;
+    }
+
+    /**
+     * 创建目录
+     *
+     * @param directory
+     *            父目录
+     * @param subDirectory
+     *            子目录
+     */
+    private static void createDirectory(String directory, String subDirectory)
+    {
+        String dir[];
+        File fl = new File(directory);
+        try
+        {
+            if (subDirectory == "" && fl.exists() != true)
+            {
+                fl.mkdir();
+            }
+            else if (subDirectory != "")
+            {
+                dir = subDirectory.replace('\\', '/').split("/");
+                for (int i = 0; i < dir.length; i++)
+                {
+                    File subFile = new File(directory + File.separator + dir[i]);
+                    if (subFile.exists() == false)
+                    {
+                        subFile.mkdir();
+                    }
+                    directory += File.separator + dir[i];
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            System.out.println(ex.getMessage());
+        }
+    }
+
+
 }
