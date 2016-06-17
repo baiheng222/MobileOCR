@@ -91,7 +91,8 @@ public class UploadImage
                 offset = 0;
             }
 
-            while(true)
+            boolean flag = true;
+            while(flag)
             {
                 if ((isPause) || ((!isPause)&&(offset >= length)))
                 {
@@ -117,22 +118,20 @@ public class UploadImage
                     e1.printStackTrace();
                 }
 
+                LogUtil.i("readBytes:"+readBytes);
+                LogUtil.i("offset is " + offset);
+                LogUtil.i("file length is " + length);
+
+
                 if (readBytes < 0)
                 {
-                    LogUtil.i("!!!!! readBytes < 0");
-                    if (null != handler)
-                    {
-                        Message msg = Message.obtain();
-                        msg.what = InfoMsg.FILE_UPLOAD_FAIL;
-                        handler.sendMessage(msg);
-                    }
+                    LogUtil.i("!!!!! readBytes is " + readBytes + " , break while!!!");
                     break;
                 }
 
 
-                LogUtil.i("readBytes:"+readBytes);
-                LogUtil.i("offset is " + offset);
-                LogUtil.i("file length is " + length);
+
+
                 //parmas = GetMapFromType(buffer, filename, offset, length, type, readBytes);
                 //parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes);
                 parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes, fileAmount, iszip, fileFormat);

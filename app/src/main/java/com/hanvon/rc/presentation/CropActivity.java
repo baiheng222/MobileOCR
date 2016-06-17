@@ -373,25 +373,19 @@ public class CropActivity extends Activity
 				CropActivity.this.textHandler.sendMessage(msg);
 				return;
 			}
-			/**********test by chenxinzhuang************/
-			/*
-			if(HanvonApplication.isAccurateRecg)
+
+
+			Log.i(TAG, "!!!!!!DEVID is " + HanvonApplication.AppDeviceId);
+			if("".equals(HanvonApplication.hvnName))
 			{
-				new UploadImage(textHandler).GetEvaluate(fid);
+				new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.AppDeviceId, fid, "1", "4");
 			}
 			else
-			{*/
-				Log.i(TAG, "!!!!!!DEVID is " + HanvonApplication.AppDeviceId);
-				if("".equals(HanvonApplication.hvnName))
-				{
-					new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.AppDeviceId, fid, "1", "4");
-				}
-				else
-				{
-					new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.hvnName, fid, "1", "4");
-				}
-			//}
-			/***************END*************/
+			{
+				new UploadImage(textHandler).GetRapidRecogRet(HanvonApplication.hvnName, fid, "1", "4");
+			}
+
+
 		}
 	}
 
@@ -472,6 +466,7 @@ public class CropActivity extends Activity
 					}
 					break;
 				}
+				/*
 				case InfoMsg.ORDER_EVL_TYPE:
 					Object evlobj = msg.obj;
 					String evlcontent = evlobj.toString();
@@ -511,6 +506,7 @@ public class CropActivity extends Activity
 						e.printStackTrace();
 					}
 					break;
+					*/
 			}
 		};
 	};

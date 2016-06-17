@@ -29,6 +29,7 @@ import com.hanvon.rc.utils.CustomDialog;
 import com.hanvon.rc.utils.HvnCloudManager;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.lidroid.xutils.util.LogUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -82,6 +83,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private Bitmap bitmapLaunch;
     private Boolean bShareClick = false;
     private String picturePaht = null;
+
+    private String fileNamePassedByIntent;
 
 
     private Boolean bReadOnlyMode = false;
@@ -198,9 +201,11 @@ public class RecResultActivity extends Activity implements View.OnClickListener
             else
             {
                 bReadOnlyMode = true;
-                resultInfo = (FileInfo) bundle.getSerializable("info");
-                LogUtil.i("received file info is : " + resultInfo.toSting());
-                recResult = readFileToBuf(resultInfo.getResultPath());
+                //resultInfo = (FileInfo) bundle.getSerializable("info");
+                //LogUtil.i("received file info is : " + resultInfo.toSting());
+                fileNamePassedByIntent = intent.getStringExtra("filename");
+                LogUtil.i("filename is " + fileNamePassedByIntent);
+                recResult = readFileToBuf(fileNamePassedByIntent);
                 LogUtil.i("get result from txt: " + recResult);
             }
         }
@@ -209,10 +214,15 @@ public class RecResultActivity extends Activity implements View.OnClickListener
 
     private String getSavedFileName()
     {
+        String filename = fileNamePassedByIntent.substring(fileNamePassedByIntent.lastIndexOf("/")+1, fileNamePassedByIntent.lastIndexOf("."));
+        LogUtils.i("disp name is " + filename);
+        return filename;
+        /*
         String filename = null;
         String name = resultInfo.getResultPath();
         filename = name.substring(name.lastIndexOf("/") + 1, name.lastIndexOf("."));
         return filename;
+        */
     }
 
     private String readFileToBuf(String filePath)
@@ -220,7 +230,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         try
         {
             StringBuffer sb = new StringBuffer("");
-            String encoding="UTF-8";
+            String encoding="UTF-16";
             File file=new File(filePath);
             if(file.isFile() && file.exists())//判断文件是否存在
             {

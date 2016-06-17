@@ -88,7 +88,7 @@ public class Crop_Canvas extends ImageView
 		centerBottom = new float[2];
 		centerLeft = new float[2];
 		centerRight = new float[2];
-		printPointPos("print at init");
+		//printPointPos("print at init");
 	}
 
 	private void printPointPos(String tag)
@@ -188,7 +188,7 @@ public class Crop_Canvas extends ImageView
 		centerRight[0] = (float)( (rightTop[0] + rightBottom[0])/2);
 		centerRight[1] = (float)( (rightTop[1] + rightBottom[1])/2);
 
-		printPointPos("printpoints in func imageScale");
+		//printPointPos("printpoints in func imageScale");
 	}
       
 	public void setRotateFlag(boolean rotateFlag)
@@ -664,7 +664,7 @@ public class Crop_Canvas extends ImageView
 			}
 		}
 
-		printPointPos("print at onDraw");
+		//printPointPos("print at onDraw");
 		Path path = new Path();
 		path.moveTo(leftTop[0], leftTop[1]);//起始点左上角
 		path.lineTo(centerTop[0], centerTop[1]); //顶部中点

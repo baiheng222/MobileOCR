@@ -6,7 +6,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.zip.CRC32;
 import java.util.zip.CheckedOutputStream;
 
@@ -187,9 +189,10 @@ public class ZipCompressor {
      *            要解压到的目录
      * @throws Exception
      */
-    public static boolean unZip(String zipFileName, String outputDirectory)
+    public static ArrayList<String> unZip(String zipFileName, String outputDirectory)
     {
         boolean flag = false;
+        ArrayList<String> filelist = new ArrayList<String>();
         try
         {
             ZipFile zipFile = new org.apache.tools.zip.ZipFile(zipFileName);
@@ -220,8 +223,9 @@ public class ZipCompressor {
                     }
 
                     File f = new File(outputDirectory + File.separator + zipEntry.getName());
-
+                    LogUtil.i("unzip file name is " + f.getAbsolutePath());
                     f.createNewFile();
+                    filelist.add(f.getAbsolutePath());
                     InputStream in = zipFile.getInputStream(zipEntry);
                     FileOutputStream out = new FileOutputStream(f);
 
@@ -241,7 +245,8 @@ public class ZipCompressor {
         {
             ex.printStackTrace();
         }
-        return flag;
+        //return flag;
+        return filelist;
     }
 
     /**

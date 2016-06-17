@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -79,8 +80,6 @@ public class FileListActivity extends Activity implements View.OnClickListener
 
     private boolean isDownLoading = false;
 
-    public final static int MSG_DOWNLOAD_DONE = 0x31;
-    public final static int MSG_DOWNLOAD_FAIL = 0x32;
 
 
     @Override
@@ -194,6 +193,14 @@ public class FileListActivity extends Activity implements View.OnClickListener
         */
     }
 
+    public void startRecResultActivityWithFileName(String filepath)
+    {
+        LogUtil.i("startRecResultActivityWithFileName called");
+        Intent intent = new Intent(this, RecResultActivity.class);
+        intent.putExtra("filename", filepath);
+        startActivity(intent);
+    }
+
 
     private void switchMode()
     {
@@ -257,18 +264,19 @@ public class FileListActivity extends Activity implements View.OnClickListener
                 Object obj = msg.obj;
                 LogUtil.i("handleMessage msg.obj is " + obj);
                 JSONObject jsonObject = null;
-                try
-                {
-                    jsonObject = new JSONObject(obj.toString());
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-
                 switch (msg.what)
                 {
                     case InfoMsg.FILE_LIST_TYPE:
+
+                        try
+                        {
+                            jsonObject = new JSONObject(obj.toString());
+                        }
+                        catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+
                         try
                         {
                             JSONArray jsonArray = new JSONArray(jsonObject.getString("list"));
@@ -303,15 +311,19 @@ public class FileListActivity extends Activity implements View.OnClickListener
                         Toast.makeText(FileListActivity.this, "网路出错，请重试", Toast.LENGTH_SHORT).show();
                         break;
 
-                    case MSG_DOWNLOAD_DONE:
-                        LogUtil.i("downLoad done");
+                    case InfoMsg.MSG_DOWNLOAD_DONE:
+                        LogUtil.i("handle downLoad done");
                         pd.dismiss();
+                        ArrayList<String> filelist = msg.getData().getStringArrayList("filelist");
+                        if (filelist != null)
+                        {
+                            for (int i = 0; i < filelist.size(); i++)
+                            {
+                                LogUtil.i("filelist[" + i + "] is " + filelist.get(i));
+                            }
+                        }
                         isDownLoading = false;
-                        break;
-
-                    case MSG_DOWNLOAD_FAIL:
-                        pd.dismiss();
-                        isDownLoading = false;
+                        startRecResultActivityWithFileName(filelist.get(0));
                         break;
                 }
             }
@@ -467,13 +479,19 @@ public class FileListActivity extends Activity implements View.OnClickListener
             }
             else
             {
-
-                ZipCompressor.unZip(path, "/sdcard/MobileOCR/zip/");
+                LogUtil.i("path is " + path);
+                String dirname = path.substring(0, path.lastIndexOf(".zip"));
+                LogUtil.i("dirname is " + dirname);
+                ArrayList<String> filelist = ZipCompressor.unZip(path, dirname);
 
                 LogUtil.i("send downdone msg");
-                Message message = Message.obtain();
-                message.what = MSG_DOWNLOAD_DONE;
+                Message message = new Message();
+                message.what = InfoMsg.MSG_DOWNLOAD_DONE;
+                Bundle bundle = new Bundle();
+                bundle.putStringArrayList("filelist", filelist);
+                message.setData(bundle);
                 FileListActivity.handler.sendMessage(message);
+
             }
         }
         catch (UnsupportedEncodingException e1)

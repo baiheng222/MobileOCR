@@ -89,7 +89,9 @@ public class ResultFileListAdapter extends BaseAdapter
                 public void onClick(View view)
                 {
                     FileListActivity act = (FileListActivity)mContext;
+                    LogUtil.i("all item clicked!!!");
                     //act.startRecsultActivity(position);
+                    act.downLoadFile(position);
                 }
             });
             viewHolder.mImageFormat = (ImageView) convertView.findViewById(R.id.iv_format_img);
@@ -150,7 +152,7 @@ public class ResultFileListAdapter extends BaseAdapter
         viewHolder.mTvFileCreateTime.setText(mDatas.get(position).getCreateTime());
 
         String downloadFlag = mDatas.get(position).getDownloadFlag();
-        /*
+
         if (downloadFlag.equals("1"))
         {
             viewHolder.mIvDownLoad.setVisibility(View.GONE);
@@ -159,7 +161,7 @@ public class ResultFileListAdapter extends BaseAdapter
         {
             viewHolder.mIvDownLoad.setVisibility(View.VISIBLE);
         }
-        */
+
         return convertView;
     }
 
