@@ -49,7 +49,7 @@ public class ThreadPreviewDataToImageData extends Thread
 
 			while (null == BlockingQueuePreviewData.getBlockingQueuePreviewData())
 			{
-				Log.i(TAG, "BlockingQueuePreviewData is null");
+				//Log.i(TAG, "BlockingQueuePreviewData is null");
 				try {
 					Thread.sleep(50);
 				} catch (InterruptedException e) {
@@ -88,15 +88,14 @@ public class ThreadPreviewDataToImageData extends Thread
 								new byte[width * height], width, height);
 
 						if (!this.isQuit) {
-							Log.i(TAG,
-									"start-1-ImageProcessing" + this.getName());
+							//Log.i(TAG, "start-1-ImageProcessing" + this.getName());
 							ImageProcessing.YUV420SPToGrayByteRotation(
 									grayByteDataPreviewData.getData(),
 									previewSize.width, previewSize.height,
 									offsetX, offsetY, height, width,
 									grayByteDataQR.getData(), 90);
 
-							Log.i(TAG, "end-1-ImageProcessing" + this.getName());
+							//Log.i(TAG, "end-1-ImageProcessing" + this.getName());
 						}
 
 						GrayByteData[] grayByteDataArray = new GrayByteData[2];
@@ -156,7 +155,7 @@ public class ThreadPreviewDataToImageData extends Thread
 							.getBlockingQueueGrayByteDataPreviewData().putData(
 									grayByteDataPreviewData);
 
-					Log.i(TAG, "put BCard previewData" + this.getName());
+					//Log.i(TAG, "put BCard previewData" + this.getName());
 
 				}
 

@@ -15,6 +15,7 @@ import com.hanvon.rc.R;
 import com.hanvon.rc.adapter.FileFormatAdapter;
 import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
 import com.hanvon.rc.md.camera.activity.RecResultActivity;
+import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 
@@ -112,7 +113,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         mDatas = new ArrayList<String>();
         mDatas.add("TXT");
         //mDatas.add("PDF");
-        mDatas.add("DOC");
+        //mDatas.add("DOC");
 
         adapter = new FileFormatAdapter(this, mDatas);
     }
@@ -124,6 +125,8 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         {
             case R.id.iv_back:
                 //setRet();
+                Intent intent = new Intent(ChooseFileFormatActivity.this, CropActivity.class);
+                setResult(RESULT_CANCELED, intent);
                 finish();
             break;
         }

@@ -192,7 +192,7 @@ public class CropActivity extends Activity
 
 				if (isRecognizing)
 				{
-					Log.i(TAG, "recogize thread already running");
+					LogUtil.i("recogize thread already running");
 					return;
 				}
 				else
@@ -312,8 +312,8 @@ public class CropActivity extends Activity
 //	 	float scaleY = (float) (((screen_height-90*density-10*density)* 1.0)/(backBitmap.getHeight() * 1.0) ); 
 //	 	scale = scaleX < scaleY ? scaleX:scaleY;
 		scale = scaleX;
-	 	LogUtil.i("scale is " + scale+"----------->");
-		LogUtil.i("screenwidth is " + screen_width + " screenheight " + screen_height);
+	 	//LogUtil.i("scale is " + scale+"----------->");
+		//LogUtil.i("screenwidth is " + screen_width + " screenheight " + screen_height);
         canvas.setHeightAndWidth(screen_width, screen_height,scale,density);
         canvas.setBitmap(backBitmap);
 	 } 
@@ -373,6 +373,14 @@ public class CropActivity extends Activity
 				CropActivity.this.textHandler.sendMessage(msg);
 				return;
 			}
+			else if (fid.equals("8002"))
+			{
+				Message msg = new Message();
+				msg.what = InfoMsg.ERR_COOD_8002;
+				CropActivity.this.textHandler.sendMessage(msg);
+				LogUtil.i("receive result is 8002, no result");
+				return;
+			}
 
 
 			Log.i(TAG, "!!!!!!DEVID is " + HanvonApplication.AppDeviceId);
@@ -406,6 +414,11 @@ public class CropActivity extends Activity
 
 				case InfoMsg.FILE_UPLOAD_FAIL:
 					Toast.makeText(CropActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT);
+					break;
+				case InfoMsg.ERR_COOD_8002:
+					Toast.makeText(CropActivity.this, "图片样本不清晰，请重新拍摄图片", Toast.LENGTH_LONG);
+					LogUtil.i("handle msg 8002");
+					//CropActivity.this.finish();
 					break;
 				case InfoMsg.FILE_RECO_FAIL:
 					Object msgobj = msg.obj;
@@ -649,6 +662,7 @@ public class CropActivity extends Activity
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
+
 		if (resultCode == RESULT_OK)
 		{
 			switch (requestCode)
@@ -661,6 +675,11 @@ public class CropActivity extends Activity
 					startUpload(suffix);
 					break;
 			}
+		}
+		else if (resultCode == RESULT_CANCELED)
+		{
+			LogUtil.i("canceled !!!!");
+			isRecognizing = false;
 		}
 	}
 

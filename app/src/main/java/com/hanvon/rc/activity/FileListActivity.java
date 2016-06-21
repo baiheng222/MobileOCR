@@ -3,6 +3,7 @@ package com.hanvon.rc.activity;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Message;
 import android.os.Handler;
@@ -45,6 +46,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
@@ -238,7 +240,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
             break;
 
             case R.id.iv_share:
-
+                    sendByEmail();
                 break;
 
             case R.id.iv_del:
@@ -251,6 +253,44 @@ public class FileListActivity extends Activity implements View.OnClickListener
                 switchMode();
                 break;
 
+        }
+    }
+
+
+    private void sendByEmail()
+    {
+        ArrayList<String> filelist = fileListAdapter.getSelectFiles();
+
+        if (filelist.size() > 0)
+        {
+            Intent it = new Intent(Intent.ACTION_SEND_MULTIPLE);
+            String theme = "分享";
+            it.putExtra(Intent.EXTRA_SUBJECT, theme);
+
+            ArrayList<Uri> uri = new ArrayList<Uri>();
+
+            for (int i = 0; i < filelist.size(); i++)
+            {
+                LogUtil.i("filepath is " + filelist.get(i));
+                File file = new File(filelist.get(i));
+                uri.add(Uri.fromFile(file));
+            }
+            it.setType("application/octet-stream");
+            it.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uri);
+            startActivity(it);
+
+            /*
+            String fullPath = "/sdcard/MobileOCR/aic_201606171145552389_result.zip";
+            it.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(fullPath)));
+            String fullPath2 = "/sdcard/MobileOCR/aic_201606021717002994_txt.zip";
+            it.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(fullPath2)));
+            it.setType("plain/text");
+            //it.setType("plain/text");邮件
+            //it.setType("application/octet-stream");邮件+蓝牙+其它
+            //intent.setType("text/html"):邮件+蓝牙
+            //setType("text/plain")：邮件+蓝牙+其它
+            startActivity(it);
+            */
         }
     }
 
@@ -373,7 +413,14 @@ public class FileListActivity extends Activity implements View.OnClickListener
             return;
         }
 
-        pd = ProgressDialog.show(FileListActivity.this, "", "正在下载......");
+        if (mFileList.get(position).getDownloadFlag().equals("0"))
+        {
+            pd = ProgressDialog.show(FileListActivity.this, "", "正在下载......");
+        }
+        else
+        {
+            pd = ProgressDialog.show(FileListActivity.this, "", "正在打开......");
+        }
 
         downOffset = 0;
         long offset = 0;

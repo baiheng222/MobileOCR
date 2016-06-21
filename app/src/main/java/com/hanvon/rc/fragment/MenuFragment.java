@@ -115,8 +115,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             case R.id.rl_file:
                 Intent fileIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
                 this.startActivity(fileIntent);
-                MainActivity act2 = (MainActivity)getActivity();
-                act2.closeMenu();
+                //MainActivity act2 = (MainActivity)getActivity();
+                //act2.closeMenu();
                 break;
 
 
@@ -128,8 +128,8 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             case R.id.rl_settings:
                 Intent settingIntent = new Intent(MenuFragment.this.getActivity(), SettingActivity.class);
                 startActivity(settingIntent);
-                MainActivity act = (MainActivity)getActivity();
-                act.closeMenu();
+                //MainActivity act = (MainActivity)getActivity();
+                //act.closeMenu();
             break;
         }
     }

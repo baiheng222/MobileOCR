@@ -84,6 +84,7 @@ public class InfoMsg {
     public static final int RECO_MODE_EXACT_RECO = 0x27;
 
     public static final int NET_ERR_SOCKET_TIMEOUT = 0x47;
+    public static final int ERR_COOD_8002 = 0x48;
 
     public static final int MSG_DOWNLOAD_DONE = 0x60;
 }

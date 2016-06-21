@@ -18,6 +18,8 @@ import com.hanvon.rc.activity.ResultFileInfo;
 import com.hanvon.rc.db.FileInfo;
 import com.hanvon.rc.utils.LogUtil;
 
+import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,6 +30,8 @@ public class ResultFileListAdapter extends BaseAdapter
     private LayoutInflater mInflater;
     private Context mContext;
     private List<ResultFileInfo> mDatas;
+    private List<String> mDownloadedFiles;
+    private int[] mCheckArray;
 
     private static int EDIT_MODE = 2;
     private static int VIEW_MODE = 1;
@@ -40,6 +44,18 @@ public class ResultFileListAdapter extends BaseAdapter
         mDatas = info;
         mInflater = LayoutInflater.from(context);
         mShowMode = showmode;
+        mDownloadedFiles = new ArrayList<String>();
+
+        initCheckArray();
+    }
+
+    private void initCheckArray()
+    {
+        mCheckArray = new int[mDatas.size()];
+        for (int i = 0; i < mDatas.size();i++)
+        {
+            mCheckArray[i] = 0;
+        }
     }
 
     public void setmShowMode(int mode)
@@ -80,6 +96,14 @@ public class ResultFileListAdapter extends BaseAdapter
                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked)
                 {
                     LogUtil.i("itme " + position + " state is " + isChecked);
+                    if (isChecked)
+                    {
+                        mCheckArray[position] = 1;
+                    }
+                    else
+                    {
+                        mCheckArray[position] = 0;
+                    }
                 }
             });
             viewHolder.mRlFileItem = (RelativeLayout) convertView.findViewById(R.id.rl_fileitem);
@@ -127,7 +151,7 @@ public class ResultFileListAdapter extends BaseAdapter
         {
             viewHolder.mImageSelection.setVisibility(View.GONE);
         }
-        else
+        else if (mShowMode !=VIEW_MODE && mDatas.get(position).getDownloadFlag().equals("1"))
         {
             viewHolder.mImageSelection.setVisibility(View.VISIBLE);
         }
@@ -185,6 +209,20 @@ public class ResultFileListAdapter extends BaseAdapter
             return R.mipmap.format_txt;
         }
 
+    }
+
+    public ArrayList<String> getSelectFiles()
+    {
+        ArrayList<String> files = new ArrayList<String>();
+        for (int i = 0; i < mDatas.size(); i++)
+        {
+            if ((mCheckArray[i] == 1) && mDatas.get(i).getDownloadFlag().equals("1"))
+            {
+                String filename = "/sdcard/MobileOCR/"+ mDatas.get(i).getFileNanme() + ".zip";
+                files.add(filename);
+            }
+        }
+        return files;
     }
 
     private final class ViewHolder

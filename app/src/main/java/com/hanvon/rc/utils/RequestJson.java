@@ -242,6 +242,7 @@ public class RequestJson {
             JSuserInfoJson.put("pageSize", "10");
             JSuserInfoJson.put("sort", conditionJson);
             JSuserInfoJson.put("status", status);
+            JSuserInfoJson.put("recogType","2");
         } catch(JSONException e) {
             e.printStackTrace();
         }

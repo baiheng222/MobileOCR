@@ -156,6 +156,14 @@ public class UploadFileActivity extends Activity
                 UploadFileActivity.this.textHandler.sendMessage(msg);
                 return;
             }
+            else if (fid.equals("8002"))
+            {
+                Message msg = new Message();
+                msg.what = InfoMsg.ERR_COOD_8002;
+                UploadFileActivity.this.textHandler.sendMessage(msg);
+                LogUtil.i("receive result is 8002, no result");
+                return;
+            }
 
             //new UploadImage(textHandler).GetEvaluate(fid);
             UploadImage.GetEvaluate(fid);
@@ -212,6 +220,12 @@ public class UploadFileActivity extends Activity
                     updateProcessBar(arg);
                 }
                 break;
+
+                case InfoMsg.ERR_COOD_8002:
+                    Toast.makeText(UploadFileActivity.this, "图片样本不清晰，请重新拍摄图片", Toast.LENGTH_LONG);
+                    LogUtil.i("handle msg 8002");
+                    //CropActivity.this.finish();
+                    break;
 
                 case InfoMsg.NETWORK_ERR:
                     Toast.makeText(UploadFileActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();

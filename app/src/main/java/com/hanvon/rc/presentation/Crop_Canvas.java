@@ -120,17 +120,17 @@ public class Crop_Canvas extends ImageView
 		setImageBitmap(bitmap);
 //		Matrix matrix = new Matrix();
 
-		LogUtil.i("bitmap w：" + bitmap.getWidth() + " bitmap h:" + bitmap.getHeight());
-		LogUtil.i("rectWidth:" + rectWidth + " , rectHeight:" + rectHeight);
+		//LogUtil.i("bitmap w：" + bitmap.getWidth() + " bitmap h:" + bitmap.getHeight());
+		//LogUtil.i("rectWidth:" + rectWidth + " , rectHeight:" + rectHeight);
 
 
 		translateHeight = (float) (frameHeight-rectHeight-96*density-padding*2*density)/2 - 20;//减去20是为了画框更准
 		//translateHeight = 0;
 		translateWidth = (float)(frameWidth-rectWidth-padding*2*density)/2;
 
-		LogUtil.i("translateWidth: " + translateWidth + " ,translateHeight: " + translateHeight);
+		//LogUtil.i("translateWidth: " + translateWidth + " ,translateHeight: " + translateHeight);
 
-		LogUtil.i("setBitmap end !!!!");
+		//LogUtil.i("setBitmap end !!!!");
 
 //		matrix.setScale(scale, scale);
 //		matrix.postTranslate(translateWidth, translateHeight);
@@ -159,7 +159,7 @@ public class Crop_Canvas extends ImageView
 	
 	public void imageScale()
 	{
-		LogUtil.i("imagescale"+canvasWidth+"--"+canvasHeight);
+		//LogUtil.i("imagescale"+canvasWidth+"--"+canvasHeight);
 		width = rectWidth;
 		height = rectHeight;
 		boundRect.left = density*padding + translateWidth;
@@ -226,7 +226,7 @@ public class Crop_Canvas extends ImageView
 		{
     		y = bitmap.getHeight() - h;
     	}
-        LogUtil.i(x+"width" + w );
+        //LogUtil.i(x+"width" + w );
         return Bitmap.createBitmap(bitmap, x, y,w,h);
 	}  
     public boolean onTouchEvent(MotionEvent event)
@@ -596,7 +596,7 @@ public class Crop_Canvas extends ImageView
         int measureHeight = measureHeight(heightMeasureSpec); 
         canvasWidth = measureWidth;
         canvasHeight = measureHeight;
-        LogUtil.i(canvasHeight+"-canvas------------------------"+canvasWidth);
+        //LogUtil.i(canvasHeight+"-canvas------------------------"+canvasWidth);
         // 设置自定义的控件MyViewGroup的大小  
         setMeasuredDimension(measureWidth, measureHeight); 
 	}

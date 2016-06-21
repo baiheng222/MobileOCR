@@ -157,6 +157,11 @@ public class UploadImage
             LogUtil.i("!!! result is null, error return");
             return result;
         }
+        else if (result.equals("8002"))
+        {
+            LogUtil.i("code is 8002");
+            return result;
+        }
 
         String fid = null;
         fid = processUploadRet(result);
@@ -372,7 +377,7 @@ public class UploadImage
 
     private static String  dopost(Map<String, String> parmas,byte[] data)
     {
-        Log.i(TAG, "!!!!dpost!!!!");
+        LogUtil.i( "!!!!dpost!!!!");
         String result = null;
         MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create();
         mEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
@@ -402,7 +407,7 @@ public class UploadImage
             HttpEntity entity = response.getEntity();
             InputStream content = entity.getContent();
             String returnConnection = convertStreamToString(content);
-            Log.i(TAG,"!!!!! return string is " + returnConnection);
+            LogUtil.i("!!!!! return string is " + returnConnection);
             try
             {
                 JSONObject json = new JSONObject(returnConnection);
@@ -412,6 +417,11 @@ public class UploadImage
                     result = returnConnection;
                     Log.i(TAG,offset+"");
                 }
+                else
+                {
+                    result = json.getString("code");
+                }
+
             }
             catch (JSONException e)
             {

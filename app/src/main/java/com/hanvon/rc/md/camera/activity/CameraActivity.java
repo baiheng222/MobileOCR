@@ -747,6 +747,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             else
             {
                 Log.d(TAG, "null camera");
+                isTakingPicture = false;
             }
         }
     }
