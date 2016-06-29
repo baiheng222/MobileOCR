@@ -54,8 +54,7 @@
         android:theme="@style/AppTheme">
 
         <!--   <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"-->
-        <activity android:name="com.hanvon.rc.activity.MainActivity" android:screenOrientation="portrait"
-            android:launchMode="singleTask">
+        <activity android:name="com.hanvon.rc.activity.MainActivity" android:screenOrientation="portrait">
         <!-- <activity android:name="com.hanvon.rc.activity.MainActivity" 
         <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity"
 -->
@@ -93,7 +92,7 @@
         <activity android:name="com.hanvon.rc.md.camera.activity.ExactActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.hanvon.rc.md.camera.activity.CameraActivity" android:screenOrientation="portrait"></activity>
 
-        <activity android:name="com.hanvon.rc.md.camera.activity.RecResultActivity" android:screenOrientation="portrait"></activity>
+        <activity android:name="com.hanvon.rc.md.camera.activity.RecResultActivity" android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait"></activity>
         <activity android:name="com.hanvon.rc.md.camera.activity.RecFailActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.hanvon.rc.bcard.ChooseMorePicturesActivity" android:screenOrientation="portrait"></activity>
         <activity android:name="com.hanvon.rc.bcard.PreviewPicActivity" android:screenOrientation="portrait"></activity>

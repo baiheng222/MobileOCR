@@ -15,6 +15,8 @@ import android.util.Log;
 import com.hanvon.rc.md.camera.BitmapProcess;
 import com.hanvon.rc.md.camera.CurrentTime;
 import com.hanvon.rc.utils.FileUtil;
+import com.hanvon.rc.utils.LogUtil;
+
 import org.json.JSONException;
 
 import java.io.ByteArrayOutputStream;
@@ -54,6 +56,7 @@ public class ThreadSaveJPG extends Thread
 
 		if (null == bitmap)
 		{
+			LogUtil.i("bitmap null call restart preview");
 			this.cameraActivity.messageToRestartPreview();
 			return;
 		}
@@ -61,6 +64,7 @@ public class ThreadSaveJPG extends Thread
 
 		if (null == context)
 		{
+			LogUtil.i("context is null , call restart preview");
 			this.cameraActivity.messageToRestartPreview();
 			return;
 		}

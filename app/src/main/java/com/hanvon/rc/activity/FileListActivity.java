@@ -65,6 +65,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
     private ImageView mIvShare;
     private ImageView mIvCopyFiles;
     private ImageView mIvDelFiles;
+    private TextView mTvShare;
 
     private ProgressDialog pd;
 
@@ -126,6 +127,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
 
         lvFile.setAdapter(fileListAdapter);
 
+        /*
         lvFile.setOnItemClickListener(new AdapterView.OnItemClickListener()
         {
             @Override
@@ -136,7 +138,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
                 FileListActivity.this.finish();
             }
         });
-
+        */
     }
 
     public void initView()
@@ -152,6 +154,8 @@ public class FileListActivity extends Activity implements View.OnClickListener
 
         mIvShare = (ImageView) findViewById(R.id.iv_share);
         mIvShare.setOnClickListener(this);
+        mTvShare = (TextView)findViewById(R.id.tv_share);
+        mTvShare.setOnClickListener(this);
         mIvCopyFiles = (ImageView) findViewById(R.id.iv_copy_files);
         mIvCopyFiles.setOnClickListener(this);
         mIvDelFiles = (ImageView) findViewById(R.id.iv_del);
@@ -211,12 +215,14 @@ public class FileListActivity extends Activity implements View.OnClickListener
         {
             mShowMode = EDIT_MODE;
             rlBottom.setVisibility(View.VISIBLE);
+            mTvEdit.setText(R.string.bc_str_cancle);
 
         }
         else
         {
             mShowMode = VIEW_MODE;
             rlBottom.setVisibility(View.GONE);
+            mTvEdit.setText(R.string.edit);
         }
 
         fileListAdapter.setmShowMode(mShowMode);
@@ -239,6 +245,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
                 }
             break;
 
+            case R.id.tv_share:
             case R.id.iv_share:
                     sendByEmail();
                 break;

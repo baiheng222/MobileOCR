@@ -218,11 +218,13 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     {
         // TODO Auto-generated method stub
         // DrawManager.setPromptText("touch");
-        if (mCameraManager.isTakePicture() || ModeCtrl.isBCardScanningStop()
+        if ((null != mCameraManager && mCameraManager.isTakePicture()) || ModeCtrl.isBCardScanningStop()
                 || ModeCtrl.isBCardScanningStop())
         {
             return false;
         }
+
+
 
         if (event.getAction() == MotionEvent.ACTION_DOWN)
         {
@@ -327,6 +329,11 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     private void reSetCamera()
     {
+        LogUtil.i("resetCamera");
+
+
+        isTakingPicture = false;
+
         if (mCameraManager != null)
         {
             //this.releaseScanningResource();
@@ -355,6 +362,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     private void initCamera()
     {
+        isTakingPicture = false;
         SurfaceView surfaceView = (SurfaceView) findViewById(R.id.sv_preview);
         SurfaceHolder surfaceHolder = surfaceView.getHolder();
         mPreviewDataManager = new PreviewDataManager();
@@ -377,6 +385,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     protected void onResume()
     {
         super.onResume();
+        LogUtil.i("on Resume  initCamera");
         initCamera();
 
         Intent intent = this.getIntent();
@@ -421,7 +430,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     public void surfaceCreated(SurfaceHolder holder)
     {
         boolean isCameraOnped = false;
-        Log.i(TAG, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$surfaceCreated");
+       LogUtil.i("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$surfaceCreated");
         if (holder == null)
         {
             Log.e(TAG, "*** WARNING *** surfaceCreated() gave us a null surface!");
@@ -446,8 +455,10 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
                 if (mCameraManager.isOpenSuccess())
                 {
+                    LogUtil.i("setFocusMode!!!!!");
                     mCameraManager.setTouchView(50, 100);
                     mCameraManager.setFocusModeAutoCycle(1750);
+                    //mCameraManager.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
                     //add 2016-05-31
                     //Camera.Parameters parameters = mCameraManager.getCameraParameters();
                     //parameters.setPreviewSize(1280, 720);
@@ -482,7 +493,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)
     {
-        Log.i(TAG, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$surfaceChanged");
+       LogUtil.i( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$surfaceChanged");
         // TODO Auto-generated method stub
 
     }
@@ -492,7 +503,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     {
         // TODO Auto-generated method stub
         isSurfaceCreated = false;
-        Log.i(TAG, "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$surfaceDestroyed");
+        LogUtil.i( "$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$surfaceDestroyed");
     }
 
 
@@ -500,26 +511,28 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     @Override
     public void onPictureTaken(byte[] data, Camera camera)
     {
-        // TODO Auto-generated method stub
-        Log.i(TAG,
-                "set picture size:"
-                        + String.valueOf(this.mCameraManager
-                        .getPictureSize().width)
-                        + "_"
-                        + String.valueOf(this.mCameraManager
-                        .getPictureSize().height));
-        Camera.Parameters param = this.mCameraManager.getCameraParameters();
-        Log.i(TAG,
-                "real picture size:"
-                        + String.valueOf(param.getPictureSize().width) + "_"
-                        + String.valueOf(param.getPictureSize().height));
-
-        if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) || (capMode == CAPTURE_MULTI))
+        try
         {
-            reSetCamera();
-        }
+            LogUtil.i("onPictureTaken ");
+            LogUtil.i("set picture size:"
+                            + String.valueOf(this.mCameraManager.getPictureSize().width) + "_"
+                            + String.valueOf(this.mCameraManager.getPictureSize().height));
+            Camera.Parameters param = this.mCameraManager.getCameraParameters();
+            LogUtil.i("real picture size:" + String.valueOf(param.getPictureSize().width) + "_"
+                            + String.valueOf(param.getPictureSize().height));
 
-        new ThreadSaveJPG(cameraActivity, data).start();
+            if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) || (capMode == CAPTURE_MULTI))
+            {
+                reSetCamera();
+            }
+
+            new ThreadSaveJPG(cameraActivity, data).start();
+        }
+        catch (RuntimeException e)
+        {
+            LogUtil.i("catche run time exception");
+            e.printStackTrace();
+        }
         /*
         switch (ModeCtrl.getUserMode()) {
             case SHOPPING:
@@ -609,6 +622,9 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     void switchCapMode()
     {
+        restartPreviewAfterTackpicture();
+        isTakingPicture = false;
+
         LogUtil.i("switchCapMode!!!!!");
         if (capMode == CAPTURE_SINGLE)
         {
@@ -680,81 +696,45 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
     public void requestTakePicture()
     {
-
         if (isTakingPicture)
         {
             LogUtil.i("taking pic , return");
             return;
         }
         isTakingPicture = true;
-        Log.d(TAG, "requestTakePicture");
+
+        LogUtil.i("requestTakePicture");
+
         if (mCameraManager != null)
         {
             if (!mCameraManager.isTakePicture())
             {
-                Log.d(TAG, "not takeing picture");
+                LogUtil.i("not takeing picture");
                 mCameraManager.setTakePicture(true);
 
                 if (mCameraManager.takePicture(true, false, this, true))
                 {
-                    Log.d(TAG, "captuer !!!!!!!");
+                   LogUtil.i("captuer !!!!!!!");
                 }
                 else
                 {
-                    isTakingPicture = false;
-                    Log.d(TAG, "capteru failed !!!1");
+                    //isTakingPicture = false;
+                    mCameraManager.setTakePicture(false);
+                    LogUtil.i("capteru failed !!!1");
                 }
-                /*
-                switch (ModeCtrl.getUserMode())
-                {
-                    case SHOPPING:
-                        this.messageToInvisbleButton();
-                        this.messageToTextViewUpData("正在拍照,请保持稳定...");
-                        if (cameraManager.takePicture(true, false, this, true)) {
-
-                        } else {
-                            this.messageToSetVisbleButton(UserMode.SHOPPING);
-                            this.messageToTextViewUpData("");
-                            cameraManager.setTakePicture(false);
-                            this.messageToRestartUserMode();
-                        }
-
-                        break;
-                    case BCARD:
-                        if (!ModeCtrl.isBCardScanningStop()) {
-                            ModeCtrl.setBCardScanningStop(true);
-                            threadBCardScanning.setQuit(true);
-                            threadBCardScanning = null;
-                        }
-                        this.messageToInvisbleButton();
-                        this.messageToTextViewUpData("正在拍照,请保持稳定...");
-                        if (cameraManager.takePicture(true, false, this, true)) {
-
-                        } else {
-                            //this.messageToSetVisbleButton(UserMode.BCARD);
-                            this.messageToTextViewUpData("");
-                            cameraManager.setTakePicture(false);
-                            this.messageToRestartUserMode();
-                        }
-                        Log.i(TAG, "cameraManager.tackPicture");
-
-                        break;
-                    default:
-                        break;
-                }
-                */
             }
             else
             {
-                Log.d(TAG, "null camera");
-                isTakingPicture = false;
+                LogUtil.i("taking pic!!!!!");
             }
         }
     }
 
     public void messageToRestartPreview()
     {
-        if (caHandlerManager != null) {
+        if (caHandlerManager != null)
+        {
+            LogUtil.i("send restart preview msg");
             Message message = Message.obtain(caHandlerManager,
                     CAHandlerManager.RESTART_PREVIEW);
             caHandlerManager.sendMessageDelayed(message, 10);
@@ -797,15 +777,17 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     {
         if ((recoMode == InfoMsg.RECO_MODE_QUICK_RECO))
         {
-            Log.i(TAG, "in func jpgSaveComplete, path is " + path);
+            LogUtil.i("in func jpgSaveComplete, path is " + path);
             Intent intent = new Intent();
             intent.setClass(mContext, CropActivity.class);
             intent.putExtra("parentActivity", "CameraActivity");
             intent.putExtra("path", path);
             intent.putExtra("recomode", recoMode);
-            isTakingPicture = false;
-            Log.i(TAG, "Start CropActivity !!!1");
+
+            LogUtil.i("Start CropActivity !!!1");
             startActivity(intent);
+            LogUtil.i("set isTakingPicture false");
+            isTakingPicture = false;
         }
         else if (recoMode == InfoMsg.RECO_MODE_EXACT_RECO && (capMode == CAPTURE_SINGLE))
         {
@@ -816,7 +798,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             intent.putExtra("path", path);
             intent.putExtra("recomode", recoMode);
             isTakingPicture = false;
-            Log.i(TAG, "Start CropActivity !!!1");
+            LogUtil.i("Start CropActivity !!!2");
             startActivity(intent);
         }
         else if (recoMode == InfoMsg.RECO_MODE_EXACT_RECO && (capMode == CAPTURE_MULTI))
@@ -838,10 +820,24 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 LogUtil.i("init camera error !!!");
             }
 
+            restartPreviewAfterTackpicture();
+
             isTakingPicture = false;
         }
     }
 
+
+    public void restartPreviewAfterTackpicture()
+    {
+        if (this.mCameraManager != null)
+        {
+            LogUtil.i("restartPreviewAfterTakpicture");
+            mCameraManager.setTakePicture(false);
+            mCameraManager.restartPreviewAfterTakePiture();
+        }
+        //this.restartUserMode();
+
+    }
 
     private void deletePictures()
     {

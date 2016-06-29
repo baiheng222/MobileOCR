@@ -53,7 +53,7 @@ public class CAHandlerManager extends Handler
 			//cameraActivity.autoFocusCycle(time);
 			break;
 		case RESTART_PREVIEW:
-			//cameraActivity.restartPreviewAfterTackpicture();
+			cameraActivity.restartPreviewAfterTackpicture();
 			break;
 		/*case SET_PREVIEW_CALLBACK:
 			if(PreviewDataManager.getPreviewDataManager()!=null){

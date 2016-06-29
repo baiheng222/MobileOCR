@@ -190,6 +190,13 @@ public class CropActivity extends Activity
 				break;
 			case R.id.pt_crop_ok:
 
+				if (!connInNet()) //如果连网
+				{
+					LogUtil.i("network is not ok !!!!");
+					Toast.makeText(CropActivity.this, "网络连接失败，请检查网络后重试", Toast.LENGTH_LONG).show();
+					return;
+				}
+
 				if (isRecognizing)
 				{
 					LogUtil.i("recogize thread already running");
@@ -413,10 +420,10 @@ public class CropActivity extends Activity
 					break;
 
 				case InfoMsg.FILE_UPLOAD_FAIL:
-					Toast.makeText(CropActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT);
+					Toast.makeText(CropActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT).show();
 					break;
 				case InfoMsg.ERR_COOD_8002:
-					Toast.makeText(CropActivity.this, "图片样本不清晰，请重新拍摄图片", Toast.LENGTH_LONG);
+					Toast.makeText(CropActivity.this, "图片样本不清晰，请重新拍摄图片", Toast.LENGTH_LONG).show();
 					LogUtil.i("handle msg 8002");
 					//CropActivity.this.finish();
 					break;

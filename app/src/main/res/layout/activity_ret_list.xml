@@ -51,6 +51,15 @@
         android:layout_width="match_parent"
         android:layout_height="48dp">
 
+        <TextView
+            android:id="@+id/tv_share"
+            android:layout_centerHorizontal="true"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:textColor="@color/seagreen"
+            android:text="@string/ret_str_share"/>
+
         <ImageView
             android:id="@+id/iv_share"
             android:layout_alignParentLeft="true"
@@ -58,7 +67,8 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:src="@mipmap/share_icon"/>
+            android:src="@mipmap/share_icon"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/iv_del"
@@ -67,7 +77,8 @@
             android:layout_width="30dp"
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
-            android:src="@mipmap/del_icon"/>
+            android:src="@mipmap/del_icon"
+            android:visibility="gone"/>
 
         <ImageView
             android:id="@+id/iv_copy_files"
@@ -75,7 +86,8 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_centerVertical="true"
-            android:src="@mipmap/copy_files"/>
+            android:src="@mipmap/copy_files"
+            android:visibility="gone"/>
 
 
     </RelativeLayout>

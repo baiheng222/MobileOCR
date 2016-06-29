@@ -31,6 +31,8 @@ import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.lidroid.xutils.util.LogUtils;
 
+import org.w3c.dom.Text;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -59,6 +61,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
     private ImageView tvExact;
     private ImageView tvDel;
     private TextView tvTitle;
+
+    private TextView mShare;
 
     private EditText etResult;
 
@@ -157,6 +161,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         tvCopy = (ImageView) findViewById(R.id.iv_copy);
         tvExact = (ImageView) findViewById(R.id.iv_exact);
         tvDel = (ImageView) findViewById(R.id.iv_del);
+        mShare = (TextView) findViewById(R.id.tv_share);
+
 
         etResult = (EditText) findViewById(R.id.et_result);
         if (recResult != null)
@@ -182,6 +188,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         tvCopy.setOnClickListener(this);
         tvExact.setOnClickListener(this);
         tvDel.setOnClickListener(this);
+        mShare.setOnClickListener(this);
     }
 
     private void initData()
@@ -442,6 +449,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 //showSave();
                 break;
 
+            case R.id.tv_share:
             case R.id.iv_share:
                 if (!bShareClick)
                 {

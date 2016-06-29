@@ -2,6 +2,7 @@ package com.hanvon.rc.md.camera.draw;
 
 import com.hanvon.rc.md.camera.DensityUtil;
 import com.hanvon.rc.md.camera.activity.CameraActivity;
+import com.hanvon.rc.utils.LogUtil;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -18,7 +19,8 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-public class DrawManager extends SurfaceView implements SurfaceHolder.Callback {
+public class DrawManager extends SurfaceView implements SurfaceHolder.Callback
+{
 	private static final String TAG = DrawManager.class.getSimpleName();
 	public static RectF scanningRect;
 	// public static int canvasW;
@@ -52,13 +54,13 @@ public class DrawManager extends SurfaceView implements SurfaceHolder.Callback {
 	public void surfaceChanged(SurfaceHolder holder, int format, int width,
 							   int height) {
 		// TODO Auto-generated method stub
-		Log.i(TAG, "*********************************surfaceChanged*********************************");
+		LogUtil.i( "*********************************surfaceChanged*********************************");
 	}
 
 	@Override
 	public void surfaceCreated(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
-		Log.i(TAG, "*********************************surfaceCreated*********************************");
+		LogUtil.i( "*********************************surfaceCreated*********************************");
 		threadSurfaceDraw = new ThreadSurfaceDraw();
 		threadSurfaceDraw.mSurfaceHolder = this.surfaceHolder;
 		threadSurfaceDraw.start();
@@ -67,7 +69,7 @@ public class DrawManager extends SurfaceView implements SurfaceHolder.Callback {
 	@Override
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
-		 Log.i(TAG, "*********************************surfaceDestroyed*********************************");
+		 LogUtil.i("*********************************surfaceDestroyed*********************************");
 		threadSurfaceDraw.mQuit = true;
 		// Log.i("DrawSurfaceView",
 		// "threadSurfaceDraw.mQuit = true;-------------");
@@ -88,8 +90,10 @@ public class DrawManager extends SurfaceView implements SurfaceHolder.Callback {
 			Paint paint = new Paint();
 			int timeinterval = 25;
 
-			while (true) {
-				if (mQuit) {
+			while (true)
+			{
+				if (mQuit)
+				{
 					return;
 				}
 				// Log.i(TAG,
@@ -98,7 +102,8 @@ public class DrawManager extends SurfaceView implements SurfaceHolder.Callback {
 				// Log.i(TAG,
 				// "<---------------------->Canvas canvas = mSurfaceHolder.lockCanvas()--end;");
 
-				if ((canvas != null)) {
+				if ((canvas != null))
+				{
 					canvas.drawColor(Color.TRANSPARENT, Mode.CLEAR);
 					int w = canvas.getWidth();
 					int h = canvas.getHeight();
@@ -133,7 +138,8 @@ public class DrawManager extends SurfaceView implements SurfaceHolder.Callback {
 					// canvas.drawText("Orientation"+String.valueOf(getOrientation()),
 					// 300, 300, paint);
 
-					if (bitmap != null) {
+					if (bitmap != null)
+					{
 						// canvas.drawBitmap(CameraManager.getPreviewBitmap(),
 						// 0, 0, null);
 						Matrix matrix = new Matrix();
@@ -145,28 +151,31 @@ public class DrawManager extends SurfaceView implements SurfaceHolder.Callback {
 					paint.setColor(Color.WHITE);
 					paint.setTextAlign(Align.CENTER);
 					
-					if (getPromptText() != null) {
+					if (getPromptText() != null)
+					{
 						new DrawPromptText(canvas, getPromptText());
 					}
 					long time012 = System.currentTimeMillis();
 
 				}
-				 Log.i(TAG,
-				 "<----------------------> mSurfaceHolder.unlockCanvasAndPost(canvas)--start;;");
-				if (mQuit) {
+				 //LogUtil.i("mSurfaceHolder.unlockCanvasAndPost(canvas)--start;");
+				if (mQuit)
+				{
 
 					// Log.i(TAG,
 					// "<----------------------> mQuitmQuitmQuitmQuitmQuitmQuitmQuitmQuit");
 					return;
-				}else{
+				}
+				else
+				{
 					mSurfaceHolder.unlockCanvasAndPost(canvas);
 				}
-				
-				// Log.i(TAG,
-				// "<---------------------->mSurfaceHolder.unlockCanvasAndPost(canvas)--end;;");
-				try {
+
+				try
+				{
 					Thread.sleep(timeinterval);
-				} catch (InterruptedException e) {
+				} catch (InterruptedException e)
+				{
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}

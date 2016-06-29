@@ -12,9 +12,9 @@ android {
     defaultConfig {
         applicationId "com.hanvon.rc"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 21
         versionCode 1
-        versionName "1.0.18"
+        versionName "1.0.20"
         multiDexEnabled true
     }
 
