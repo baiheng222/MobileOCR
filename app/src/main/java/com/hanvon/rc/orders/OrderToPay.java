@@ -292,6 +292,10 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                         pd = ProgressDialog.show(this, "", "");
                         RequestJson.OrderAdd(orderDetail, "11",resultFileType);
                     } else {
+                        if(!isWXAppInstalledAndSupported()){
+                            Toast.makeText(this,"微信客户端未安装，请选择其他支付方式!",Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         pd = ProgressDialog.show(this, "", "");
                         RequestJson.OrderAdd(orderDetail, "12",resultFileType);
                     }
@@ -326,5 +330,12 @@ public class OrderToPay extends Activity implements View.OnClickListener {
             finish();
         }
         return true;
+    }
+
+    private boolean isWXAppInstalledAndSupported() {
+        boolean sIsWXAppInstalledAndSupported = HanvonApplication.api.isWXAppInstalled()
+                &&  HanvonApplication.api.isWXAppSupportAPI();
+
+        return sIsWXAppInstalledAndSupported;
     }
 }

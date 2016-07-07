@@ -122,6 +122,7 @@ public class CropActivity extends Activity
 
 
 		Log.d(TAG, "!!!!! path is " + path);
+		printBitmapSize(path);
 
 		BitmapFactory.Options opt =  new  BitmapFactory.Options();
 		opt.inSampleSize = BitmapUtil.getImageScale(path);
@@ -167,6 +168,12 @@ public class CropActivity extends Activity
         //rotate.setOnClickListener(new MyListener());
 		backImage.setOnClickListener(new MyListener());
 
+	}
+
+	private void printBitmapSize(String path)
+	{
+		Bitmap bitmap = BitmapFactory.decodeFile(path);
+		LogUtil.i("picture real width is " + bitmap.getWidth() + " real height is " + bitmap.getHeight());
 	}
 
 	public class MyListener implements OnClickListener

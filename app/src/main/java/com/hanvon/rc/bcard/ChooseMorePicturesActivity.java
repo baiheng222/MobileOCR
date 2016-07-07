@@ -776,6 +776,17 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 					{
 						String back = data.getStringExtra("back_to");
 						PhotoAlbum backAlbum = (PhotoAlbum) data.getSerializableExtra("album");
+
+						if ((backAlbum != null) && (backAlbum.getBitList().size() == 0))
+						{
+							LogUtil.i("all pic has been del, finish activity");
+							Intent myintent = new Intent(ChooseMorePicturesActivity.this, CameraActivity.class);
+							myintent.putExtra("message", "userdelall");
+							startActivity(myintent);
+							this.finish();
+							return;
+						}
+
 						if(back.equals("big"))
 						{
 							LogUtil.i("on activity result return big");

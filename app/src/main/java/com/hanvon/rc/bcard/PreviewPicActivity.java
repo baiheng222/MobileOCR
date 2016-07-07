@@ -189,7 +189,9 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 	{
 		// TODO Auto-generated method stub
 		album = (PhotoAlbum) this.getIntent().getSerializableExtra("data");
+		LogUtil.i("pic list size is " + album.getBitList().size());
 		picturePos = this.getIntent().getExtras().getInt("pos");
+		LogUtil.i("picturePos is " + picturePos);
 		comeForm = this.getIntent().getExtras().getString("from");
 		parentActivity = this.getIntent().getExtras().getString("parentActivity");
 		recoMode = this.getIntent().getIntExtra("recomod", InfoMsg.RECO_MODE_QUICK_RECO);
@@ -349,27 +351,61 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 
 	private void deletePicture()
 	{
-		String filepathToDel = album.getBitList().get(picturePos).getPath();
-		Uri imageuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-		ContentResolver mContentResolver = PreviewPicActivity.this.getContentResolver();
-		String where = MediaStore.Images.Media.DATA + "='" + filepathToDel + "'";
-		LogUtil.i("wherw is " + where);
-		mContentResolver.delete(imageuri, where, null);
-
-		Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
-		File file = new File(filepathToDel);
-		Uri uri = Uri.fromFile(file);
-		intent.setData(uri);
-		PreviewPicActivity.this.sendBroadcast(intent);
-
-		album.getBitList().remove(picturePos);
 		int size = album.getBitList().size();
-		if (picturePos > (size - 1))
+		if (size > 0)
 		{
-			picturePos = size -1;
+			String filepathToDel = album.getBitList().get(picturePos).getPath();
+			Uri imageuri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+			ContentResolver mContentResolver = PreviewPicActivity.this.getContentResolver();
+			String where = MediaStore.Images.Media.DATA + "='" + filepathToDel + "'";
+			LogUtil.i("wherw is " + where);
+			mContentResolver.delete(imageuri, where, null);
+
+			Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+			File file = new File(filepathToDel);
+			Uri uri = Uri.fromFile(file);
+			intent.setData(uri);
+			PreviewPicActivity.this.sendBroadcast(intent);
+
+			album.getBitList().remove(picturePos);
+			size--;
+
+			if (picturePos > (size - 1))
+			{
+				picturePos = size - 1;
+			}
+
+			LogUtil.i("picturePos is " + picturePos);
+
+			int picsize = album.getBitList().size();
+			if (picsize > 0)
+			{
+				setPreviewImage();
+			}
+			else
+			{
+				Toast.makeText(PreviewPicActivity.this, "图片已经完全删除!", Toast.LENGTH_LONG).show();
+
+				LogUtil.i("last pic has been del");
+				Intent myintent = new Intent();
+				myintent.putExtra("album", album);
+				if(comeForm.equals(PREVIEW)) //预览按钮进来
+				{
+					myintent.putExtra("back_to", PREVIEW);
+				}
+				else if(comeForm.equals(BIG)) //点击图片进来
+				{
+					myintent.putExtra("back_to", BIG);
+				}
+				setResult(RESULT_OK,myintent);
+				PreviewPicActivity.this.finish();
+			}
+		}
+		else
+		{
+			LogUtil.i("all pic has been deleted!!!!!");
 		}
 
-		setPreviewImage();
 	}
 
 	private void processImageSelect()

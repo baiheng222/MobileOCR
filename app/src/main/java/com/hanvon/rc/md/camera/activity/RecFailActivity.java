@@ -29,6 +29,7 @@ public class RecFailActivity extends Activity implements View.OnClickListener
 
             rlTitle = (RelativeLayout) findViewById(R.id.rl_title);
             ivBack = (ImageView) findViewById(R.id.iv_back);
+            ivBack.setOnClickListener(this);
             ivError = (ImageView) findViewById(R.id.iv_error);
             findViewById(R.id.btn_continue).setOnClickListener(this);
             findViewById(R.id.btn_retake_pic).setOnClickListener(this);
@@ -39,6 +40,7 @@ public class RecFailActivity extends Activity implements View.OnClickListener
     {
         switch (view.getId())
         {
+            case R.id.iv_back:
             case R.id.btn_continue:
                 RecFailActivity.this.finish();
                 break;

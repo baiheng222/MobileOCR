@@ -6,6 +6,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.hardware.Camera;
 //import android.hardware.camera2.CameraManager;
 import android.media.MediaScannerConnection;
@@ -47,6 +48,7 @@ import com.hanvon.rc.widget.BadgeView;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import android.hardware.Camera.Size;
 
 /**
  * Created by baiheng222 on 16-3-21.
@@ -61,6 +63,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private PreviewDataManager mPreviewDataManager;
 
     private ImageView mLight;
+    private TextView mTvLight;
     private ImageView mGallery;
     private ImageView mCapture;
     private TextView mCancel;
@@ -103,6 +106,13 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private static final int CAPTURE_SINGLE = 1;
     private static final int CAPTURE_MULTI = 2;
 
+    private static final String FLASH_PREFS = "flash_prefs";
+    private SharedPreferences prefs;
+    private static final int FLASH_ON = 1;
+    private static final int FLASH_OFF = 2;
+    private static final int FLASH_AUTO = 3;
+    private int mFlashMode;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -135,6 +145,10 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         LogUtil.i("recomode is " + recoMode);
         capMode = CAPTURE_SINGLE;
         multiCapNum = 0;
+
+        prefs = getSharedPreferences(FLASH_PREFS, Activity.MODE_PRIVATE);
+        mFlashMode = prefs.getInt("flashmode", FLASH_OFF);
+        LogUtil.i("mFlashMode is " + mFlashMode);
     }
 
     private void creatDir()
@@ -174,6 +188,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         drawManager = (DrawManager) findViewById(R.id.draw_manager);
         mLight = (ImageView) findViewById(R.id.iv_light);
         mLight.setOnClickListener(this);
+        mTvLight = (TextView) findViewById(R.id.tv_light);
         mGallery = (ImageView) findViewById(R.id.iv_gallery);
         mGallery.setOnClickListener(this);
         mCapture = (ImageView) findViewById(R.id.iv_capture);
@@ -208,6 +223,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             relativeLayoutUserMode.setVisibility(View.VISIBLE);
 
         }
+
+        setFlashstateImage();
 
     }
 
@@ -390,10 +407,20 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
         Intent intent = this.getIntent();
         String msg = intent.getStringExtra("message");
+        if (null != msg)
+        {
+            LogUtil.i("!!!!! msg is " + msg);
+        }
         if (null != msg && msg.equals("recapture"))
         {
             LogUtil.i("receive recapture msg!!!");
             resetMultiCapState();
+        }
+
+        if (null !=msg && msg.equals("userdelall"))
+        {
+            LogUtil.i("receive userdelall msg !!!!");
+            resetMultiCapStateByUerDel();
         }
 
 
@@ -457,13 +484,32 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 {
                     LogUtil.i("setFocusMode!!!!!");
                     mCameraManager.setTouchView(50, 100);
-                    mCameraManager.setFocusModeAutoCycle(1750);
+                    //mCameraManager.setFocusModeAutoCycle(1750); //modify by at2015-07-01
+                    mCameraManager.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
                     //mCameraManager.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
                     //add 2016-05-31
-                    //Camera.Parameters parameters = mCameraManager.getCameraParameters();
-                    //parameters.setPreviewSize(1280, 720);
-                    //parameters.setPictureSize(1920, 1080);
-                    //mCameraManager.setCameraParameters(parameters);
+
+                    //LogUtil.i("set preview size and picture size to 1920 x 1080");
+                    Camera.Parameters parameters = mCameraManager.getCameraParameters();
+
+                    printSupportFocusMode(parameters);
+
+                    List<Size> picsizes = printSupportPictureSize(parameters);
+                    List<Size> previewsizes = printSupportPreviewSize(parameters);
+
+                    Size pictureS = CameraPicturSize.getInstance().getPictureSize(picsizes, 800);
+                    Size previewS = CameraPicturSize.getInstance().getPreviewSize(previewsizes, 800);
+
+                    if (null != previewS)
+                    {
+                        parameters.setPreviewSize(previewS.width, previewS.height);
+                    }
+
+                    if (null != pictureS)
+                    {
+                        parameters.setPictureSize(pictureS.width, pictureS.height);
+                    }
+                    mCameraManager.setCameraParameters(parameters);
                     //add end
                     //setFlashAuto(); //fjm add
                     /*
@@ -521,6 +567,10 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             LogUtil.i("real picture size:" + String.valueOf(param.getPictureSize().width) + "_"
                             + String.valueOf(param.getPictureSize().height));
 
+            //printSupportPreviewSize(mCameraManager.getCameraParameters());
+            //printSupportFocusMode(mCameraManager.getCameraParameters());
+            //printSupportPictureSize(mCameraManager.getCameraParameters());
+
             if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) || (capMode == CAPTURE_MULTI))
             {
                 reSetCamera();
@@ -574,6 +624,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 break;
 
             case R.id.iv_gallery:
+                processBtnGallery();
+                /*
                 Log.d(TAG, "start ChooseMorPictureActivity");
                 Intent sysIntent = new Intent();
                 sysIntent.setClass(CameraActivity.this, ChooseMorePicturesActivity.class);
@@ -582,6 +634,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 sysIntent.putExtra("capmode", capMode);
                 startActivity(sysIntent);
                 //startActivityForResult(sysIntent, REQ_SYS_PICTURE);
+                */
                 break;
             case R.id.iv_light:
                 setFlashState();
@@ -598,10 +651,41 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         }
     }
 
-    void processBtnPress()
+    private void processBtnGallery()
     {
-        if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) && (capMode == CAPTURE_MULTI))
+        LogUtil.i("!!!!! processBtnGallery");
+        if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) && (capMode == CAPTURE_MULTI) && (multiCapNum > 0))
         {
+            //multiCapNum = 0;
+            //mSubSuperscript.hide();
+            Intent intent = new Intent(this, ChooseMorePicturesActivity.class);
+            intent.putExtra("entry", "finish_btn");
+            Bundle bundle = new Bundle();
+            bundle.putStringArrayList("pictures", picturesPathForSave);
+            intent.putExtra("bundle", bundle);
+            intent.putExtra("recomode", recoMode);
+            intent.putExtra("capmode", capMode);
+            intent.putExtra("parentActivity", "CameraActivity");
+            startActivity(intent);
+        }
+        else
+        {
+            Log.d(TAG, "start ChooseMorPictureActivity");
+            Intent sysIntent = new Intent();
+            sysIntent.setClass(CameraActivity.this, ChooseMorePicturesActivity.class);
+            sysIntent.putExtra("parentActivity", "cameraActivity");
+            sysIntent.putExtra("recomode", recoMode);
+            sysIntent.putExtra("capmode", capMode);
+            startActivity(sysIntent);
+        }
+    }
+
+    private void processBtnPress()
+    {
+        LogUtil.i("!!!!!!processBtnPress");
+        if ((recoMode == InfoMsg.RECO_MODE_EXACT_RECO) && (capMode == CAPTURE_MULTI) && (multiCapNum > 0))
+        {
+            LogUtil.i("!!!!! enter gallery");
             //multiCapNum = 0;
             //mSubSuperscript.hide();
             Intent intent = new Intent(this, ChooseMorePicturesActivity.class);
@@ -631,7 +715,16 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             capMode = CAPTURE_MULTI;
             mSingleCap.setTextColor(getResources().getColor(R.color.silver));
             mMultiCap.setTextColor(getResources().getColor(R.color.white));
-            mCancel.setText(getResources().getText(R.string.wb_str_done));
+            if (multiCapNum != 0)
+            {
+                mSubSuperscript.show();
+                mCancel.setText(getResources().getText(R.string.wb_str_done));
+            }
+            else
+            {
+                mCancel.setText(getResources().getText(R.string.bc_str_cancle));
+            }
+
             //mSubSuperscript.show();
         }
         else
@@ -679,8 +772,53 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         mLight.setImageResource(R.mipmap.camera_flash_on);
     }
 
+    private void setFlashstateImage()
+    {
+        switch (mFlashMode)
+        {
+            case FLASH_ON:
+                mLight.setImageResource(R.mipmap.camera_flash_on);
+                mTvLight.setText(R.string.camera_light_on);
+                break;
+
+            case FLASH_OFF:
+                mLight.setImageResource(R.mipmap.camera_flash_off);
+                mTvLight.setText(R.string.camera_light_off);
+                break;
+
+        }
+    }
+
     private void setFlashState()
     {
+        /*
+        if (mFlashMode < 3)
+        {
+            mFlashMode++;
+        }
+        else if (mFlashMode == 3)
+        {
+            mFlashMode = 1;
+        }
+        */
+
+        if (mFlashMode == FLASH_ON)
+        {
+            mFlashMode = FLASH_OFF;
+        }
+        else
+        {
+            mFlashMode = FLASH_ON;
+        }
+
+
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt("flashmode", mFlashMode);
+        editor.commit();
+
+        setFlashstateImage();
+
+        /*
         if (isCameraFlashOpen)
         {
             turnOffFlash();
@@ -691,8 +829,82 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         {
             turnOnFlash();
             isCameraFlashOpen = true;
+        }*/
+
+    }
+
+    /*通过equalRate(Size s, float rate)保证Size的长宽比率。
+      一般而言这个比率为1.333/1.7777即通常说的4:3和16:9比率。
+    */
+    public boolean equalRate(Size s, float rate)
+    {
+        float r = (float)(s.width)/(float)(s.height);
+        if(Math.abs(r - rate) <= 0.2)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
+
+    /**打印支持的previewSizes
+     * @param params
+     */
+    public  List<Size> printSupportPreviewSize(Camera.Parameters params)
+    {
+        LogUtil.i("SupportPreviewSize!!!!!!");
+        List<Size> previewSizes = params.getSupportedPreviewSizes();
+        for(int i=0; i< previewSizes.size(); i++)
+        {
+            Size size = previewSizes.get(i);
+            if (equalRate(size, 1.33f))
+            {
+                LogUtil.i("4:3 previewSizes:width = " + size.width + " height = " + size.height);
+            }
+            else
+            {
+                LogUtil.i("16:9 previewSizes:width = " + size.width + " height = " + size.height);
+            }
+        }
+        return previewSizes;
+    }
+
+    /**打印支持的pictureSizes
+     * @param params
+     */
+    public  List<Size> printSupportPictureSize(Camera.Parameters params)
+    {
+        LogUtil.i("SupportPictureSize!!!!!!");
+        List<Size> pictureSizes = params.getSupportedPictureSizes();
+        for(int i=0; i< pictureSizes.size(); i++)
+        {
+            Size size = pictureSizes.get(i);
+            if (equalRate(size, 1.33f))
+            {
+                LogUtil.i("4:3 pictureSizes:width = " + size.width + " height = " + size.height);
+            }
+            else
+            {
+                LogUtil.i("16:9 pictureSizes:width = " + size.width + " height = " + size.height);
+            }
+        }
+
+        return pictureSizes;
+    }
+    /**打印支持的聚焦模式
+     * @param params
+     */
+    public void printSupportFocusMode(Camera.Parameters params)
+    {
+        List<String> focusModes = params.getSupportedFocusModes();
+        for(String mode : focusModes)
+        {
+            LogUtil.i("Support focusModes--" + mode);
+        }
+    }
+
 
     public void requestTakePicture()
     {
@@ -722,6 +934,23 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                     mCameraManager.setTakePicture(false);
                     LogUtil.i("capteru failed !!!1");
                 }
+                //fjm add
+                LogUtil.i("open flash light !!!!1");
+                Camera.Parameters parameters = mCameraManager.getCameraParameters();
+                if (mFlashMode == FLASH_ON)
+                {
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                }
+                else if(mFlashMode == FLASH_AUTO)
+                {
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
+                }
+                else
+                {
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                }
+                mCameraManager.setCameraParameters(parameters);
+                //fjm add end
             }
             else
             {
@@ -823,6 +1052,13 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             restartPreviewAfterTackpicture();
 
             isTakingPicture = false;
+
+            if (multiCapNum > 0)
+            {
+                LogUtil.i("set state !!!!!!!!!! to done !!!!!!");
+                mCancel.setText(R.string.wb_str_done);
+            }
+
         }
     }
 
@@ -861,6 +1097,18 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
 
 
+    }
+
+    private void resetMultiCapStateByUerDel()
+    {
+        LogUtil.i("resetMultiCapStateByUerDel called here");
+        multiCapNum = 0;
+        mSubSuperscript.hide();
+        picturesPathForSave.clear();
+
+        relativeLayoutUserMode.setVisibility(View.VISIBLE);
+        recoMode = InfoMsg.RECO_MODE_EXACT_RECO;
+        switchCapMode();
     }
 
     private void resetMultiCapState()

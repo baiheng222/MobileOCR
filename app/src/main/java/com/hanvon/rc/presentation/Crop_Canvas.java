@@ -209,8 +209,9 @@ public class Crop_Canvas extends ImageView
         return Bitmap.createBitmap(bitmap, x, y,w,h);*/        
         int x = (int) ((leftTop[0] - padding*density-translateWidth)/scale);
         int y =  (int) ((leftTop[1] - padding*density-translateHeight)/scale);
-    	int w = (int) (((rightTop[0]-leftTop[0])/scale *100)/100);
-    	int h = (int) (((leftBottom[1]-leftTop[1])/scale *100 )/100);
+    	int w = Math.abs((int) (((rightTop[0]-leftTop[0])/scale *100)/100));
+    	int h = Math.abs((int) (((leftBottom[1]-leftTop[1])/scale *100 )/100));
+		LogUtil.i("w is " + w + ", h is " + h);
     	//防止越界处理
     	if(x<0){
     		x= 0;
@@ -388,6 +389,7 @@ public class Crop_Canvas extends ImageView
     	return (int) Math.sqrt(dx * dx + dy *dy) ;
     }
 
+	//判断点击的位置是否再圆内， 参数float[] circle 是圆型的圆心，半径为20
     public boolean isInCircle(float x, float y, float[] circle)
 	{
     	System.out.println(circle[0] + "===" + circle[1]);
@@ -400,22 +402,32 @@ public class Crop_Canvas extends ImageView
     
 	private void pressLT(float x, float y)
 	{
-		float dst[] = {leftTop[0]+x-startX,leftTop[1]+y-startY};
-		if (dst[0] <boundRect.left) {
+		float dst[] = {leftTop[0]+x-startX, leftTop[1]+y-startY};
+
+		if (dst[0] <boundRect.left)
+		{
 			leftTop[0] =boundRect.left;
-		} else if( dst[0] > boundRect.right) {
+		}
+		else if( dst[0] > boundRect.right)
+		{
 			leftTop[0] = boundRect.right;
-		}else{
+		}else
+		{
 			leftTop[0] = dst[0];
 			centerLeft[0] = (float )(leftTop[0] + leftBottom[0])/2;
 			centerTop[0] = (float )(leftTop[0] + rightTop[0]) /2;
 		}
-		if (dst[1] <  boundRect.top) {
+
+		if (dst[1] <  boundRect.top)
+		{
 			leftTop[1] = boundRect.top ;
 		}  
-		else if(dst[1] > boundRect.bottom){
+		else if(dst[1] > boundRect.bottom)
+		{
 			leftTop[1] = boundRect.bottom;
-		}else{
+		}
+		else
+		{
 			leftTop[1] = dst[1]; 
 			centerLeft[1] = (float )(leftTop[1] + leftBottom[1])/2;
 			centerTop [1] = (float )(leftTop[1] + rightTop[1]) /2;
@@ -491,17 +503,25 @@ public class Crop_Canvas extends ImageView
 		}
 	}
 
-	private void pressCT(float x,float y){
-		float dst[] = {centerTop[0]+x-startX,centerTop[1]+y-startY};
+	private void pressCT(float x,float y)
+	{
+		float dst[] = {centerTop[0]+x-startX, centerTop[1]+y-startY};
 		System.out.println(x);
-		if (dst[0] != width/2) {
+		if (dst[0] != width/2)
+		{
 			centerTop[0] = (float ) (leftTop[0] + rightTop[0])/2;
-		} else {
+		}
+		else
+		{
 			centerTop[0] = dst[0];
 		}
-		if (dst[1] < boundRect.top || dst[1] > boundRect.bottom) {
+
+		if (dst[1] < boundRect.top || dst[1] > boundRect.bottom)
+		{
 			centerTop[1] = (float )(leftTop[1]+rightTop[1])/2;
-		}else{
+		}
+		else
+		{
 			centerTop[1] = dst[1];
 			//顶部中点移动时 左右的中点都会跟着移动
 			leftTop[1] = dst[1];
@@ -509,19 +529,53 @@ public class Crop_Canvas extends ImageView
 			
 			centerLeft[1] = leftTop[1] + (float )(leftBottom[1] - leftTop[1])/2 ;
 			centerRight[1] = rightTop[1] + (float) (rightBottom[1] - rightTop[1])/2;
+
 		}
-	}  
-	private void pressCB(float x,float y){
+
+		/*
+		//fjm add
+		if (centerTop[1] > centerBottom[1])
+		{
+			LogUtil.i("swap top and bottom");
+			//交换centertop 和centerbottom
+			float tmp = centerTop[1];
+			centerTop[1] = centerBottom[1];
+			centerBottom[1] = tmp;
+
+			//交换lefttop和leftbottom
+			tmp = leftTop[1];
+			leftTop[1] = leftBottom[1];
+			leftBottom[1] = tmp;
+
+			//交换righttop和rightbottom
+			tmp = rightTop[1];
+			rightTop[1] = rightBottom[1];
+			rightBottom[1] = tmp;
+
+		}
+		//fjm add end
+		*/
+	}
+
+	private void pressCB(float x,float y)
+	{
 		float dst[] = {centerBottom[0]+x-startX,centerBottom[1]+y-startY};
 		System.out.println(x);
-		if (dst[0] != width/2) {
+		if (dst[0] != width/2)
+		{
 			centerBottom[0] = (float ) (leftBottom[0]+rightBottom[0])/2;
-		} else {
+		}
+		else
+		{
 			centerBottom[0] = dst[0];
 		}
-		if (dst[1] > boundRect.bottom || dst[1] <boundRect.top) {
+
+		if (dst[1] > boundRect.bottom || dst[1] <boundRect.top)
+		{
 			centerBottom[1] = (float )(leftBottom[1]+rightBottom[1])/2;
-		} else {
+		}
+		else
+		{
 			centerBottom[1] = dst[1];
 			//底部中点移动时 左右的中点都会跟着移动
 			leftBottom[1] = dst[1];
@@ -530,6 +584,41 @@ public class Crop_Canvas extends ImageView
 			centerLeft[1] = leftBottom[1] - (float )(leftBottom[1] - leftTop[1])/2 ;
 			centerRight[1] = rightBottom[1] - (float) (rightBottom[1] - rightTop[1])/2;
 		}
+
+		/*
+		//fjm add
+		if (centerTop[1] > centerBottom[1])
+		{
+			LogUtil.i("swap top and bottom");
+			//交换centertop 和centerbottom
+			float tmp = centerTop[1];
+			centerTop[1] = centerBottom[1];
+			centerBottom[1] = tmp;
+
+			//交换lefttop和leftbottom
+			tmp = leftTop[1];
+			leftTop[1] = leftBottom[1];
+			leftBottom[1] = tmp;
+
+			//交换righttop和rightbottom
+			tmp = rightTop[1];
+
+
+
+
+
+
+
+
+
+
+			rightTop[1] = rightBottom[1];
+			rightBottom[1] = tmp;
+
+		}
+		//fjm add end
+		*/
+
 	} 
 	
 	private void pressCL(float x,float y){

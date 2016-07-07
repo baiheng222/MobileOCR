@@ -25,6 +25,7 @@
             android:layout_height="40dp"
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/iv_light"
+            android:gravity="center_vertical"
             android:text="@string/camera_light_auto"
             android:textColor="@color/white"
             />

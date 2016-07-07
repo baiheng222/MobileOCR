@@ -71,6 +71,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             e.printStackTrace();
         }
 
+        mRlOcr.setOnClickListener(this);
         mRlFile.setOnClickListener(this);
         mRlOrders.setOnClickListener(this);
         mRlSettings.setOnClickListener(this);
@@ -130,6 +131,13 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 startActivity(settingIntent);
                 //MainActivity act = (MainActivity)getActivity();
                 //act.closeMenu();
+            break;
+
+            case R.id.rl_ocr:
+                MainActivity act = (MainActivity)getActivity();
+
+                act.closeMenu();
+                act.startCameraActivity();
             break;
         }
     }

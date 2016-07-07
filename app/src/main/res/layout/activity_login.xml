@@ -54,7 +54,8 @@
                 android:maxLength="32"
                 android:textColor="#D7D7D7"
                 android:textColorHint="#D7D7D7"
-                android:textSize="15sp" 
+                android:textCursorDrawable="@drawable/color_cursor"
+                android:textSize="15sp"
                 android:imeOptions="actionNext" >
             </com.hanvon.rc.utils.ClearEditText>
         </LinearLayout>
@@ -80,7 +81,8 @@
                 android:maxLength="16"
                 android:textColor="#D7D7D7"
                 android:textColorHint="#D7D7D7"
-                android:textSize="15sp" 
+                android:textSize="15sp"
+                android:textCursorDrawable="@drawable/color_cursor"
                 android:imeOptions="actionDone">
             </com.hanvon.rc.utils.ClearEditText>
         </LinearLayout>

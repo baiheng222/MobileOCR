@@ -69,6 +69,8 @@ public class OrderListActivity extends Activity implements AbsListView.OnScrollL
     private boolean isLoadComplate = false;
     private boolean isScrollBottom = false;
 
+    private boolean isScrollTop = false;
+
     public static OrderListActivity instance = null;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -144,6 +146,10 @@ public class OrderListActivity extends Activity implements AbsListView.OnScrollL
                 }
                 switch (msg.what) {
                     case InfoMsg.ORDER_LIST_TYPE:
+                        if(isScrollTop){
+                            isSameView = false;
+                            isScrollTop = false;
+                        }
                         int j = 0;
                         int recordCount = 0;
                         if(!isSameView) {
@@ -353,6 +359,17 @@ public class OrderListActivity extends Activity implements AbsListView.OnScrollL
                 }
             } else if(y2 - y1 > 50) {
              //   Toast.makeText(OrderListActivity.this, "向下滑", Toast.LENGTH_SHORT).show();
+                LogUtil.i("-----------Scoll Up-----------------");
+                if(isScrollTop){
+                    pages = 0;
+                    if (status == 0) {
+                        initDatas("");
+                    } else if (status == 2) {
+                        initDatas("5");
+                    } else if (status == 3) {
+                        initDatas("1");
+                    }
+                }
             } else if(x1 - x2 > 50) {
               //  Toast.makeText(OrderListActivity.this, "向左滑", Toast.LENGTH_SHORT).show();
                 if(status == 3){
@@ -391,6 +408,11 @@ public class OrderListActivity extends Activity implements AbsListView.OnScrollL
             isScrollBottom = true;
         }else{
             isScrollBottom = false;
+        }
+        if(firstVisibleItem == 0){
+            isScrollTop = true;
+        }else{
+            isScrollTop = false;
         }
         this.visibleItemCount = visibleItemCount;
         visibleLastIndex = firstVisibleItem + visibleItemCount - 1;
