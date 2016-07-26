@@ -1,6 +1,5 @@
 package com.hanvon.rc.utils;
 
-import android.content.SyncInfo;
 import android.util.Log;
 
 import com.hanvon.rc.application.HanvonApplication;
@@ -369,7 +368,7 @@ public class RequestJson {
             JSuserInfoJson.put("subject", URLEncoder.encode("汉王识文-精准人工识别", "UTF-8"));
             JSuserInfoJson.put("body", URLEncoder.encode("汉王识文-精准人工识别", "UTF-8"));
             JSuserInfoJson.put("total_fee", totalfee);
-            JSuserInfoJson.put("notify_url", "http://rc.hwyun.com:9090/rws-cloud/alipay/notify");
+            JSuserInfoJson.put("notify_url", "http://dpi.hanvon.com/alipay/notify");
             JSuserInfoJson.put("service", "mobile.securitypay.pay");
             JSuserInfoJson.put("payment_type", "1");
             JSuserInfoJson.put("_input_charset", "utf-8");

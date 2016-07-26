@@ -23,6 +23,7 @@ import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.utils.MyHttpUtils;
 import com.hanvon.rc.utils.RequestJson;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.tencent.mm.sdk.modelpay.PayReq;
 
 import org.json.JSONException;
@@ -129,6 +130,8 @@ public class OrderToPay extends Activity implements View.OnClickListener {
         InitView();
         initHandler();
         new MyHttpUtils(handler);
+
+        StatisticsUtils.IncreasePayPage();
     }
 
     public void initHandler() {
@@ -260,12 +263,14 @@ public class OrderToPay extends Activity implements View.OnClickListener {
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.payinfo_wxpay:
+                StatisticsUtils.IncreaseWxPayBtn();
                 RbWxPay.setChecked(true);
                 RbZfbPay.setChecked(false);
                 isWxPay = true;
                 isZfbPay = false;
                 break;
             case R.id.payinfo_zfbpay:
+                StatisticsUtils.IncreaseAlipayBtn();
                 RbWxPay.setChecked(false);
                 RbZfbPay.setChecked(true);
                 isWxPay = false;
@@ -284,6 +289,7 @@ public class OrderToPay extends Activity implements View.OnClickListener {
                 finish();
                 break;
             case R.id.payinfo_topay:
+                StatisticsUtils.IncreaseEnsurePayBtn();
                 LogUtil.i("*************resultFileType:"+resultFileType);
                 if(new ConnectionDetector(OrderToPay.this).isConnectingTOInternet()) {
                     isOrderChange = true;

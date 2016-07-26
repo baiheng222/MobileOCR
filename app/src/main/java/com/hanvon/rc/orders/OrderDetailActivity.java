@@ -173,8 +173,10 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
                                 OrderInfo orderInfo = new OrderInfo();
                                 orderInfo.setOrderNumber(orderNumber);
                                 orderInfo.setPayMode("1");
-                                MainActivity.dbManager.insertOrder(orderInfo);
-                                OrderQueryService.getServiceInstance().ResetTimeTask();
+                                if(!MainActivity.dbManager.getOrderIsInDatabase(orderInfo)) {
+                                    MainActivity.dbManager.insertOrder(orderInfo);
+                                    OrderQueryService.getServiceInstance().ResetTimeTask();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -224,8 +226,10 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
                                 OrderInfo orderInfo = new OrderInfo();
                                 orderInfo.setOrderNumber(orderNumber);
                                 orderInfo.setPayMode("0");
-                                MainActivity.dbManager.insertOrder(orderInfo);
-                                OrderQueryService.getServiceInstance().ResetTimeTask();
+                                if(!MainActivity.dbManager.getOrderIsInDatabase(orderInfo)) {
+                                    MainActivity.dbManager.insertOrder(orderInfo);
+                                    OrderQueryService.getServiceInstance().ResetTimeTask();
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -331,7 +335,9 @@ public class OrderDetailActivity extends Activity implements View.OnClickListene
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if(keyCode == KeyEvent.KEYCODE_BACK){
             if(isOrderChange){
-                OrderListActivity.instance.finish();
+                if(OrderListActivity.instance != null) {
+                    OrderListActivity.instance.finish();
+                }
                 isOrderChange = false;
             }
             Intent intent = new Intent();

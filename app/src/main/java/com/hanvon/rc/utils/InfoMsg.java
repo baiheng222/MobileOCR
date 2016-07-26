@@ -42,6 +42,9 @@ public class InfoMsg {
 
     public static final String UrlContactsModify = HanvonUrl+"/user/edit/order/contacts/info";
 
+    public static final String UrlOrderEvlProcess = HanvonUrl+"/order/evaluate/progress";
+    public static final String UrlOrderEvlResult = HanvonUrl+"/order/evaluate/result";
+
     public static final int FILE_RECOGINE_TYPE = 0x01;
     public static final int FILE_LIST_TYPE = 0x02;
     public static final int FILE_UPLOAD_TYPE = 0x03;
@@ -61,6 +64,7 @@ public class InfoMsg {
     public static final int ORDER_SEARCH_TYPE = 0x15;
     public static final int ORDER_CANCEL_TYPE = 0x16;
     public static final int ORDER_DELETE_TYPE = 0x17;
+    public static final int ORDER_EVL_RESULT_TYPE = 0x18;
 
 
     public static final int ORDER_WXPAY_TYPE = 0x18;
@@ -87,4 +91,5 @@ public class InfoMsg {
     public static final int ERR_COOD_8002 = 0x48;
 
     public static final int MSG_DOWNLOAD_DONE = 0x60;
+    public static final int MSG_FILEUPLOAD_DONE = 0x61;
 }

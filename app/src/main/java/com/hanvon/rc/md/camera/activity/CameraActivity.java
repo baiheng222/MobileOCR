@@ -43,6 +43,7 @@ import com.hanvon.rc.md.camera.DensityUtil;
 import com.hanvon.rc.md.camera.activity.ModeCtrl.UserMode;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.hanvon.rc.widget.BadgeView;
 
 import java.io.File;
@@ -125,6 +126,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         initData();
 
         initView();
+
+        StatisticsUtils.IncreaseCameraPage();
     }
 
     private void initData()
@@ -427,6 +430,29 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     }
 
 
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        LogUtil.i("onNewIntent called !!!!");
+        //processExtraData();
+    }
+
+
+    private void processExtraData()
+    {
+        LogUtil.i("processExtraData called !!!");
+        Intent intent = this.getIntent();
+        String msg = intent.getStringExtra("message");
+
+        if (null !=msg && msg.equals("userdelall"))
+        {
+            LogUtil.i("receive userdelall msg !!!!");
+            resetMultiCapStateByUerDel();
+        }
+    }
+
     public void showNoRightOpenCamera()
     {
         new CustomDialog.Builder(CameraActivity.this)
@@ -484,7 +510,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 {
                     LogUtil.i("setFocusMode!!!!!");
                     mCameraManager.setTouchView(50, 100);
-                    //mCameraManager.setFocusModeAutoCycle(1750); //modify by at2015-07-01
+                    mCameraManager.setFocusModeAutoCycle(1750); //modify by at2015-07-01
                     mCameraManager.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
                     //mCameraManager.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
                     //add 2016-05-31
@@ -493,6 +519,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                     Camera.Parameters parameters = mCameraManager.getCameraParameters();
 
                     printSupportFocusMode(parameters);
+
+                    printSupportFlashMode(parameters);
 
                     List<Size> picsizes = printSupportPictureSize(parameters);
                     List<Size> previewsizes = printSupportPreviewSize(parameters);
@@ -615,6 +643,12 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         switch (view.getId())
         {
             case R.id.iv_capture:
+                if (capMode == CAPTURE_MULTI && multiCapNum >= 9)
+                {
+                    Toast.makeText(CameraActivity.this, "最多只能连拍9张", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                StatisticsUtils.IncreaseCaptureBtn();
                 requestTakePicture();
                 break;
 
@@ -624,6 +658,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 break;
 
             case R.id.iv_gallery:
+                StatisticsUtils.IncreaseInsertBtn();
                 processBtnGallery();
                 /*
                 Log.d(TAG, "start ChooseMorPictureActivity");
@@ -637,15 +672,18 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 */
                 break;
             case R.id.iv_light:
+                StatisticsUtils.IncreaseFlashBtn();
                 setFlashState();
             break;
 
             case R.id.hanvon_camera_bcard:
+                StatisticsUtils.IncreaseSerialBtn();
                 switchCapMode();
 
                 break;
 
             case R.id.hanvon_camera_scanning:
+                StatisticsUtils.IncreaseSingleBtn();
                 switchCapMode();
                 break;
         }
@@ -906,6 +944,16 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     }
 
 
+    public void printSupportFlashMode(Camera.Parameters params)
+    {
+        List<String> flashModes = params.getSupportedFlashModes();
+        for(String mode : flashModes)
+        {
+            LogUtil.i("Support flashModes--" + mode);
+        }
+    }
+
+
     public void requestTakePicture()
     {
         if (isTakingPicture)
@@ -939,7 +987,7 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                 Camera.Parameters parameters = mCameraManager.getCameraParameters();
                 if (mFlashMode == FLASH_ON)
                 {
-                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    parameters.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
                 }
                 else if(mFlashMode == FLASH_AUTO)
                 {

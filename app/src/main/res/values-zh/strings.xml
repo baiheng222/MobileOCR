@@ -170,4 +170,6 @@
     <string name="feedback_tip_inputs_email">选填，用于解决问题后对您的回复</string>
     <string name="str_uploading">正在上传文件...</string>
     <string name="str_title_upload">上传文件</string>
+    <string name="dle_msg">数据即将删除,不可恢复,是否继续?</string>
+    <string name="str_upload_done">上传完成，正在评估</string>
 </resources>

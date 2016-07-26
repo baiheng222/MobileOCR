@@ -12,6 +12,7 @@ import com.hanvon.rc.R;
 import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 
 
 /**
@@ -49,6 +50,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onClick(View v)
             {
+                StatisticsUtils.IncreaseLeftPage();
                 Log.d(TAG, "!!! onClick !!");
                 MainActivity act = (MainActivity)getActivity();
                 act.openMenu();
@@ -66,6 +68,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
         {
             case R.id.tv_auto:
             case R.id.iv_auto:
+                StatisticsUtils.IncreaseQuickRcgBtn();
                 HanvonApplication.isAccurateRecg = false;
                 MainActivity act = (MainActivity)getActivity();
                 LogUtil.i("start quick reco!!!!");
@@ -74,6 +77,7 @@ public class MainFragment extends BaseFragment implements View.OnClickListener
 
             case R.id.iv_exact:
             case R.id.tv_exact:
+                StatisticsUtils.IncreasePreciseRcgBtn();
                 HanvonApplication.isAccurateRecg = true;
                 MainActivity act2 = (MainActivity)getActivity();
                 LogUtil.i("start exact reco !!!");

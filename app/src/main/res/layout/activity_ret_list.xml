@@ -78,7 +78,7 @@
             android:layout_height="match_parent"
             android:layout_centerVertical="true"
             android:src="@mipmap/del_icon"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
 
         <ImageView
             android:id="@+id/iv_copy_files"

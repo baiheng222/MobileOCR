@@ -29,6 +29,7 @@ import com.hanvon.rc.utils.CustomDialog;
 import com.hanvon.rc.utils.HvnCloudManager;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.lidroid.xutils.util.LogUtils;
 
 import org.w3c.dom.Text;
@@ -136,6 +137,8 @@ public class RecResultActivity extends Activity implements View.OnClickListener
         initView();
 
         setListener();
+
+        StatisticsUtils.IncreaseQuickRecResultPage();
 
     }
 
@@ -454,6 +457,7 @@ public class RecResultActivity extends Activity implements View.OnClickListener
                 if (!bShareClick)
                 {
                     pd = ProgressDialog.show(RecResultActivity.this, "", getString(R.string.link_mess));
+                    StatisticsUtils.IncreaseShareResultBtn();
                     shareRecoResult();
                 }
                 break;

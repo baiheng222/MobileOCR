@@ -25,6 +25,7 @@ import com.hanvon.rc.orders.OrderListActivity;
 import com.hanvon.rc.utils.CircleImageView;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.lidroid.xutils.BitmapUtils;
 import com.lidroid.xutils.bitmap.BitmapCommonUtils;
 
@@ -88,6 +89,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
     public void onClick(View v) {
         switch(v.getId()){
             case R.id.iv_login_icon:
+                StatisticsUtils.IncreaseLoginBtn();
                 if (HanvonApplication.hvnName.equals("")){
                     Intent intent = new Intent(MenuFragment.this.getActivity(), LoginActivity.class);
                     this.startActivity(intent);
@@ -97,7 +99,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 }
                 break;
             case R.id.rl_orders:
-
+                StatisticsUtils.IncreaseOrderBtn();
                 LogUtil.i("=====Before Click Orders");
                 if(HanvonApplication.hvnName.equals("")){
                     Toast.makeText(HanvonApplication.getcontext(),"未登陆,请先登录!",Toast.LENGTH_SHORT).show();
@@ -114,6 +116,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
                 break;
 
             case R.id.rl_file:
+                StatisticsUtils.IncreaseFileBtn();
                 Intent fileIntent = new Intent(MenuFragment.this.getActivity(), FileListActivity.class);
                 this.startActivity(fileIntent);
                 //MainActivity act2 = (MainActivity)getActivity();
@@ -127,6 +130,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
      //           break;
 
             case R.id.rl_settings:
+                StatisticsUtils.IncreaseSettingBtn();
                 Intent settingIntent = new Intent(MenuFragment.this.getActivity(), SettingActivity.class);
                 startActivity(settingIntent);
                 //MainActivity act = (MainActivity)getActivity();
@@ -134,6 +138,7 @@ public class MenuFragment extends BaseFragment implements View.OnClickListener {
             break;
 
             case R.id.rl_ocr:
+                StatisticsUtils.IncreaseOcrBtn();
                 MainActivity act = (MainActivity)getActivity();
 
                 act.closeMenu();

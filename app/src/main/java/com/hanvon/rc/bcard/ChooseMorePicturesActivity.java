@@ -2,11 +2,14 @@ package com.hanvon.rc.bcard;
 
 import android.app.Activity;
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Environment;
+import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
@@ -47,6 +50,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class ChooseMorePicturesActivity extends Activity implements OnClickListener
 {
@@ -68,6 +73,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	private int chooseNum = 0;//选中图片的个数
 	private String selectPicPath;
 	private Dialog mHintDialog;
+	private String zipFileFullPaht = null;
+	private String zipFileName = null;
 
 	private PhotoAlbum previewPhotoAlum;
 	private String comeFrom = "";
@@ -87,6 +94,9 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 
 	private static final int CAPTURE_SINGLE = 1;
 	private static final int CAPTURE_MULTI = 2;
+
+	private ProgressDialog mProgress = null;
+	boolean isCompressing = false;
 
 	// 设置获取图片的字段信息
 	private static final String[] STORE_IMAGES = {
@@ -123,6 +133,8 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 				LogUtil.i("picture " + i + " path is " + picturesPath.get(i));
 			}
 		}
+
+		isCompressing = false;
 
 		comeFrom = this.getIntent().getExtras().getString("parentActivity");
 		recoMode = this.getIntent().getIntExtra("recomode", InfoMsg.RECO_MODE_QUICK_RECO);
@@ -311,7 +323,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		else
 		{
 
-			if(chooseNum<= MAX_PIC_NUM)
+			if(chooseNum < MAX_PIC_NUM)
 			{
 				allAlbums.getBitList().get(position).setSelect(true);
 				chooseNum++;
@@ -447,7 +459,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 	{
 		Intent intent = new Intent(this, ChooseFileFormatActivity.class);
 		intent.putExtra("resultType", InfoMsg.RECO_MODE_EXACT_RECO);
-		intent.putExtra("filename", "test");
+		intent.putExtra("filename", zipFileName);
 		String size;
 		long ksize = (filesize + 1023) / 1024;
 		if (ksize > 1024)
@@ -492,9 +504,54 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
     }
 
 
-	private void exactRecoConfirm()
+	private String getCurTimeString()
 	{
-		LogUtil.i("exactRecoConfirm func");
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddHHmmss");
+		Date currentTime = new Date();
+		String dateString = formatter.format(currentTime);
+		return dateString;
+	}
+
+	public static final int MSG_ZIP_COMPLETE = 0x11;
+
+	public Handler zipHandler = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			super.handleMessage(msg);
+			mProgress.dismiss();
+			isCompressing = false;
+			Object obj = msg.obj;
+			switch (msg.what)
+			{
+				case MSG_ZIP_COMPLETE:
+					long length =  Long.parseLong(obj.toString());
+					LogUtil.i("receive msg, file leng is " + length);
+					getResultFileFormat(length);
+				break;
+			}
+		}
+	};
+
+	public class CompressThread implements Runnable
+	{
+		public CompressThread()
+		{
+
+		}
+
+		@Override
+		public void run()
+		{
+			compressFils();
+		}
+
+	}
+
+	private void compressFils()
+	{
+		LogUtil.i("call compressFiles func here !!!!!");
 		ArrayList<String> paths = new ArrayList<String>();
 		for(int i = 0;i<allAlbums.getBitList().size();i++)
 		{
@@ -505,37 +562,145 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		}
 
 		String sdCardPath = FileUtil.getSDCadrPath();
-		File f1 = new File(sdCardPath + "/rctmp");
+
+		String datestring = getCurTimeString();
+		String zipDir = sdCardPath + "/MobileOCR/" + datestring;
+
+		//File f1 = new File(sdCardPath + "/rctmp");
+		File f1 = new File(zipDir);
 		if (f1.exists())
 		{
 			//f1.delete();
+			LogUtil.i("dir exists!!!!");
 			RecursionDeleteFile(f1);
 		}
 
-		f1.mkdirs();
+		boolean status = f1.mkdirs();
+		if (status)
+		{
+			LogUtil.i("mkdir " + zipDir + " success!!");
+		}
+		else
+		{
+			LogUtil.i("mkdirs fail!!!!");
+		}
 
 		for (int i = 0; i < paths.size(); i++)
 		{
 			LogUtil.i("path is " + paths.get(i));
 			String filename = paths.get(i).substring(paths.get(i).lastIndexOf("/") + 1, paths.get(i).length());
 			LogUtil.i("file name is " + filename);
-			CopySdcardFile(paths.get(i), sdCardPath + "/rctmp/" + filename);
+			String prefix = "RCA000" + String.valueOf(i) + "_";
+			LogUtil.i("prefix is " + prefix);
+			//CopySdcardFile(paths.get(i), sdCardPath + "/rctmp/" + prefix + filename);
+			CopySdcardFile(paths.get(i), zipDir + "/" + prefix + filename);
 		}
 
-		ZipCompressorByAnt zip = new ZipCompressorByAnt("/sdcard/rctmp.zip");
-		zip.compressExe(sdCardPath + "/rctmp/");
+		zipFileFullPaht = zipDir + ".zip";
+		zipFileName = datestring + ".zip";
+		LogUtil.i("zipFileFullPath is " + zipFileFullPaht);
+		LogUtil.i("zipFileName is " + zipFileName);
+		//ZipCompressorByAnt zip = new ZipCompressorByAnt("/sdcard/rctmp.zip");
+		//zip.compressExe(sdCardPath + "/rctmp/");
+		ZipCompressorByAnt zip = new ZipCompressorByAnt(zipFileFullPaht);
+		zip.compressExe(zipDir + "/");
 		File zipfile = zip.getCompressedFile();
 		LogUtil.i("file size is " + zipfile.length());
-		getResultFileFormat(zipfile.length());
+		Message msg = Message.obtain();
+		msg.what = MSG_ZIP_COMPLETE;
+		msg.obj = zipfile.length();
+		ChooseMorePicturesActivity.this.zipHandler.handleMessage(msg);
+	}
+
+	private void exactRecoConfirm()
+	{
+		LogUtil.i("exactRecoConfirm func");
+
+		if (isCompressing)
+		{
+			LogUtil.i("compressing files, return !!!!");
+			return;
+		}
+
+		isCompressing = true;
+
+		mProgress = ProgressDialog.show(ChooseMorePicturesActivity.this, "", "正在处理...");
+		CompressThread thread = new CompressThread();
+		new Thread(thread).start();
+		/*
+		ArrayList<String> paths = new ArrayList<String>();
+		for(int i = 0;i<allAlbums.getBitList().size();i++)
+		{
+			if(allAlbums.getBitList().get(i).isSelect())
+			{
+				paths.add(allAlbums.getBitList().get(i).getPath());
+			}
+		}
+
+
+
+		String sdCardPath = FileUtil.getSDCadrPath();
+
+		String datestring = getCurTimeString();
+		String zipDir = sdCardPath + "/MobileOCR/" + datestring;
+
+		//File f1 = new File(sdCardPath + "/rctmp");
+		File f1 = new File(zipDir);
+		if (f1.exists())
+		{
+			//f1.delete();
+			LogUtil.i("dir exists!!!!");
+			RecursionDeleteFile(f1);
+		}
+
+		boolean status = f1.mkdirs();
+		if (status)
+		{
+			LogUtil.i("mkdir " + zipDir + " success!!");
+		}
+		else
+		{
+			LogUtil.i("mkdirs fail!!!!");
+		}
+
+
+
+		for (int i = 0; i < paths.size(); i++)
+		{
+			LogUtil.i("path is " + paths.get(i));
+			String filename = paths.get(i).substring(paths.get(i).lastIndexOf("/") + 1, paths.get(i).length());
+			LogUtil.i("file name is " + filename);
+			String prefix = "RCA000" + String.valueOf(i) + "_";
+			LogUtil.i("prefix is " + prefix);
+			//CopySdcardFile(paths.get(i), sdCardPath + "/rctmp/" + prefix + filename);
+			CopySdcardFile(paths.get(i), zipDir + "/" + prefix + filename);
+		}
+
+		zipFileFullPaht = zipDir + ".zip";
+		zipFileName = datestring + ".zip";
+		LogUtil.i("zipFileFullPath is " + zipFileFullPaht);
+		LogUtil.i("zipFileName is " + zipFileName);
+		//ZipCompressorByAnt zip = new ZipCompressorByAnt("/sdcard/rctmp.zip");
+		//zip.compressExe(sdCardPath + "/rctmp/");
+		ZipCompressorByAnt zip = new ZipCompressorByAnt(zipFileFullPaht);
+		zip.compressExe(zipDir + "/");
+		File zipfile = zip.getCompressedFile();
+		LogUtil.i("file size is " + zipfile.length());
+		*/
+
+		//getResultFileFormat(zipfile.length());
 	}
 
 	private void startUpload(String resultFileFormat)
 	{
+		LogUtil.i("startUpload called!!!!!");
 		Intent intent = new Intent(ChooseMorePicturesActivity.this, UploadFileActivity.class);
-		intent.putExtra("fileamount", allAlbums.getBitList().size());
+		intent.putExtra("fileamount", chooseNum);
 		intent.putExtra("fileformat", "jpg");
-		intent.putExtra("fullpath", "/sdcard/rctmp.zip");
-		intent.putExtra("filename", "rctmp.zip");
+		//intent.putExtra("fullpath", "/sdcard/rctmp.zip");
+		//intent.putExtra("filename", "rctmp.zip");
+		intent.putExtra("fullpath", zipFileFullPaht);
+		intent.putExtra("filename", zipFileName);
 		intent.putExtra("resultfiletype", resultFileFormat);
 		startActivity(intent);
 		this.finish();

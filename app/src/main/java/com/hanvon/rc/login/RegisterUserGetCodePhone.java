@@ -16,6 +16,7 @@ import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.ClearEditText;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.hanvon.userinfo.RequestTask;
 import com.hanvon.userinfo.ResultCallBack;
 import com.hanvon.userinfo.UserInfoMessage;
@@ -63,6 +64,8 @@ public class RegisterUserGetCodePhone extends Activity implements View.OnClickLi
         IVback.setOnClickListener(this);
         IVregisterEmail.setOnClickListener(this);
         IVregisterPhone.setOnClickListener(this);
+
+        StatisticsUtils.IncreaseRegisterPage();
     }
 
     @Override
@@ -108,6 +111,7 @@ public class RegisterUserGetCodePhone extends Activity implements View.OnClickLi
                 }
                 break;
             case R.id.register_email_button:
+                StatisticsUtils.IncreaseEmailBtn();
                 Intent intent = new Intent(RegisterUserGetCodePhone.this, RegisterUserFromEmail.class);
                 startActivity(intent);
                 this.finish();

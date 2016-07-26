@@ -1,5 +1,6 @@
 package com.hanvon.rc.application;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
@@ -21,6 +22,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.hanvon.rc.orders.OrderQueryService;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.hanvon.rc.wboard.Constants;
 import com.hanvon.userinfo.UserInfoMessage;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -149,6 +151,9 @@ public class HanvonApplication extends FrontiaApplication {
 
         initImageLoader(getApplicationContext());
         Log.i(TAG, "!!!!! onCreate end !!!!");
+
+        SharedPreferences functionSharedPref=getSharedPreferences("function", Activity.MODE_MULTI_PROCESS);
+		StatisticsUtils.getInstance(functionSharedPref);
     }
 
     public static void initImageLoader(Context context) {

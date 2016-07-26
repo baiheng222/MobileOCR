@@ -121,6 +121,7 @@
     <string name="all">All</string>
     <string name="delete">Delete</string>
     <string name="edit">Edit</string>
+    <string name="dle_msg">All Data will be delete, continue?</string>
 
     <string name="title_failrec">Reconize fail</string>
     <string name="title_save_ret">Save</string>
@@ -154,6 +155,7 @@
     <string name="str_check_network">Please check network</string>
     <string name="str_dlg_tip">Tip</string>
     <string name="str_uploading">Uploading...</string>
+    <string name="str_upload_done">Upload finish</string>
     <string name="str_title_upload">Upload</string>
 
     <string name="setting_clear_buffer">Clear buffers</string>
@@ -164,7 +166,7 @@
     <string name="setting_item_feedback">Feedback</string>
     <string name="setting_item_about">About us</string>
     <string name="title_about">About us</string>
-    <string name="about_advertise">速录笔,有你的日子,学习生活更简单,更轻松,更便捷！</string>
+    <string name="about_advertise">汉王识文，让学习生活更简单,更轻松,更便捷！</string>
     <string name="title_feedback">意见反馈</string>
     <string name="title_help">帮助手册</string>
     <string name="title_aboutUs">关于我们</string>

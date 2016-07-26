@@ -63,6 +63,9 @@ public class RegisterUserFromEmail extends Activity implements View.OnClickListe
         BTensure.setOnClickListener(this);
         IVback.setOnClickListener(this);
         IVregisterPhone.setOnClickListener(this);
+
+        StatisticsUtils.IncreaseRegisterPage();
+
     }
 
     @Override
@@ -109,6 +112,7 @@ public class RegisterUserFromEmail extends Activity implements View.OnClickListe
                 this.finish();
                 break;
             case R.id.emailrst_phonebtn:
+                StatisticsUtils.IncreasePhoneBtn();
                 startActivity(new Intent(RegisterUserFromEmail.this, RegisterUserGetCodePhone.class));
                 this.finish();
                 break;

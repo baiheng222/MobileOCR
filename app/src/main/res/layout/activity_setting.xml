@@ -156,7 +156,8 @@
         android:layout_below="@id/rl_setting_clear"
         android:layout_marginBottom="0dp"
         android:layout_marginTop="20dp"
-        android:background="#f6f6f6" >
+        android:background="#f6f6f6"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"

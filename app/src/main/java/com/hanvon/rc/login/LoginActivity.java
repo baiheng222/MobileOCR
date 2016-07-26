@@ -29,6 +29,7 @@ import com.hanvon.rc.utils.ClearEditText;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.utils.LoginUtils;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.hanvon.userinfo.RequestTask;
 import com.hanvon.userinfo.ResultCallBack;
 import com.hanvon.userinfo.UserInfoMessage;
@@ -50,6 +51,7 @@ import cn.sharesdk.framework.ShareSDK;
 import cn.sharesdk.tencent.qq.QQ;
 import cn.sharesdk.wechat.friends.Wechat;
 //import uk.co.deanwild.materialshowcaseview.MaterialShowcaseView;
+
 
 
 /**
@@ -123,7 +125,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
         }
     //    api = WXAPIFactory.createWXAPI(this, "wx021fab5878ea9288", true);
      //   api.registerApp("wx021fab5878ea9288");
-        //  StatisticsUtils.IncreaseLoginPage();
+        StatisticsUtils.IncreaseLoginPage();
     }
 
     /**************************************BEGIN*************************************************/
@@ -159,32 +161,33 @@ public class LoginActivity  extends Activity implements Handler.Callback,
                     Toast.makeText(LoginActivity.this, "用户名或者密码不允许为空", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                //      StatisticsUtils.IncreaseHvnLogin();
+                StatisticsUtils.IncreaseLoginBtn();
                 LogUtil.i("username:" + strUserName + ", passwd:" + strPassWord);
                 InputMethodManager m=(InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                 m.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                 judgeUserIsOk();
                 break;
             case R.id.login_registerbtn:
-                //    StatisticsUtils.IncreaseRegister();
+                StatisticsUtils.IncreaseRegisterBtn();
                 LogUtil.i("INTO Create user Before");
                 Intent intent = new Intent(LoginActivity.this, RegisterUserGetCodePhone.class);
                 startActivity(intent);
                 LoginActivity.this.finish();
                 break;
             case R.id.login_rememberpwd:
+                StatisticsUtils.IncreaseRmbPwdBtn();
                 Intent intent1 = new Intent(LoginActivity.this, RememberPassword.class);
                 LoginActivity.this.startActivity(intent1);
                 LoginActivity.this.finish();
                 break;
 
             case R.id.login_qq:
-                //    StatisticsUtils.IncreaseQQLogin();
+                StatisticsUtils.IncreaseQQLoginBtn();
                 QQUserLogin();
                 break;
 
             case R.id.login_weixin:
-                //    StatisticsUtils.IncreaseWXLogin();
+                StatisticsUtils.IncreaseWXLoginBtn();
                     WeiXinUserLogin();
                 break;
 
@@ -194,8 +197,8 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     }
 
     private void goHome() {
-        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-        LoginActivity.this.startActivity(intent);
+        //Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        //LoginActivity.this.startActivity(intent);
         LoginActivity.this.finish();
     }
 
@@ -484,7 +487,7 @@ public class LoginActivity  extends Activity implements Handler.Callback,
     {
         if (keyCode == KeyEvent.KEYCODE_BACK )
         {
-            startActivity(new Intent(LoginActivity.this, MainActivity.class));
+            //startActivity(new Intent(LoginActivity.this, MainActivity.class));
             this.finish();
         }
         return false;

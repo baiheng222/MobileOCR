@@ -159,7 +159,7 @@ public class UploadImage
         }
         else if (result.equals("8002"))
         {
-            LogUtil.i("code is 8002");
+            LogUtil.i("code is 8002, return 8002!!!!!");
             return result;
         }
 
@@ -255,7 +255,7 @@ public class UploadImage
             {
                 LogUtil.i( "===onFailure====="+s);
                 Message msg = new Message();
-                msg.what = InfoMsg.FILE_RECO_FAIL;
+                msg.what = InfoMsg.NET_ERR_SOCKET_TIMEOUT;
                 msg.obj = s;
                 handler.sendMessage(msg);
             }
@@ -370,7 +370,7 @@ public class UploadImage
         parmas.put("checksum", SHA1Util.sha(data));
         parmas.put("iszip", String.valueOf(iszip));
 
-        Log.i(TAG, parmas.toString());
+        LogUtil.i("in func map: " +  parmas.toString());
 
         return parmas;
     }

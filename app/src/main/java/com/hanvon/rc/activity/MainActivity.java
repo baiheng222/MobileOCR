@@ -20,6 +20,7 @@ import com.hanvon.rc.md.camera.activity.CameraActivity;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 
 
 /**
@@ -60,6 +61,24 @@ public class MainActivity extends Activity
                 updateInfo.checkVersion();
             }
         }
+
+        StatisticsUtils.IncreaseMainPage();
+        StatisticsUtils.SetCurTimeHour();
+        try {
+            StatisticsUtils.UpLoadFunctionStatus1(MainActivity.this);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        LogUtil.i("onNewIntent called !!!!");
+        //processExtraData();
     }
 
     @Override
@@ -160,6 +179,8 @@ public class MainActivity extends Activity
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        StatisticsUtils.WriteBack();
+        StatisticsUtils.releaseInstance();
         LogUtil.i("-------onDestory----MainActivity-------");
     }
 

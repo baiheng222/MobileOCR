@@ -157,7 +157,9 @@ public class OrderQueryService extends Service {
 
     public void ResetTimeTask(){
         INTERVAL_TIME = 0;
-        queryTimer.cancel();
+        if(queryTimer != null) {
+            queryTimer.cancel();
+        }
         startTime(INTERVAL_TIME);
     }
 

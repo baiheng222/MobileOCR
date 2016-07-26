@@ -147,7 +147,7 @@ public class ShowUserMessage extends Activity implements View.OnClickListener {
         HanvonApplication.isActivity = false;
         mEditor.commit();
 
-        startActivity(new Intent(ShowUserMessage.this, MainActivity.class));
+        //startActivity(new Intent(ShowUserMessage.this, MainActivity.class));
         ShowUserMessage.this.finish();
     }
 
@@ -156,7 +156,7 @@ public class ShowUserMessage extends Activity implements View.OnClickListener {
     {
         if (keyCode == KeyEvent.KEYCODE_BACK )
         {
-            startActivity(new Intent(ShowUserMessage.this, MainActivity.class));
+            //startActivity(new Intent(ShowUserMessage.this, MainActivity.class));
             ShowUserMessage.this.finish();
         }
         return false;

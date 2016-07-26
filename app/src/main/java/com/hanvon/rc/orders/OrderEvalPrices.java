@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.hanvon.rc.R;
 import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.StatisticsUtils;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -59,6 +60,8 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
             resultFileType = intent.getStringExtra("resultfiletype");
         }
         InitView();
+
+        StatisticsUtils.IncreaseEvalPage();
     }
 
     public void InitView(){
@@ -144,6 +147,7 @@ public class OrderEvalPrices extends Activity implements View.OnClickListener {
                 builder.show();
                 break;
             case R.id.evalprice_topay:
+                StatisticsUtils.IncreaseToPayBtn();
                 if(null == orderDetail.getOrderPhone() || "".equals(orderDetail.getOrderPhone())){
                     Toast.makeText(this,"联系号码不允许为空，请修改!",Toast.LENGTH_SHORT).show();
                     break;

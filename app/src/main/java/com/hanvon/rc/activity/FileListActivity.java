@@ -1,7 +1,9 @@
 package com.hanvon.rc.activity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -29,6 +31,7 @@ import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.utils.MyHttpUtils;
 import com.hanvon.rc.utils.RequestJson;
+import com.hanvon.rc.utils.StatisticsUtils;
 import com.hanvon.rc.utils.ZipCompressor;
 
 import org.apache.http.HttpResponse;
@@ -50,6 +53,7 @@ import java.net.URI;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.RunnableFuture;
 
 
 public class FileListActivity extends Activity implements View.OnClickListener
@@ -75,6 +79,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
     private int mShowMode;
 
     private static Handler handler;
+    private static Handler delHandler;
 
     private static int EDIT_MODE = 2;
     private static int VIEW_MODE = 1;
@@ -82,7 +87,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
     private static long downOffset  = 0;
 
     private boolean isDownLoading = false;
-
+    private boolean isDeleteing = false;
 
 
     @Override
@@ -100,6 +105,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
         initView();
 
         isDownLoading = false;
+        isDeleteing = false;
 
         //mFileList = MainActivity.dbManager.queryForAll();
         /*
@@ -118,7 +124,7 @@ public class FileListActivity extends Activity implements View.OnClickListener
             }
         });
         */
-
+        StatisticsUtils.IncreaseFileListPage();
     }
 
     private void setAdapter()
@@ -126,6 +132,15 @@ public class FileListActivity extends Activity implements View.OnClickListener
         fileListAdapter = new ResultFileListAdapter(this, mFileList, VIEW_MODE);
 
         lvFile.setAdapter(fileListAdapter);
+
+        if (mFileList != null && mFileList.size() > 0)
+        {
+            mTvEdit.setVisibility(View.VISIBLE);
+        }
+        else
+        {
+            mTvEdit.setVisibility(View.GONE);
+        }
 
         /*
         lvFile.setOnItemClickListener(new AdapterView.OnItemClickListener()
@@ -170,13 +185,14 @@ public class FileListActivity extends Activity implements View.OnClickListener
 
     public void initDatas()
     {
+        mFileList.clear();
         if(new ConnectionDetector(FileListActivity.this).isConnectingTOInternet())
         {
             if((null != pd)&&(pd.isShowing()))
             {
                 pd.dismiss();
             }
-            pd = ProgressDialog.show(FileListActivity.this,"","正在查询订单....");
+            pd = ProgressDialog.show(FileListActivity.this,"","正在查询文件....");
             new MyHttpUtils(handler);
             RequestJson.GetFilesList();
         }
@@ -247,10 +263,13 @@ public class FileListActivity extends Activity implements View.OnClickListener
 
             case R.id.tv_share:
             case R.id.iv_share:
+                StatisticsUtils.IncreaseShareFileBtn();
                     sendByEmail();
                 break;
 
             case R.id.iv_del:
+                StatisticsUtils.IncreaseDeleteFileBtn();
+                    showDelDlg();
                 break;
 
             case R.id.iv_copy_files:
@@ -263,6 +282,71 @@ public class FileListActivity extends Activity implements View.OnClickListener
         }
     }
 
+    private void doAfterDel()
+    {
+        initDatas();
+    }
+
+    private void doDelete()
+    {
+        if (isDeleteing)
+        {
+            LogUtil.i("deleteding file ,return");
+            return;
+        }
+        else
+        {
+            isDeleteing = true;
+        }
+
+        if (!connInNet())
+        {
+            Toast.makeText(FileListActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
+            isDeleteing = false;
+            return;
+        }
+
+
+        pd = ProgressDialog.show(FileListActivity.this, "", "正在删除......");
+
+        DeleteThread thread = new DeleteThread();
+        new Thread(thread).start();
+    }
+
+    private  void FileDelete(int tyep,String fuid)
+    {
+        LogUtil.i("fileDelete called !!!");
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("fid", fuid);
+            JSuserInfoJson.put("fileType", String.valueOf(tyep));
+        } catch(JSONException e) {
+            e.printStackTrace();
+        }
+        LogUtil.i(JSuserInfoJson.toString());
+        new MyHttpUtils(delHandler);
+        MyHttpUtils.HttpSend(InfoMsg.UrlFileDelete, JSuserInfoJson, InfoMsg.FILE_DELETE_TYPE);
+    }
+
+    private void delSelectedFiles()
+    {
+        LogUtil.i("delSelectFiles called here !!!");
+        ArrayList<ResultFileInfo> filelist = fileListAdapter.getSelectedFilesInfo();
+        String ids = new String();
+        for (int i =0; i < filelist.size(); i++)
+        {
+            ids = ids + filelist.get(i).getFid();
+            if (i < (filelist.size() - 2))
+            {
+                ids = ids + ",";
+            }
+        }
+        LogUtil.i("fid sets is {" + ids + "}");
+        FileDelete(2, ids);
+        return;
+    }
 
     private void sendByEmail()
     {
@@ -301,8 +385,86 @@ public class FileListActivity extends Activity implements View.OnClickListener
         }
     }
 
+    private void showDelDlg()
+    {
+        ArrayList<ResultFileInfo> filelist = fileListAdapter.getSelectedFilesInfo();
+        if (filelist.size() <= 0)
+        {
+            LogUtil.i("no file selected");
+            return;
+        }
+
+        AlertDialog.Builder dialog = new AlertDialog.Builder(FileListActivity.this);
+        dialog.setMessage(FileListActivity.this.getString(R.string.dle_msg));
+        dialog.setNegativeButton(R.string. bc_str_cancle, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+
+            }
+        });
+
+        dialog.setPositiveButton(R.string.ensure, new DialogInterface.OnClickListener()
+        {
+            @Override
+            public void onClick(DialogInterface dialog, int which)
+            {
+                doDelete();
+            }
+        });
+
+        dialog.show();
+
+
+    }
+
     public void initHandler()
     {
+        delHandler = new Handler()
+        {
+            @Override
+            public void handleMessage(Message msg)
+            {
+                Object obj = msg.obj;
+                LogUtil.i("handleMessage msg.obj is " + obj);
+                JSONObject jsonObject = null;
+                switch (msg.what)
+                {
+                    case InfoMsg.NET_ERR_SOCKET_TIMEOUT:
+                        LogUtil.i("network error !!!!!");
+                        pd.dismiss();
+                        Toast.makeText(FileListActivity.this, "网路出错，请重试", Toast.LENGTH_SHORT).show();
+                        isDeleteing = false;
+                        break;
+
+                    case InfoMsg.FILE_DELETE_TYPE:
+                        pd.dismiss();
+                        isDeleteing = false;
+                        try
+                        {
+                            jsonObject = new JSONObject(obj.toString());
+                            if("0".equals(jsonObject.getString("code")))
+                            {
+                                LogUtil.i("files delete success !!!!!");
+                                Toast.makeText(FileListActivity.this, "文件已经删除", Toast.LENGTH_SHORT).show();
+                                doAfterDel();
+                            }
+                            else
+                            {
+                                Toast.makeText(FileListActivity.this, "文件未能删除!!", Toast.LENGTH_LONG).show();
+                            }
+
+                        }
+                        catch (JSONException e)
+                        {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+            }
+        };
+
         handler = new Handler()
         {
             @Override
@@ -375,6 +537,21 @@ public class FileListActivity extends Activity implements View.OnClickListener
                 }
             }
         };
+    }
+
+
+    public class DeleteThread implements Runnable
+    {
+        public DeleteThread()
+        {
+
+        }
+
+        @Override
+        public void run()
+        {
+            delSelectedFiles();
+        }
     }
 
     public class DownLoadThread implements Runnable

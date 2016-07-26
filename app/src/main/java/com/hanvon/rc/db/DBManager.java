@@ -128,7 +128,7 @@ public class DBManager
     }
 
     public List<OrderInfo> QueryAllOrder(){
-        Cursor c = db.rawQuery("SELECT * FROM " + DBHelper.DATABASE_CREATE_ORDER_TABLE + " ORDER BY " +
+        Cursor c = db.rawQuery("SELECT * FROM " + DBHelper.DATABASE_ORDER_TABLE + " ORDER BY " +
                 DBHelper.KEY_QUERY_ORDER_PAYMODE + " DESC", null);
         List<OrderInfo> orderlist = new ArrayList<OrderInfo>();
         while (c.moveToNext())
@@ -153,5 +153,24 @@ public class DBManager
 
     public void deleteOrderFromId(String ordernumber){
         db.delete(DBHelper.DATABASE_CREATE_ORDER_TABLE, KEY_ORDER_NUMBER + "= ?", new String[]{ordernumber});
+    }
+
+    public boolean getOrderIsInDatabase(OrderInfo orderInfo){
+        Cursor c = db.query(DBHelper.DATABASE_ORDER_TABLE, null, DBHelper.KEY_QUERY_ORDER_NUMBER + " = ?", new String[]{orderInfo.getOrderNumber()}, null, null, null);
+        List<OrderInfo> orderlist = new ArrayList<OrderInfo>();
+        while (c.moveToNext())
+        {
+            OrderInfo orderInfo1 = new OrderInfo();
+            orderInfo1.setOrderNumber(c.getString(c.getColumnIndex(KEY_ORDER_NUMBER)));
+            orderInfo1.setPayMode(c.getString(c.getColumnIndex(KEY_ORDER_PAY_MODE)));
+
+            orderlist.add(orderInfo1);
+        }
+        c.close();
+
+        if(orderlist.size() > 0){
+            return true;
+        }
+        return false;
     }
 }

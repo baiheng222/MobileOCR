@@ -31,7 +31,7 @@ public class ResultFileListAdapter extends BaseAdapter
     private Context mContext;
     private List<ResultFileInfo> mDatas;
     private List<String> mDownloadedFiles;
-    private int[] mCheckArray;
+    private int[] mCheckArray = null;
 
     private static int EDIT_MODE = 2;
     private static int VIEW_MODE = 1;
@@ -223,6 +223,19 @@ public class ResultFileListAdapter extends BaseAdapter
             }
         }
         return files;
+    }
+
+    public ArrayList<ResultFileInfo> getSelectedFilesInfo()
+    {
+        ArrayList<ResultFileInfo> fInfos = new ArrayList<ResultFileInfo>();
+        for (int i = 0; i < mDatas.size(); i++)
+        {
+            if (mCheckArray[i] == 1)
+            {
+                fInfos.add(mDatas.get(i));
+            }
+        }
+        return fInfos;
     }
 
     private final class ViewHolder

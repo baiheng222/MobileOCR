@@ -11,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.application.HanvonApplication;
 import com.hanvon.rc.md.camera.UploadImage;
 import com.hanvon.rc.orders.OrderDetail;
 import com.hanvon.rc.orders.OrderEvalPrices;
@@ -18,7 +19,10 @@ import com.hanvon.rc.presentation.CropActivity;
 import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
+import com.hanvon.rc.utils.MyHttpUtils;
+import com.hanvon.rc.utils.StatisticsUtils;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
@@ -66,12 +70,15 @@ public class UploadFileActivity extends Activity
             UploadThread uploadThread = new UploadThread(fileName, fullPath, recType, String.valueOf(fileAmount), isZip, fileFormat);
             new Thread(uploadThread).start();
         }
+
+        StatisticsUtils.IncreaseUploadPage();
     }
 
     private void initData()
     {
         Intent intent = getIntent();
         fileAmount = intent.getIntExtra("fileamount", 0);
+        LogUtil.i("!!!! fileAmount is " + fileAmount);
         fileFormat = intent.getStringExtra("fileformat");
         fileName = intent.getStringExtra("filename");
         fullPath = intent.getStringExtra("fullpath");
@@ -106,6 +113,100 @@ public class UploadFileActivity extends Activity
         {
             //Toast.makeText(getApplication(), "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
             return false;
+        }
+    }
+
+
+    private void OrderEvaluateResult(String fuid)
+    {
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("fid", fuid);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        LogUtil.i("-----"+JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlOrderEvlResult, JSuserInfoJson,InfoMsg.ORDER_EVL_TYPE);
+    }
+
+    public class GetEvlResultThread implements Runnable
+    {
+        private String mFid;
+        public GetEvlResultThread(String fid)
+        {
+            mFid = fid;
+        }
+
+        @Override
+        public void run()
+        {
+            new MyHttpUtils(evaluateHandler);
+            OrderEvaluateResult(mFid);
+        }
+    }
+
+    private void OrderEvaluateProcess(String fuid)
+    {
+        JSONObject JSuserInfoJson = new JSONObject();
+        try
+        {
+            JSuserInfoJson.put("userid", HanvonApplication.hvnName);
+            JSuserInfoJson.put("fid", fuid);
+        }
+        catch(JSONException e)
+        {
+            e.printStackTrace();
+        }
+        LogUtil.i("-----"+JSuserInfoJson.toString());
+        MyHttpUtils.HttpSend(InfoMsg.UrlOrderEvlProcess, JSuserInfoJson,InfoMsg.ORDER_EVL_RESULT_TYPE);
+    }
+
+    public class GetEvalProcessThread implements Runnable
+    {
+        private String mFid;
+        public GetEvalProcessThread(String fid)
+        {
+            mFid = fid;
+        }
+
+        @Override
+        public void run()
+        {
+            try
+            {
+                Thread.sleep(10000);
+                LogUtil.i("sleep 10 secednds");
+            }
+            catch(InterruptedException e)
+            {
+
+            }
+
+            new MyHttpUtils(evaluateHandler);
+            OrderEvaluateProcess(mFid);
+        }
+    }
+
+
+    private void startEvlProcessThread()
+    {
+        if (connInNet())
+        {
+            GetEvalProcessThread evlProcessThread = new GetEvalProcessThread(fid);
+            new Thread(evlProcessThread).start();
+        }
+    }
+
+    private void startEvlResultThread()
+    {
+        if (connInNet())
+        {
+            GetEvlResultThread evlResultThread = new GetEvlResultThread(fid);
+            new Thread(evlResultThread).start();
         }
     }
 
@@ -158,18 +259,29 @@ public class UploadFileActivity extends Activity
             }
             else if (fid.equals("8002"))
             {
+                LogUtil.i("receive result is 8002, no result");
                 Message msg = new Message();
                 msg.what = InfoMsg.ERR_COOD_8002;
                 UploadFileActivity.this.textHandler.sendMessage(msg);
-                LogUtil.i("receive result is 8002, no result");
+
                 return;
             }
-
-            //new UploadImage(textHandler).GetEvaluate(fid);
-            UploadImage.GetEvaluate(fid);
+            else
+            {
+                Message msg = Message.obtain();
+                msg.what = InfoMsg.MSG_FILEUPLOAD_DONE;
+                UploadFileActivity.this.textHandler.sendMessage(msg);
+            }
+            new UploadImage(evaluateHandler).GetEvaluate(fid);
+            //UploadImage.GetEvaluate(fid);
         }
     }
 
+
+    private void updateInfoMsg()
+    {
+        tvUpload.setText(R.string.str_upload_done);
+    }
 
     private void updateProcessBar(long curbytes)
     {
@@ -180,7 +292,25 @@ public class UploadFileActivity extends Activity
         processBar.setProgress(percent);
     }
 
-    public Handler processBarHandler = new Handler()
+    private void doEvlProcess(String percent)
+    {
+        if (percent.equals("520"))
+        {
+            tvUpload.setText("评估接口出现错误， 520");
+        }
+        else if (percent.equals("100%"))
+        {
+            tvUpload.setText("已评估" + percent);
+            startEvlResultThread();
+        }
+        else
+        {
+            tvUpload.setText("已评估" + percent + "，请稍候");
+            startEvlProcessThread();
+        }
+    }
+
+    public Handler evaluateHandler = new Handler()
     {
         @Override
         public void handleMessage(Message msg)
@@ -189,6 +319,24 @@ public class UploadFileActivity extends Activity
             LogUtil.i("!!!!!!! processBarHandler handle msg");
             switch (msg.what)
             {
+                case InfoMsg.ORDER_EVL_RESULT_TYPE:
+                    Object evlobj1 = msg.obj;
+                    String evlprocess = evlobj1.toString();
+                    try
+                    {
+                        JSONObject json = new JSONObject(evlprocess);
+                        if ("0".equals(json.getString("code")))
+                        {
+                            String percent = json.getString("rateOfProgress");
+                            doEvlProcess(percent);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+
+                break;
 
                 case UploadFileActivity.MSG_TYPE_UPLOAD:
                 {
@@ -197,9 +345,101 @@ public class UploadFileActivity extends Activity
                     updateProcessBar(arg);
                 }
                 break;
+
+                case InfoMsg.NET_ERR_SOCKET_TIMEOUT:
+                    //Toast.makeText(UploadFileActivity.this, "网络连接超时，请重试", Toast.LENGTH_LONG).show();
+                    LogUtil.i("socket timeout error, from evaluatehandler !!!");
+                    startEvlProcessThread();
+                    break;
+
+                case InfoMsg.ERR_COOD_8002:
+                    Toast.makeText(UploadFileActivity.this, "图片样本不清晰，请重新拍摄图片", Toast.LENGTH_LONG).show();
+                    LogUtil.i("msg 8002 !!!!!!!!!!");
+                    //CropActivity.this.finish();
+                    updateErrMsg("图片样本不清晰，请重新拍摄图片");
+                    break;
+
+                case InfoMsg.NETWORK_ERR:
+                    Toast.makeText(UploadFileActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
+                    break;
+
+                case InfoMsg.ORDER_EVL_TYPE:
+                    LogUtil.i("MSG InfoMsg.ORDER_EVL_TYPE");
+                    Object evlobj = msg.obj;
+                    String evlcontent = evlobj.toString();
+                    try
+                    {
+                        JSONObject json = new JSONObject(evlcontent);
+                        if("0".equals(json.getString("code")))
+                        {
+                            OrderDetail orderDetail = new OrderDetail();
+                            orderDetail.setOrderFileNanme(fileName);
+                            orderDetail.setOrderFilesPages(json.getString("fileAmount"));
+                            orderDetail.setOrderFilesBytes(json.getString("wordsRange"));
+                            orderDetail.setOrderFinshTime(json.getString("finishTime"));
+                            orderDetail.setOrderPrice(json.getString("price"));
+                            orderDetail.setOrderWaitTime(json.getString("waitTime"));
+                            orderDetail.setAccurateWords(json.getString("accurateWords"));
+                            orderDetail.setRecogRate(json.getString("recogRate"));
+                            orderDetail.setRecogAngle(json.getString("recogAngle"));
+                            orderDetail.setOrderNumber(json.getString("oid"));
+                            orderDetail.setZoom(json.getString("zoom"));
+                            orderDetail.setOrderLevel(json.getString("level"));
+                            orderDetail.setOrderFid(fid);
+                            orderDetail.setOrderStatus("1");
+                            String contactId = json.getString("contactId");
+                            if(null == contactId || "null".equals(contactId) || "".equals(contactId)){
+                                orderDetail.setContactId("");
+                            }else{
+                                orderDetail.setContactId(contactId);
+                            }
+                            String mobile = json.getString("mobile");
+                            if(null == mobile || "null".equals(mobile) || "".equals(mobile)){
+                                orderDetail.setOrderPhone("");
+                            }else{
+                                orderDetail.setOrderPhone(mobile);
+                            }
+                            String fullname = json.getString("fullname");
+                            if(null == fullname || "null".equals(fullname) || "".equals(fullname)){
+                                orderDetail.setOrderName("");
+                            }else{
+                                orderDetail.setOrderName(fullname);
+                            }
+                            Intent intent = new Intent();
+                            intent.setClass(UploadFileActivity.this, OrderEvalPrices.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("ordetail", orderDetail);
+                            intent.putExtras(bundle);
+                            intent.putExtra("resultfiletype", resultFileType);
+                            LogUtil.i("*************resultFileType:"+resultFileType);
+                            startActivity(intent);
+                            finish();
+                        }
+                        else if ("8002".equals(json.getString("code")))
+                        {
+                            Toast.makeText(UploadFileActivity.this,json.getString("result"),Toast.LENGTH_SHORT).show();
+                            tvUpload.setText("图片样本不够清晰");
+                        }
+                        else
+                        {
+                            Toast.makeText(UploadFileActivity.this,"评估过程出现错误!",Toast.LENGTH_SHORT).show();
+                            updateErrMsg(json.getString("code"));
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        e.printStackTrace();
+                    }
+                    break;
             }
         }
     };
+
+
+    private void updateErrMsg(String msg)
+    {
+        tvUpload.setText(msg);
+    }
 
     public Handler textHandler = new Handler()
     {
@@ -221,18 +461,31 @@ public class UploadFileActivity extends Activity
                 }
                 break;
 
+                case InfoMsg.MSG_FILEUPLOAD_DONE:
+                {
+                    updateInfoMsg();
+                }
+
                 case InfoMsg.ERR_COOD_8002:
-                    Toast.makeText(UploadFileActivity.this, "图片样本不清晰，请重新拍摄图片", Toast.LENGTH_LONG);
-                    LogUtil.i("handle msg 8002");
+                    //Toast.makeText(UploadFileActivity.this, "图片样本不清晰，请重新拍摄图片", Toast.LENGTH_LONG).show();
+                    LogUtil.i("handle msg 8002, !!!!!!!!!!!!!!!!!!!!!!!!!, who send this msg!!!!");
                     //CropActivity.this.finish();
+                    //updateErrMsg("图片样本不清晰，请重新拍摄图片");
+                    break;
+
+                case InfoMsg.NET_ERR_SOCKET_TIMEOUT:
+                    Toast.makeText(UploadFileActivity.this, "网络连接超时，请重试", Toast.LENGTH_LONG).show();
+                    updateErrMsg("网络连接超时，请重试");
                     break;
 
                 case InfoMsg.NETWORK_ERR:
                     Toast.makeText(UploadFileActivity.this, "网络连接失败，请检查网络后重试！", Toast.LENGTH_LONG).show();
+                    updateErrMsg("网络连接失败，请检查网络后重试！");
                     break;
 
                 case InfoMsg.FILE_UPLOAD_FAIL:
-                    Toast.makeText(UploadFileActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT);
+                    Toast.makeText(UploadFileActivity.this, "上传失败，请检查网络并重试", Toast.LENGTH_SHORT).show();
+                    updateErrMsg("上传失败，请检查网络并重试");
                     break;
                 case InfoMsg.FILE_RECO_FAIL:
                     Object msgobj = msg.obj;

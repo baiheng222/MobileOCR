@@ -87,7 +87,14 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
 
         if (null != defFileName)
         {
-            etFileName.setText(defFileName);
+            if (defFileName.equals("test"))
+            {
+                etFileName.setText(defFileName);
+            }
+            else
+            {
+                etFileName.setText(defFileName.substring(0, defFileName.lastIndexOf(".zip")));
+            }
         }
 
         if (mResultType == InfoMsg.RESULT_TYPE_QUICK_RECO)
@@ -102,6 +109,7 @@ public class ChooseFileFormatActivity extends Activity implements View.OnClickLi
         Intent intent = getIntent();
         mResultType = intent.getIntExtra("resultType", 0);
         defFileName = intent.getStringExtra("filename");
+        LogUtil.i("defFilename is " + defFileName);
         mFileSize = intent.getStringExtra("filesize");
         LogUtil.i("resultType is " + mResultType);
         LogUtil.i("file size is " + mFileSize);
