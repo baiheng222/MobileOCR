@@ -52,7 +52,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 //import com.hanvon.HWCloudManager;
 //import com.hanvon.common.HWLangDict;
@@ -83,6 +85,9 @@ public class CropActivity extends Activity
 
 	private String oriName;
 	private String fid;
+
+	private String zipFileFullPaht = null;
+	private String zipFileName = null;
 
 	private int recoMode;
 
@@ -708,22 +713,21 @@ public class CropActivity extends Activity
 		return true;
 	}
 
+	private String getCurTimeString()
+	{
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-ddHHmmss");
+		Date currentTime = new Date();
+		String dateString = formatter.format(currentTime);
+		return dateString;
+	}
 
 	private void exactRecoSingle(String path)
 	{
 		LogUtil.i("exactRecoSingle func");
 		ArrayList<String> paths = new ArrayList<String>();
 		paths.add(path);
-		/*
-		for(int i = 0;i<allAlbums.getBitList().size();i++)
-		{
-			if(allAlbums.getBitList().get(i).isSelect())
-			{
-				paths.add(allAlbums.getBitList().get(i).getPath());
-			}
-		}
-		*/
 
+		/*
 		String sdCardPath = FileUtil.getSDCadrPath();
 		File f1 = new File(sdCardPath + "/rctmp");
 		if (f1.exists())
@@ -747,6 +751,54 @@ public class CropActivity extends Activity
 		File zipfile = zip.getCompressedFile();
 		LogUtil.i("file size is " + zipfile.length());
 		getResultFileFormat(zipfile.length());
+		*/
+		String sdCardPath = FileUtil.getSDCadrPath();
+
+		String datestring = getCurTimeString();
+		String zipDir = sdCardPath + "/MobileOCR/" + datestring;
+
+		//File f1 = new File(sdCardPath + "/rctmp");
+		File f1 = new File(zipDir);
+		if (f1.exists())
+		{
+			//f1.delete();
+			LogUtil.i("dir exists!!!!");
+			RecursionDeleteFile(f1);
+		}
+
+		boolean status = f1.mkdirs();
+		if (status)
+		{
+			LogUtil.i("mkdir " + zipDir + " success!!");
+		}
+		else
+		{
+			LogUtil.i("mkdirs fail!!!!");
+		}
+
+		for (int i = 0; i < paths.size(); i++)
+		{
+			LogUtil.i("path is " + paths.get(i));
+			String filename = paths.get(i).substring(paths.get(i).lastIndexOf("/") + 1, paths.get(i).length());
+			LogUtil.i("file name is " + filename);
+			String prefix = "RCA000" + String.valueOf(i) + "_";
+			LogUtil.i("prefix is " + prefix);
+			//CopySdcardFile(paths.get(i), sdCardPath + "/rctmp/" + prefix + filename);
+			CopySdcardFile(paths.get(i), zipDir + "/" + prefix + filename);
+		}
+
+		zipFileFullPaht = zipDir + ".zip";
+		zipFileName = datestring + ".zip";
+		LogUtil.i("zipFileFullPath is " + zipFileFullPaht);
+		LogUtil.i("zipFileName is " + zipFileName);
+		//ZipCompressorByAnt zip = new ZipCompressorByAnt("/sdcard/rctmp.zip");
+		//zip.compressExe(sdCardPath + "/rctmp/");
+		ZipCompressorByAnt zip = new ZipCompressorByAnt(zipFileFullPaht);
+		zip.compressExe(zipDir + "/");
+		File zipfile = zip.getCompressedFile();
+		LogUtil.i("file size is " + zipfile.length());
+		getResultFileFormat(zipfile.length());
+
 	}
 
 	private static final int REQUEST_FILE_FORMAT = 4;
@@ -755,7 +807,7 @@ public class CropActivity extends Activity
 	{
 		Intent intent = new Intent(CropActivity.this, ChooseFileFormatActivity.class);
 		intent.putExtra("resultType", InfoMsg.RECO_MODE_EXACT_RECO);
-		intent.putExtra("filename", "test");
+		intent.putExtra("filename", zipFileName);
 		String size;
 		long ksize = (filesize + 1023) / 1024;
 		if (ksize > 1024)
@@ -828,8 +880,8 @@ public class CropActivity extends Activity
 		Intent intent = new Intent(CropActivity.this, UploadFileActivity.class);
 		intent.putExtra("fileamount", 1);
 		intent.putExtra("fileformat", "png");
-		intent.putExtra("fullpath", "/sdcard/rctmp.zip");
-		intent.putExtra("filename", "rctmp.zip");
+		intent.putExtra("fullpath", zipFileFullPaht);
+		intent.putExtra("filename", zipFileName);
 		intent.putExtra("resultfiletype", resultFileFormat);
 		startActivity(intent);
 		this.finish();
