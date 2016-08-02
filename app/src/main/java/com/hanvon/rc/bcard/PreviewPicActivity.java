@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -250,12 +251,41 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 		txt_del.setOnClickListener(this);
 	}
 
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			processBackBtn();
+		}
+		return false;
+	}
+
+	private void processBackBtn()
+	{
+		Intent intent = new Intent();
+		intent.putExtra("album", album);
+		if(comeForm.equals(PREVIEW)) //预览按钮进来
+		{
+			intent.putExtra("back_to", PREVIEW);
+		}
+		else if(comeForm.equals(BIG)) //点击图片进来
+		{
+			intent.putExtra("back_to", BIG);
+		}
+		setResult(RESULT_OK,intent);
+		PreviewPicActivity.this.finish();
+	}
+
 	@Override
 	public void onClick(View v)
 	{
 		switch (v.getId())
 		{
 		case R.id.bc_preview_img_back:
+			processBackBtn();
+			/*
 			Intent intent = new Intent();
 			intent.putExtra("album", album);
 			if(comeForm.equals(PREVIEW)) //预览按钮进来
@@ -268,6 +298,7 @@ public class PreviewPicActivity extends Activity implements OnClickListener,OnTo
 			}
 			setResult(RESULT_OK,intent);
 			PreviewPicActivity.this.finish();
+			*/
 			break;
 		case R.id.bc_preview_confirm:
 		{

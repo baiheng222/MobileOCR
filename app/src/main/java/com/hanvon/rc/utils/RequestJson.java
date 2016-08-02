@@ -176,7 +176,7 @@ public class RequestJson {
             JSuserInfoJson.put("zoom", ordertail.getZoom());
             JSuserInfoJson.put("payType","1" );
             JSuserInfoJson.put("payWay", paytyep);
-            JSuserInfoJson.put("price", "0.01");
+            JSuserInfoJson.put("price", ordertail.getOrderPrice());
             String waitTime = null;
             try {
                 waitTime = URLEncoder.encode(ordertail.getOrderWaitTime(), "utf-8");
@@ -322,7 +322,7 @@ public class RequestJson {
             JSuserInfoJson.put("oid", orderid);
             JSuserInfoJson.put("productId", "2");
             JSuserInfoJson.put("body", URLEncoder.encode("汉王识文-精准人工识别", "UTF-8"));
-            JSuserInfoJson.put("price", "0.01");
+            JSuserInfoJson.put("price", prices);
         } catch(Exception e) {
             e.printStackTrace();
         }

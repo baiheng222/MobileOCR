@@ -426,6 +426,25 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
             resetMultiCapStateByUerDel();
         }
 
+        if (null !=msg && msg.equals("backmsg"))
+        {
+            LogUtil.i("recievie backmsg in fucn onResume!!!!");
+
+            picturesPathForSave = intent.getStringArrayListExtra("filelist");
+
+            if (null == picturesPathForSave)
+            {
+                LogUtil.i("receive null !!!!!1");
+                return;
+            }
+
+            for (int i =0; i < picturesPathForSave.size(); i++)
+            {
+                LogUtil.i("file path " + i + " is " + picturesPathForSave.get(i));
+            }
+            resetMultiCapStateByBackBtn();
+        }
+
 
     }
 
@@ -1145,6 +1164,17 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
 
 
+    }
+
+
+    private void resetMultiCapStateByBackBtn()
+    {
+        LogUtil.i("call resetMultiCapStatByBackBtn");
+        multiCapNum = picturesPathForSave.size();
+        mSubSuperscript.setText(String.valueOf(multiCapNum));
+
+        recoMode = InfoMsg.RECO_MODE_QUICK_RECO;
+        switchCapMode();
     }
 
     private void resetMultiCapStateByUerDel()

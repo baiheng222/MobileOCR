@@ -12,6 +12,7 @@ import android.os.Environment;
 import android.os.Message;
 import android.provider.MediaStore;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -338,6 +339,37 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		adapter.notifyDataSetChanged();
 	}
 
+
+	private void processBackBtn()
+	{
+		Intent intent = new Intent(this, CameraActivity.class);
+		/*
+		ArrayList<String> filelist = new ArrayList<String>();
+		for (int i = 0; i < allAlbums.getBitList().size(); i++)
+		{
+			String path = allAlbums.getBitList().get(i).getPath();
+			LogUtil.i("file " + i + " is " + path);
+			filelist.add(path);
+		}
+
+		intent.putStringArrayListExtra("filelist", filelist);
+		intent.putExtra("message", "backmsg");
+		*/
+		intent.putExtra("message", "recapture");
+		startActivity(intent);
+	}
+
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event)
+	{
+		if (keyCode == KeyEvent.KEYCODE_BACK)
+		{
+			processBackBtn();
+			ChooseMorePicturesActivity.this.finish();
+		}
+		return false;
+	}
+
 	@Override
 	public void onClick(View v)
 	{
@@ -346,6 +378,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 		case R.id.left:
 		case R.id.bc_left_img_back:
 		case R.id.bc_left_title:
+			processBackBtn();
 			ChooseMorePicturesActivity.this.finish();
 			break;
 

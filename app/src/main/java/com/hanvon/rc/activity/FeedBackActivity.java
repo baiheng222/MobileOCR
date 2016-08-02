@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.hanvon.rc.R;
 import com.hanvon.rc.utils.ConnectionDetector;
+import com.hanvon.rc.utils.LogUtil;
 import com.lidroid.xutils.HttpUtils;
 import com.lidroid.xutils.exception.HttpException;
 import com.lidroid.xutils.http.RequestParams;
@@ -48,7 +49,8 @@ public class FeedBackActivity extends Activity implements OnClickListener
 
 	private ProgressDialog progressDialog;
 
-	private String mFeedbackAddress = "http://cloud.hwyun.com/ws-dcloud/rt/ap/v1/statistics/gather/feedback";
+	private String mFeedbackAddress = "http://dpi.hanvon.com/rt/ap/v1/pub/std/heatmap//send";
+	//private String mFeedbackAddress = "http://cloud.hwyun.com/ws-dcloud/rt/ap/v1/statistics/gather/feedback";
 	private SharedPreferences mDefaultPreference;
 	
 	
@@ -86,6 +88,7 @@ public class FeedBackActivity extends Activity implements OnClickListener
 			@Override
 			public void handleMessage(Message msg) 
 			{
+				LogUtil.i("handlemssg");
 				switch (msg.what) 
 				{
 				case 0:
@@ -99,13 +102,14 @@ public class FeedBackActivity extends Activity implements OnClickListener
 						feedbackDialog = null;
 					}
 					*/
-					//Toast.makeText(this, R.string.feedback_error, Toast.LENGTH_LONG).show();
+					Toast.makeText(FeedBackActivity.this, R.string.feedback_error, Toast.LENGTH_LONG).show();
 					break;
 				case 1:
 					if (progressDialog != null) {
 						progressDialog.dismiss();
 						progressDialog = null;
 					}
+					showThanks();
 					/*
 					if (feedbackDialog != null) {
 						feedbackDialog.dismiss();
@@ -119,6 +123,12 @@ public class FeedBackActivity extends Activity implements OnClickListener
 				}
 			}
 		};
+	}
+
+	private void showThanks()
+	{
+		mLlContent.setVisibility(View.GONE);
+		mLlThanks.setVisibility(View.VISIBLE);
 	}
 
 	public boolean isMailNO(String mail)
@@ -149,13 +159,14 @@ public class FeedBackActivity extends Activity implements OnClickListener
 		JSONObject mJsonObject = new JSONObject();
 		try
 		{
-			mJsonObject.putOpt("userid", "suluepen" + UUID.randomUUID());
-			mJsonObject.putOpt("devid", "0");
-			mJsonObject.putOpt("sid", mPackageName);
+			mJsonObject.putOpt("userid", "MobileOCR" + UUID.randomUUID());
+			//mJsonObject.putOpt("devid", "0");
+			mJsonObject.putOpt("sid", "MobileOCR_Software");
 			mJsonObject.putOpt("ver", version);
 			mJsonObject.putOpt("fbcontent", content);
-			mJsonObject.putOpt("mobile", "");
-			mJsonObject.putOpt("email", mail);
+			//mJsonObject.putOpt("mobile", "");
+			//mJsonObject.putOpt("email", mail);
+			mJsonObject.putOpt("type", "5");
 		} catch (JSONException e)
 		{
 			e.printStackTrace();
@@ -184,6 +195,7 @@ public class FeedBackActivity extends Activity implements OnClickListener
 				@Override
 				public void onFailure(HttpException arg0, String arg1)
 				{
+					LogUtil.i("on failure, arg1 is " + arg1);
 					try
 					{
 						Thread.sleep(500);
@@ -200,14 +212,17 @@ public class FeedBackActivity extends Activity implements OnClickListener
 				@Override
 				public void onSuccess(ResponseInfo<String> responseInfo)
 				{
+					LogUtil.i("onsuccess");
 					try
 					{
 						final JSONObject mJsonObject = new JSONObject(responseInfo.result.toString());
+						LogUtil.i("JSonboj is " + mJsonObject.toString());
 						final String code = mJsonObject.getString("code");
 						if (code.equals("0"))
 						{
 							String result = mJsonObject.getString("result");
-							if (result.equals("success"))
+							LogUtil.i("result is " + result);
+							if (result.equals("OK"))
 							{
 								try
 								{
@@ -217,10 +232,11 @@ public class FeedBackActivity extends Activity implements OnClickListener
 								{
 									e.printStackTrace();
 								}
-								handler.sendEmptyMessage(1);
-								mDefaultPreference.edit().putString("feedback_msg",content).commit();
-								mDefaultPreference.edit().putString("feedback_mail",mail).commit();
+
 							}
+							handler.sendEmptyMessage(1);
+							mDefaultPreference.edit().putString("feedback_msg",content).commit();
+							mDefaultPreference.edit().putString("feedback_mail",mail).commit();
 						} 
 						else
 						{

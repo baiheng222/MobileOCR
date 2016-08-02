@@ -222,7 +222,7 @@
             android:layout_marginLeft="24dp"
             android:gravity="bottom"
             android:textColor="@color/white"
-            android:text="RC.hanvon.com" />
+            android:text="rc.hanvon.com" />
 
         <TextView
             android:id="@+id/tv_version"

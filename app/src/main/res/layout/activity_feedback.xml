@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:padding="5dip"
-            android:text="version"
+            android:text="感谢您的反馈，我们力求为您提供更好的服务！"
             android:textColor="@android:color/black" />
 
         <TextView
@@ -61,7 +61,7 @@
             android:layout_marginTop="20dip"
             android:gravity="center"
             android:padding="10dip"
-            android:text="@string/feedback_thanks"
+            android:text=""
             android:textSize="20sp" />
     </LinearLayout>
 
