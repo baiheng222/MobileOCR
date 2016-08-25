@@ -2,6 +2,7 @@ package com.hanvon.rc.activity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
@@ -9,6 +10,7 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import com.hanvon.rc.R;
@@ -21,6 +23,7 @@ import com.hanvon.rc.utils.ConnectionDetector;
 import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.utils.StatisticsUtils;
+import com.jaeger.library.StatusBarUtil;
 
 
 /**
@@ -37,6 +40,9 @@ public class MainActivity extends Activity
     private ActionBarDrawerToggle mDrawerToggle;
 
     public static boolean isFromLogin;
+
+    private int mStatusBarColor;
+    private int mAlpha = StatusBarUtil.DEFAULT_STATUS_BAR_ALPHA;
 
 
 
@@ -70,6 +76,22 @@ public class MainActivity extends Activity
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+
+        /*
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            WindowManager.LayoutParams localLayoutParams = getWindow().getAttributes();
+            localLayoutParams.flags = (WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS | localLayoutParams.flags);
+            if(Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP){
+                //将侧边栏顶部延伸至status bar
+                mDrawerLayout.setFitsSystemWindows(true);
+                //将主页面顶部延伸至status bar;虽默认为false,但经测试,DrawerLayout需显示设置
+                mDrawerLayout.setClipToPadding(false);
+            }
+        }
+        */
+
+        mStatusBarColor = getResources().getColor(R.color.activity_default_color);
+        StatusBarUtil.setColorForDrawerLayout(MainActivity.this, mDrawerLayout, mStatusBarColor, 0);
     }
 
     @Override
@@ -183,5 +205,14 @@ public class MainActivity extends Activity
         StatisticsUtils.releaseInstance();
         LogUtil.i("-------onDestory----MainActivity-------");
     }
+
+    /*
+    @Override
+    protected void setStatusBar()
+    {
+        mStatusBarColor = getResources().getColor(R.color.activity_default_color);
+        StatusBarUtil.setColorForDrawerLayout(this, (DrawerLayout)findViewById(R.id.drawerlayout), mStatusBarColor, 112);
+    }
+    */
 
 }

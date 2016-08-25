@@ -1075,7 +1075,7 @@ public class ChooseMorePicturesActivity extends Activity implements OnClickListe
 			String dir_id = cursor.getString(4);
 			String dir = cursor.getString(5);
 			String pic_date = cursor.getString(6);
-			LogUtil.i( "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
+			//LogUtil.i( "id==="+id+", ==dir_id=="+dir_id+", ==dir=="+dir+", ==path="+path);
 
             if (!FileUtil.exit(path))
             {

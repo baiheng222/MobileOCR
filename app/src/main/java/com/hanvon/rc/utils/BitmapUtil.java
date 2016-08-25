@@ -317,7 +317,7 @@ private static int  MINIBOUNDLEN  = 1080;
 		if (tmp > MINIBOUNDLEN * 3) {
 			scale = 4;
 		}
-
+		LogUtil.i("scale is " + scale);
 		return scale;
 	}
 

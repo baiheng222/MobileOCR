@@ -7,13 +7,14 @@ package com.hanvon.rc.utils;
  */
 public class InfoMsg {
 
-    public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
-    //public static final String HanvonUrl = "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1";
+    //public static final String HanvonUrl = "http://dpi.hanvon.com/rt/ws/v1";
+    public static final String HanvonUrl = "http://rc.hwyun.com:9090/rws-cloud/rt/ws/v1";
 
     public static final String ShareUrl = "http://dpi.hanvon.com/rt/ap/v1";
     //public static final String ShareUrl = "http://cloud.hwyun.com/dws-cloud/rt/ap/v1";
 
 
+    public static final String UrlOriginQucikRecog = HanvonUrl + "/file/cutimg/quick/recog";
     public static final String UrlRapidRecog = HanvonUrl + "/file/web/rapid/recog";
     public static final String UrlFileRecog = HanvonUrl+"/file/quick/recog";
     public static final String UrlFileList = HanvonUrl+"/file/list";

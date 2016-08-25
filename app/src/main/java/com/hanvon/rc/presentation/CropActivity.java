@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.Point;
+import android.graphics.RectF;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -90,6 +91,9 @@ public class CropActivity extends Activity
 	private String zipFileName = null;
 
 	private int recoMode;
+	private RectF originFilePos;
+	private int inSampleSize = 0;
+	private int originWidth = 0;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState)
@@ -111,14 +115,14 @@ public class CropActivity extends Activity
 		if (parent.equals("CameraActivity"))
 		{
 			path = this.getIntent().getStringExtra("path");
-			Log.i(TAG, "!!!! from CameraActivity, path is " + path);
+			LogUtil.i("!!!! from CameraActivity, path is " + path);
 		}
 		else if (parent.equals("ChooseMorePicturesActivity"))
 		{
 			PhotoAlbum album = (PhotoAlbum) this.getIntent().getSerializableExtra("data");
 			int picturePos = this.getIntent().getExtras().getInt("pos");
 			path = album.getBitList().get(picturePos).getPath();
-			Log.i(TAG, "!!!! from ChooseMorePicturesActivity, path is " + path);
+			LogUtil.i("!!!! from ChooseMorePicturesActivity, path is " + path);
 		}
 		else
 		{
@@ -178,6 +182,7 @@ public class CropActivity extends Activity
 	private void printBitmapSize(String path)
 	{
 		Bitmap bitmap = BitmapFactory.decodeFile(path);
+		originWidth = bitmap.getWidth();
 		LogUtil.i("picture real width is " + bitmap.getWidth() + " real height is " + bitmap.getHeight());
 	}
 
@@ -249,7 +254,10 @@ public class CropActivity extends Activity
                 }
 
                 canvas.getSubsetBitmap(screen_width,screen_height).compress(Bitmap.CompressFormat.PNG, 60, fOut);
-                try
+				originFilePos = canvas.getPicPos();
+				inSampleSize = originWidth / (int)(originFilePos.right - originFilePos.left);
+				LogUtil.i("final inSampleSize is " + inSampleSize);
+				try
 				{
                         fOut.flush();
                 }
@@ -280,7 +288,8 @@ public class CropActivity extends Activity
 					{
 						mProgress = ProgressDialog.show(CropActivity.this, "", "正在识别......");
 						oriName = path.substring(path.lastIndexOf("/") + 1, path.length());
-						RecoThread recoThread = new RecoThread(oriName, f.getAbsolutePath(), "1");
+						//RecoThread recoThread = new RecoThread(oriName, f.getAbsolutePath(), "1");
+						OriginQuickRecoThread recoThread = new OriginQuickRecoThread(oriName, path, "1");
 						new Thread(recoThread).start();
 					}
 				}
@@ -331,8 +340,8 @@ public class CropActivity extends Activity
 //	 	float scaleY = (float) (((screen_height-90*density-10*density)* 1.0)/(backBitmap.getHeight() * 1.0) ); 
 //	 	scale = scaleX < scaleY ? scaleX:scaleY;
 		scale = scaleX;
-	 	//LogUtil.i("scale is " + scale+"----------->");
-		//LogUtil.i("screenwidth is " + screen_width + " screenheight " + screen_height);
+	 	LogUtil.i("scaleX is " + scale+"----------->");
+		LogUtil.i("screenwidth is " + screen_width + " screenheight " + screen_height);
         canvas.setHeightAndWidth(screen_width, screen_height,scale,density);
         canvas.setBitmap(backBitmap);
 	 } 
@@ -352,6 +361,59 @@ public class CropActivity extends Activity
 		
 		return str; 
 	
+	}
+
+
+
+	public class OriginQuickRecoThread implements Runnable
+	{
+		private String mFileName;
+		private String mPath;
+		private String mRecgType;
+
+		public OriginQuickRecoThread(String filename, String path, String recgtype)
+		{
+			mFileName = filename;
+			mPath = path;
+			mRecgType = recgtype;
+		}
+
+		@Override
+		public void run()
+		{
+			Log.i(TAG, "!!!!!!!! RecoThread running !!!!!!!");
+
+			if (!connInNet())
+			{
+				Log.i(TAG, "network err ,send msg !!!!!!");
+				Message msg = new Message();
+				msg.what = InfoMsg.NETWORK_ERR;
+				CropActivity.this.textHandler.sendMessage(msg);
+				return;
+			}
+
+			String x, y, w, h;
+			x = String.valueOf(originFilePos.left * inSampleSize);
+			y = String.valueOf(originFilePos.top * inSampleSize);
+			w = String.valueOf((originFilePos.right - originFilePos.left) * inSampleSize);
+			h = String.valueOf((originFilePos.bottom - originFilePos.top) * inSampleSize);
+			LogUtil.i("originFilePos is x:" + x + " y:" + y + " w:" + w + " h:" + h);
+
+			String content = UploadImage.OriginFileQuickReco(mRecgType, mPath, mFileName, String.valueOf(1), false, "jpg", x, y, w, h);
+
+			Message msg = new Message();
+			msg.what = InfoMsg.FILE_RECOGINE_TYPE;
+			if (null != msg)
+			{
+				msg.obj = content;
+			}
+			else
+			{
+				msg.obj = "error";
+			}
+			CropActivity.this.textHandler.sendMessage(msg);
+			LogUtil.i("after send msg !!!!!");
+		}
 	}
 
 	public class RecoThread implements Runnable
@@ -381,8 +443,18 @@ public class CropActivity extends Activity
 				return;
 			}
 
+			/*
+			String x , y , w, h;
+			x = String.valueOf(originFilePos.left * inSampleSize);
+			y = String.valueOf(originFilePos.top * inSampleSize);
+			w = String.valueOf((originFilePos.right - originFilePos.left) * inSampleSize);
+			h = String.valueOf((originFilePos.bottom - originFilePos.top) * inSampleSize);
+			LogUtil.i("originFilePos is x:" + x + " y:" + y + " w:" + w + " h:" + h);
+			*/
 			//String fid = null;
 			fid = UploadImage.UploadFiletoHvn(mRecgType, mPath, mFileName, String.valueOf(1), false, "png");
+			//fid = UploadImage.UploadFiletoHvn(mRecgType, mPath, mFileName, String.valueOf(1), false, "jpg", x, y, w, h);
+
 
 			if (null == fid)
 			{
@@ -460,7 +532,7 @@ public class CropActivity extends Activity
 				case InfoMsg.FILE_RECOGINE_TYPE:
 				{
 					Object obj = msg.obj;
-					Log.i(TAG, obj.toString());
+					LogUtil.i( obj.toString());
 					//processResult(obj.toString());
 					String content = obj.toString();
 					LogUtil.i("content is " + content);
@@ -473,7 +545,7 @@ public class CropActivity extends Activity
 							if ("0".equals(jobj.getString("code")))
 							{
 								byte [] ret = Base64Utils.decode(jobj.getString("result"));
-								String result = new String(ret, "UTF8");
+								String result = new String(ret, "GB2312");
 								//String result = jobj.getString("result");
 								LogUtil.i(" !!!! result is " + result);
 								String offset = jobj.getString("offset");

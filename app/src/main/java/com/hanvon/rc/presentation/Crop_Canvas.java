@@ -58,6 +58,7 @@ public class Crop_Canvas extends ImageView
 	private float translateHeight,translateWidth;//平移的高度
 	private int rectWidth,rectHeight;//框的高宽
 	private RectF boundRect = new RectF(); //画框的边界
+	private RectF bmpPos = new RectF();
     private int padding = 10;
 	public Crop_Canvas(Context context) {
 		super(context);
@@ -121,14 +122,14 @@ public class Crop_Canvas extends ImageView
 //		Matrix matrix = new Matrix();
 
 		//LogUtil.i("bitmap w：" + bitmap.getWidth() + " bitmap h:" + bitmap.getHeight());
-		//LogUtil.i("rectWidth:" + rectWidth + " , rectHeight:" + rectHeight);
+		LogUtil.i("rectWidth:" + rectWidth + " , rectHeight:" + rectHeight);
 
 
 		translateHeight = (float) (frameHeight-rectHeight-96*density-padding*2*density)/2 - 20;//减去20是为了画框更准
 		//translateHeight = 0;
 		translateWidth = (float)(frameWidth-rectWidth-padding*2*density)/2;
-
-		//LogUtil.i("translateWidth: " + translateWidth + " ,translateHeight: " + translateHeight);
+		LogUtil.i("frameWidht:" + frameWidth + " , frameHeight:" + frameHeight);
+		LogUtil.i("translateWidth: " + translateWidth + " ,translateHeight: " + translateHeight);
 
 		//LogUtil.i("setBitmap end !!!!");
 
@@ -196,6 +197,11 @@ public class Crop_Canvas extends ImageView
 		this.rotateFlag = rotateFlag;
 	}
 
+	public RectF getPicPos()
+	{
+		return bmpPos;
+	}
+
 	public Bitmap getSubsetBitmap(int frameWidth, int frameHeight)
 	{
         firstFlag = true;  
@@ -228,6 +234,11 @@ public class Crop_Canvas extends ImageView
     		y = bitmap.getHeight() - h;
     	}
         //LogUtil.i(x+"width" + w );
+		bmpPos.left = x;
+		bmpPos.top = y;
+		bmpPos.right = x + w;
+		bmpPos.bottom = y + h;
+		LogUtil.i("!!!!!!! subbitmap is: x:" + x + "  y:" + y + "  w:" + w + "  h:" + h);
         return Bitmap.createBitmap(bitmap, x, y,w,h);
 	}  
     public boolean onTouchEvent(MotionEvent event)

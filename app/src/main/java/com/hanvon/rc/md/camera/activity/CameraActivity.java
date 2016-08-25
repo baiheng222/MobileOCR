@@ -30,6 +30,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hanvon.rc.R;
+import com.hanvon.rc.activity.BaseActivity;
 import com.hanvon.rc.activity.MainActivity;
 import com.hanvon.rc.bcard.ChooseMorePicturesActivity;
 import com.hanvon.rc.bcard.PreviewPicActivity;
@@ -45,6 +46,7 @@ import com.hanvon.rc.utils.InfoMsg;
 import com.hanvon.rc.utils.LogUtil;
 import com.hanvon.rc.utils.StatisticsUtils;
 import com.hanvon.rc.widget.BadgeView;
+import com.jaeger.library.StatusBarUtil;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -114,6 +116,9 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
     private static final int FLASH_AUTO = 3;
     private int mFlashMode;
 
+    private int mColor;
+    private int mAlpha = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -128,6 +133,8 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         initView();
 
         StatisticsUtils.IncreaseCameraPage();
+        mColor = getResources().getColor(R.color.activity_default_color);
+        StatusBarUtil.setColor(CameraActivity.this, mColor, mAlpha);
     }
 
     private void initData()
@@ -1212,5 +1219,13 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
         //intScreenHeight = dm.heightPixels;
         //Log.i(TAG, Integer.toString(intScreenWidth));
     }
+
+    /*
+    @Override
+    protected void setStatusBar() {
+        mColor = getResources().getColor(R.color.activity_default_color);
+        StatusBarUtil.setColor(this, mColor);
+    }
+    */
 
 }

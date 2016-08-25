@@ -134,7 +134,9 @@ public class UploadImage
 
                 //parmas = GetMapFromType(buffer, filename, offset, length, type, readBytes);
                 //parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes);
-                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes, fileAmount, iszip, fileFormat);
+                //parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType, readBytes, fileAmount, iszip, fileFormat);
+                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType,
+                        readBytes, fileAmount, iszip, fileFormat);
                 result = dopost(parmas, buffer);
 
                 if (null != handler)
@@ -333,8 +335,8 @@ public class UploadImage
 
 
 
-    public static Map<String, String> GetMapFromType(String data,String filename,
-                 int offset, int totalLength, String type,int readBytes, String fileAmount, boolean iszip, String fileFormat)
+    public static Map<String, String> GetMapFromType(String data,String filename, int offset, int totalLength, String type,int readBytes, String fileAmount, boolean iszip, String fileFormat)
+
 
     /*
     public static Map<String, String> GetMapFromType(byte[] data,String filename,
@@ -531,5 +533,218 @@ public class UploadImage
             e.printStackTrace();
         }
 
+    }
+
+    private static String  doQuickRecpost(Map<String, String> parmas,byte[] data)
+    {
+        LogUtil.i( "!!!!dpost!!!!");
+        String result = null;
+        MultipartEntityBuilder mEntityBuilder = MultipartEntityBuilder.create();
+        mEntityBuilder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+        mEntityBuilder.setCharset(Charset.defaultCharset());
+
+        ByteArrayBody dataBody = new ByteArrayBody(data,
+                ContentType.MULTIPART_FORM_DATA, "uploadTemp");
+        mEntityBuilder.addPart("file", dataBody);
+        mEntityBuilder.setBoundary("----------ThIs_Is_tHe_bouNdaRY_$");
+
+        DefaultHttpClient client = new DefaultHttpClient();//http客户端
+        HttpPost httpPost = null;
+
+        httpPost = new HttpPost(InfoMsg.UrlOriginQucikRecog);
+        if(parmas != null)
+        {
+            for (Map.Entry<String, String> e : parmas.entrySet())
+            {
+                mEntityBuilder.addTextBody(e.getKey(), e.getValue());
+            }
+        }
+
+        try
+        {
+            httpPost.setEntity(mEntityBuilder.build());
+            HttpResponse response = client.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            InputStream content = entity.getContent();
+            String returnConnection = convertStreamToString(content);
+            LogUtil.i("!!!!! return string is " + returnConnection);
+            try
+            {
+                JSONObject json = new JSONObject(returnConnection);
+                if (json.getString("code").equals("0"))
+                {
+                    offset = Integer.valueOf(json.getString("offset"));
+                    result = returnConnection;
+                   LogUtil.i(" !!!! offset is " + offset);
+                }
+                else
+                {
+                    result = json.getString("code");
+                }
+
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+
+        }
+        catch (IllegalStateException e)
+        {
+            e.printStackTrace();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+        }
+
+        return result;
+    }
+
+    public static String OriginFileQuickReco(String recgType,String path,String filename, String fileAmount, boolean iszip,
+                             String fileFormat, String pic_x, String pic_y, String pic_w, String pic_h)
+    {
+        String result = null;
+        try
+        {
+            byte[] buffer = null;
+            int readBytes = BUF_SIZE;
+            final File file = new File(path);
+
+            FileInputStream fis = new FileInputStream(file);
+            int length = fis.available();
+
+
+            LogUtil.i("!!!!! filename is " + filename);
+            LogUtil.i("offset:" + offset);
+
+            if(offset != 0)
+            {
+                //fis.skip(offset);
+                offset = 0;
+            }
+
+            boolean flag = true;
+            while(flag)
+            {
+                if ((isPause) || ((!isPause)&&(offset >= length)))
+                {
+                    break;
+                }
+
+                if((length - offset) / BUF_SIZE > 0)
+                {
+                    readBytes = BUF_SIZE;
+                }
+                else
+                {
+                    readBytes = length - offset;
+                }
+
+                try
+                {
+                    buffer =  new byte[readBytes];
+                    readBytes = fis.read(buffer);
+                }
+                catch (IOException e1)
+                {
+                    e1.printStackTrace();
+                }
+
+                LogUtil.i("readBytes:"+readBytes);
+                LogUtil.i("offset is " + offset);
+                LogUtil.i("file length is " + length);
+
+
+                if (readBytes < 0)
+                {
+                    LogUtil.i("!!!!! readBytes is " + readBytes + " , break while!!!");
+                    break;
+                }
+
+
+
+                /*
+                parmas = GetMapFromType(Base64Utils.encode(buffer), filename, offset, length, recgType,
+                        readBytes, fileAmount, iszip, fileFormat);
+               */
+
+                Map<String, String> parmas = new HashMap<String, String>();
+                if ("2".equals(recgType))
+                {
+                    parmas.put("userid", HanvonApplication.hvnName);
+                }
+                else
+                {
+                    if ("".equals(HanvonApplication.hvnName))
+                    {
+                        parmas.put("userid", HanvonApplication.AppDeviceId);
+                    }
+                    else
+                    {
+                        parmas.put("userid", HanvonApplication.hvnName);
+                    }
+                }
+
+                //parmas.put("resType", recgType);
+                parmas.put("resType", "1");
+                parmas.put("platformType", "4");
+                parmas.put("fileName", URLEncoder.encode(filename));
+                parmas.put("fileFormat", fileFormat);
+                parmas.put("fileAmount", fileAmount);
+                parmas.put("size", String.valueOf(length));
+                parmas.put("length", String.valueOf(readBytes));
+                parmas.put("offset", String.valueOf(offset));
+                parmas.put("checksum", SHA1Util.sha(Base64Utils.encode(buffer)));
+                //parmas.put("iszip", String.valueOf(iszip));
+                parmas.put("cutXAxis", pic_x);
+                parmas.put("cutYAxis", pic_y);
+                parmas.put("cutWidthRect", pic_w);
+                parmas.put("cutHeightRect", pic_h);
+
+                LogUtil.i("in func map: " +  parmas.toString());
+
+                //return parmas;
+
+                result = doQuickRecpost(parmas, buffer);
+
+            }
+        }
+        catch (IOException e)
+        {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        if (result == null)
+        {
+            LogUtil.i("!!! result is null, error return");
+            return result;
+        }
+        else if (result.equals("8002"))
+        {
+            LogUtil.i("code is 8002, return 8002!!!!!");
+            return result;
+        }
+
+        return result;
+
+        /*
+        String fid = null;
+        fid = processUploadRet(result);
+
+        if (null != fid)
+        {
+            LogUtil.i("!!!! final fid is " + fid);
+        }
+
+        return fid;
+        */
+        /*
+        if (fid != null)
+        {
+            GetRapidRecogRet("test2345", fid, "1", "4");
+        }
+         */
     }
 }
