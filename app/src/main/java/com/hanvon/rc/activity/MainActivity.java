@@ -90,8 +90,10 @@ public class MainActivity extends Activity
         }
         */
 
+        /*
         mStatusBarColor = getResources().getColor(R.color.activity_default_color);
         StatusBarUtil.setColorForDrawerLayout(MainActivity.this, mDrawerLayout, mStatusBarColor, 0);
+        */
     }
 
     @Override

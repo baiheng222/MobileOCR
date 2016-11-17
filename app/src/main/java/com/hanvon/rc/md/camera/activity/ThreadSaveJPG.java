@@ -83,14 +83,15 @@ public class ThreadSaveJPG extends Thread
 		*/
 
 		byte[] byteData = new byte[bitmap.getWidth() * bitmap.getHeight()];
-		Log.i(TAG, String.valueOf(bitmap.getWidth()) + "_" + String.valueOf(bitmap.getHeight()));
+		LogUtil.i("width * height: " + String.valueOf(bitmap.getWidth()) + "_" + String.valueOf(bitmap.getHeight()));
 
 		//fjm add
 		ByteArrayOutputStream baos2 = new ByteArrayOutputStream();
 
 		//Bitmap mMyBitmap = Bitmap.createScaledBitmap(bitmap, 720, 1280,true);
 
-		bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos2);
+		//bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos2);
+		bitmap.compress(Bitmap.CompressFormat.JPEG, 80, baos2);
 		//mMyBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos2);
 
 		if (!bitmap.isRecycled())
@@ -110,7 +111,7 @@ public class ThreadSaveJPG extends Thread
 		}
 
 		path += CurrentTime.getCurrentTime() + ".jpg";
-		Log.i(TAG, "file path to be write is " + path);
+		LogUtil.i( "file path to be write is " + path);
 
 		try
 		{

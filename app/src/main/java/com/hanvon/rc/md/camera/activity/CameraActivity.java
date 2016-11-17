@@ -551,17 +551,46 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
                     List<Size> picsizes = printSupportPictureSize(parameters);
                     List<Size> previewsizes = printSupportPreviewSize(parameters);
 
-                    Size pictureS = CameraPicturSize.getInstance().getPictureSize(picsizes, 800);
+
                     Size previewS = CameraPicturSize.getInstance().getPreviewSize(previewsizes, 800);
 
                     if (null != previewS)
                     {
+                        LogUtil.i("!!!!! setPreviewSize to " + previewS.width + " * " + previewS.height);
                         parameters.setPreviewSize(previewS.width, previewS.height);
                     }
-
-                    if (null != pictureS)
+                    else
                     {
-                        parameters.setPictureSize(pictureS.width, pictureS.height);
+                        LogUtil.i("!!! getPreview size errr, use default !!!!!!!");
+                    }
+
+
+
+                    SharedPreferences sp = getSharedPreferences("cameraSize", MODE_PRIVATE);
+                    int width = sp.getInt("width", 0);
+                    int height = sp.getInt("height", 0);
+                    if (width == 0 || height == 0)
+                    {
+                        Size pictureS = CameraPicturSize.getInstance().getPictureSize(picsizes, 800);
+
+                        if (null != pictureS)
+                        {
+                            parameters.setPictureSize(pictureS.width, pictureS.height);
+                            LogUtil.i("!!!!! setPictureSize to " + pictureS.width + " * " + pictureS.height);
+                            SharedPreferences.Editor editor = sp.edit();
+                            editor.putInt("width", pictureS.width);
+                            editor.putInt("height", pictureS.height);
+                            editor.commit();
+                        }
+                        else
+                        {
+                            LogUtil.i("!!! getPicture size errr, use default !!!!!!!");
+                        }
+                    }
+                    else
+                    {
+                        LogUtil.i("Use saved width and height to set pic size: " + width + " * " + height);
+                        parameters.setPictureSize(width, height);
                     }
                     mCameraManager.setCameraParameters(parameters);
                     //add end
@@ -589,6 +618,16 @@ public class CameraActivity extends Activity implements OnClickListener, Camera.
 
         }
     }
+
+    /*
+    public void Size getCamerPicSize()
+    {
+        SharedPreferences sp = getPreferences("cameraSize", MODE_PRIVATE);
+        int width = sp.getInt("width", 0);
+
+        Size pic = new Size(0, 0);
+    }
+    */
 
     @Override
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height)

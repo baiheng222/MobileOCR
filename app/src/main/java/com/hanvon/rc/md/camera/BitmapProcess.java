@@ -5,6 +5,8 @@ import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
 
+import com.hanvon.rc.utils.LogUtil;
+
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
@@ -108,13 +110,15 @@ public class BitmapProcess
 		BitmapFactory.decodeByteArray(data, 0, data.length, opts);
 		int width = opts.outWidth;
 		int height = opts.outHeight;
+		LogUtil.i("origin bitmap data, width and height : " + width + " * " + height);
 		int SrcLongSize;
 		if (width > height) {
 			SrcLongSize = width;
 		} else {
 			SrcLongSize = height;
 		}
-		opts.inSampleSize = SrcLongSize / maxSideLenght + 1;
+		//opts.inSampleSize = SrcLongSize / maxSideLenght + 1;
+		opts.inSampleSize = 1;
 
 		opts.inJustDecodeBounds = false;
 
